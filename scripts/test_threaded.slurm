@@ -10,4 +10,4 @@
 cd ~/welfare-meta-study
 ~/julia-1.9.3/bin/julia -t 20 scripts/test_threaded.jl
 ~/julia-1.9.3/bin/julia -t 40 scripts/test_threaded.jl
-~/julia-1.9.3/bin/julia -t 100 scripts/test_threaded.jl
+~/julia-1.9.3/bin/julia -t 90 scripts/test_threaded.jl

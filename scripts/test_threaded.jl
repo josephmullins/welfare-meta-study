@@ -47,5 +47,5 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,M,MD,data,n_idx)
 
 ll = log_likelihood_threaded(x0,G,LL,M,∂M,EM,MD,p,data,n_idx)
-println(" -- Evaluation time with $nthreads() cores:")
+println(" -- Evaluation time with $(nthreads()) cores:")
 @time log_likelihood_threaded(x0,G,LL,M,∂M,EM,MD,p,data,n_idx)
