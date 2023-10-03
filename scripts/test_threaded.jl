@@ -43,7 +43,6 @@ LL = zeros(nthreads())
 
 Random.seed!(2020)
 shuffle!(MD)
-MD = MD[1:400]
 
 forward_back_threaded!(p,EM,M,MD,data,n_idx)
 

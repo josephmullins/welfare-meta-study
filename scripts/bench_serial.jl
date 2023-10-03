@@ -54,12 +54,14 @@ function log_likelihood_bench!(x,G::Matrix{Float64},solvetime::Vector{Float64},M
     update!(p,M,∂M,(1,8,9))
     @threads :static for i in eachindex(MD) # in MD
         t0 = time()
-        md = MD[i]
         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-        # update the number of time periods, the choice set, the utilities, and solve.
-        solve!(M[m_idx,threadid()],∂M[m_idx,threadid()],md,p)
-        ll = 0.
-        #println(threadid()," ",length(n_idx[md.case_idx]))
+
+        # ------- Step 1: get the log-likelihood of choices --------
+        # to save on memory allocations we to do this for each t over all observations that fit this case, then we update and discard data from t.
+
+        @views ll = log_likelihood_choices(p,G[:,threadid()],M[m_idx,threadid()],∂M[m_idx,threadid()],EM,data,md,n_idx)
+
+        # ------- Step 2: get the log-likelihood of prices and transitions ----- #
         for n ∈ n_idx[md.case_idx]
             if data[n].use
                 @views ll += log_likelihood(G[:,threadid()],EM[n],md,p,M[m_idx,threadid()],∂M[m_idx,threadid()],data[n])

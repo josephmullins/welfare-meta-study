@@ -1,6 +1,2 @@
- -- Evaluation time with nthreads() cores:
- 12.910798 seconds (163 allocations: 15.016 KiB)
- -- Evaluation time with nthreads() cores:
-  9.982627 seconds (304 allocations: 28.484 KiB)
- -- Evaluation time with nthreads() cores:
-  9.509496 seconds (652 allocations: 62.109 KiB)
+ -- Evaluation time with 20 cores:
+ 11.367116 seconds (162 allocations: 14.984 KiB)
