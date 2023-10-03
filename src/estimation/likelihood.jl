@@ -29,10 +29,13 @@ function log_likelihood_threaded(x,G::Matrix{Float64},LL::Vector{Float64},M::Mat
     @threads :static for i in eachindex(MD) # in MD
         md = MD[i]
         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-        # update the number of time periods, the choice set, the utilities, and solve.
-        solve!(M[m_idx,threadid()],∂M[m_idx,threadid()],md,p)
-        ll = 0.
-        #println(threadid()," ",length(n_idx[md.case_idx]))
+
+        # ------- Step 1: get the log-likelihood of choices --------
+        # to save on memory allocations we to do this for each t over all observations that fit this case, then we update and discard data from t.
+
+        @views ll = log_likelihood_choices(p,G[:,threadid()],M[m_idx,threadid()],∂M[m_idx,threadid()],EM,data,md,n_idx)
+
+        # ------- Step 2: get the log-likelihood of prices and transitions ----- #
         for n ∈ n_idx[md.case_idx]
             if data[n].use
                 @views ll += log_likelihood(G[:,threadid()],EM[n],md,p,M[m_idx,threadid()],∂M[m_idx,threadid()],data[n])
@@ -44,6 +47,34 @@ function log_likelihood_threaded(x,G::Matrix{Float64},LL::Vector{Float64},M::Mat
         @views apply_chain_rule!(G[:,it],p,∂M[1,1].σ_idx,∂M[1,1].β_idx)
     end
     return sum(LL)
+end
+
+# this function combines model solution with evaluation of choice probabilities
+# it reduces memeory requirements in ∂m.logP
+function log_likelihood_choices(p::pars,g,m::ddc_model,∂m::ddc_derivative,EM::Vector{EM_data},data::Vector{likelihood_data},md::model_data,n_idx::Vector{Vector{Int64}})
+    T = max((17-md.ageyng)*4,md.T)
+    fill!(m.V,0.)
+    fill!(∂m.v,0.)
+    fill!(∂m.V,0.)
+    @views fill!(∂m.logP,0.)
+    tnow = 1
+    ll = 0.
+    for t in reverse(1:T)
+        tnext = 3-tnow #<- tnow = 1 => tnext =2, tnow=2 => tnext =1
+        solve!(m,∂m,md,p,t,tnow,tnext)
+        # swap locations of next period and current period for V 
+        # if tnow = 1, tnext
+        tnow = tnext #<- if 1, moves to 2, if 2, moves to 1.
+
+        # evaluate the likelihood of choices:
+        for n ∈ n_idx[md.case_idx]
+            if data[n].use && (t<=data[n].T)
+                @views ll += log_likelihood_choices(g,EM[n],m,∂m,t)
+            end
+        end
+
+    end
+    return ll
 end
 
 function prices_log_likelihood(x,EM::Vector{EM_data},MD,p::pars,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
@@ -97,7 +128,6 @@ function log_likelihood(g,em::EM_data,md::model_data,p::pars,model::ddc_model,�
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
 
     ll = 0.
-    ll += log_likelihood_choices(g,em,model,∂m)
     ll += log_likelihood_transitions(g,em,model,∂m)
     ll += prices_log_like(g,em,p,md,data,model.J,s_inv,k_inv) #<
     if md.source=="SIPP"
@@ -262,16 +292,14 @@ end
 
 # now do as above but for data coming from an EM algorithm:
 # - here the choices and the states are partially unobserved
-function log_likelihood_choices(g,em::EM_data,m::ddc_model,∂m::ddc_derivative)
+function log_likelihood_choices(g,em::EM_data,m::ddc_model,∂m::ddc_derivative,t::Int64)
     s_inv = CartesianIndices((m.J,m.K))
     ll = 0.
-    for t in axes(em.q_s,2)
-        for s in nzrange(em.q_s,t)
-            s_idx = em.q_s.rowval[s]
-            j,k = Tuple(s_inv[s_idx])
-            wght = em.q_s.nzval[s]
-            @views ll += log_likelihood(j,g,m.logP[:,k,t],∂m.logP[:,:,k,t],m.G,wght)
-        end
+    for s in nzrange(em.q_s,t)
+        s_idx = em.q_s.rowval[s]
+        j,k = Tuple(s_inv[s_idx])
+        wght = em.q_s.nzval[s]
+        @views ll += log_likelihood(j,g,m.logP[:,k,t],∂m.logP[:,:,k],m.G,wght)
     end
     return ll
 end
