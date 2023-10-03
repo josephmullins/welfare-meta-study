@@ -20,11 +20,21 @@ scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
 #select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
 
+# we have to split the panel and then put it back together again :-)
+sipp = @subset panel :source.=="SIPP"
+
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
+    vcat(sipp)
 end
 
+# @chain panel begin
+#     @select :id :source
+#     unique()
+#     groupby(:source)
+#     @combine(:N = length(:id))
+# end
 
 M,∂M,MD,EM,data,n_idx = estimation_setup(panel);
 
@@ -33,29 +43,9 @@ LL = zeros(nthreads())
 
 Random.seed!(2020)
 shuffle!(MD)
-#MD_subset = shuffle(MD)[1:200]
 
+forward_back_threaded!(p,EM,M,MD,data,n_idx)
 
-#c_subset = DataFrame(case_idx = [md.case_idx for md in MD_subset])
-#CSV.write("../output/case_subset.csv",c_subset)
-
-# round cases to get faster? don't think it will amount to much.
-
-expectation_maximization!(p,M,∂M,EM,MD,n_idx,100,true)
-
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample.csv")
-savepars(p,"est_childsample")
-
-# now do all the data
-# forward_back_threaded!(p,EM,M,MD,data,n_idx)
-# basic_model_fit(p,EM,MD,data,n_idx,"../output/model_stats_full.csv")
-
-# practice getting bootstrap sample:
-# easy peasy, nice :-).
-N = length(data)
-b_idx = [[] for md in MD] #<- initialize
-bt = rand(1:N,N)
-for b in bt
-    c_idx = data[b].case_idx
-    push!(b_idx[c_idx],b)
-end
+ll = log_likelihood_threaded(x0,G,LL,M,∂M,EM,MD,p,data,n_idx)
+println(" -- Evaluation time with $nthreads() cores:")
+@time log_likelihood_threaded(x0,G,LL,M,∂M,EM,MD,p,data,n_idx)
