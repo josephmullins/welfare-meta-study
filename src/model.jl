@@ -139,7 +139,7 @@ end
 struct ddc_derivative
     v::Matrix{Float64} #<- dv / dθ and dV / dθ all stacked together (?)
     V::Array{Float64,3}
-    logP::Array{Float64,4} #<- p,j,k,t (this will be big)
+    logP::Array{Float64,3} #<- don't store aross T as it uses too much memory (we think)
     F::Array{SparseMatrixCSC{Float64,Int64},3}
     u_idx::UnitRange{Int64} #<- location of parameters that affect utility
     F_idx::UnitRange{Int64} #<- location of parameters that effect F
@@ -157,9 +157,9 @@ function ddc_derivative(p::pars,m::ddc_model,Kω)
     σ_idx = (nu+nF+1):(nu+nF+3)
     β_idx = (nu+nF+4):(nu+nF+4)
     np = (nu+nF+4)
-    v = zeros(np,size(m.v)[1])
-    V = zeros(np,size(m.V)[1],2)
-    logP = zeros(np,size(m.logP)...)
+    v = zeros(np,size(m.v,1))
+    V = zeros(np,size(m.V,1),2)
+    logP = zeros(np,size(m.logP,1),size(m.logP,2))
     J = m.J
     K = m.K
     T = m.T
