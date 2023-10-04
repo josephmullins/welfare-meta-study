@@ -54,6 +54,7 @@ function log_likelihood_bench!(x,G::Matrix{Float64},solvetime::Vector{Float64},M
     update!(p,M,∂M,(1,8,9))
     @threads :static for i in eachindex(MD) # in MD
         t0 = time()
+        md = MD[i]
         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
 
         # ------- Step 1: get the log-likelihood of choices --------
@@ -88,7 +89,6 @@ println(" -- Maximum solve time is: $(maximum(solvetime))")
 
 chunks = Iterators.partition(solvetime, length(solvetime) ÷ 20)
 a = [sum(c) for c in chunks]
-
 
 # compare the evaluation time to the one implied by solvetime.
 
