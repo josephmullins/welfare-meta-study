@@ -38,7 +38,7 @@ function solve!(m::ddc_model,md::model_data,p::pars)
     return nothing
 end
 
-function solve!(m::ddc_model,∂m::ddc_derivative,md::model_data,p::pars,t::Int,tnow::Int,tnext::Int)
+function solve!(m::ddc_model,∂m::ddc_derivative,md::model_data,p::pars,t::Int16,tnow::Int16,tnext::Int16)
     J = m.J
     K = m.K
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
