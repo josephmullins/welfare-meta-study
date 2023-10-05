@@ -26,13 +26,13 @@ function choice_probs!(logP,V,σ,NL::NestedLogitTree) #
         for p in NL.parents[l]
             eV = 0.
             vmax = -Inf
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if V[j]>vmax
                     vmax = V[j]
                 end
                 logP[j] = V[j] / σ[l] #<- or eV += exp(logP[j]) quicker or slower?
             end
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if V[j]>-Inf
                     eV += exp( (V[j] - vmax) / σ[l])
                 end
@@ -40,7 +40,7 @@ function choice_probs!(logP,V,σ,NL::NestedLogitTree) #
             log_eV = vmax / σ[l] +  log(eV)
             V[p] = σ[l]*log_eV
             # if all the choices result in -Infty, then we'll get an error here
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if logP[j]>-Inf
                     logP[j] -= log_eV #<- 
                 end
@@ -54,7 +54,7 @@ function choice_probs!(logP,V,σ,choice_set,NL::NestedLogitTree) #
         for p in NL.parents[l]
             eV = 0.
             vmax = -Inf
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if choice_set[j]
                     if V[j]>vmax
                         vmax = V[j]
@@ -62,7 +62,7 @@ function choice_probs!(logP,V,σ,choice_set,NL::NestedLogitTree) #
                     logP[j] = V[j] / σ[l] #<- or eV += exp(logP[j]) quicker or slower?
                 end
             end
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if choice_set[j]
                     eV += exp( (V[j] - vmax) / σ[l])
                 end
@@ -70,7 +70,7 @@ function choice_probs!(logP,V,σ,choice_set,NL::NestedLogitTree) #
             log_eV = vmax / σ[l] + log(eV)
             V[p] = σ[l]*log_eV
             # if all the choices result in -Infty, then we'll get an error here
-            for j in NL.children[p]
+            @inbounds for j in NL.children[p]
                 if choice_set[j] && logP[j]>-Inf
                     logP[j] -= log_eV #<- this creates a NaN if any V==0 (->log(V)=-Inf)
                 end
