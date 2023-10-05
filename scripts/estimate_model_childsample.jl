@@ -20,11 +20,13 @@ scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
 #select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
 
+# we have to split the panel and then put it back together again :-)
+sipp = @subset panel :source.=="SIPP"
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
+    vcat(sipp)
 end
-
 
 M,∂M,MD,EM,data,n_idx = estimation_setup(panel);
 
@@ -33,8 +35,6 @@ LL = zeros(nthreads())
 
 Random.seed!(2020)
 shuffle!(MD)
-#MD_subset = shuffle(MD)[1:200]
-
 
 #c_subset = DataFrame(case_idx = [md.case_idx for md in MD_subset])
 #CSV.write("../output/case_subset.csv",c_subset)
@@ -52,10 +52,11 @@ savepars(p,"est_childsample")
 
 # practice getting bootstrap sample:
 # easy peasy, nice :-).
-N = length(data)
-b_idx = [[] for md in MD] #<- initialize
-bt = rand(1:N,N)
-for b in bt
-    c_idx = data[b].case_idx
-    push!(b_idx[c_idx],b)
-end
+
+# N = length(data)
+# b_idx = [[] for md in MD] #<- initialize
+# bt = rand(1:N,N)
+# for b in bt
+#     c_idx = data[b].case_idx
+#     push!(b_idx[c_idx],b)
+# end

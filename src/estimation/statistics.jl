@@ -69,7 +69,7 @@ function log_inc(s_idx,t,model,p::pars,md::model_data)
     prF = kid_developing * exp(logpriceF(p,md,kτ,t))
     year = min(2010,md.y0 + fld(md.q0 + t-1,4)) #<- assume expected policy environment is fixed beyond 2010
     #Y,dY = budget(W*H,0.,md.SOI,md.source,md.arm,year,md.numkids,md.cpi[min(end,t)],S + A)
-    Y,_ = transfers.budget(W*H,0.,md.SOI,year,md.numkids,md.cpi[min(end,t)],P)
+    Y,_ = Transfers.budget(W*H,0.,md.SOI,year,md.numkids,md.cpi[min(end,t)],P)
     full_income = 0.0001 + Y # max(Y - prF*F,0.)
     return log(full_income)
 end
@@ -108,11 +108,11 @@ function benefits(s_idx,t,model,p,md)
     cpi = md.cpi[min(end,t)]
     if P>0
         if P>1 && md.numkids>0
-            tanf,_ = transfers.TANF(cpi*H*W,0.,md.SOI,year,md.numkids)
+            tanf,_ = Transfers.TANF(cpi*H*W,0.,md.SOI,year,md.numkids)
         else 
             tanf = 0.
         end
-        snap,_,_ = transfers.SNAP(cpi*H*W,0.,year,md.numkids,tanf)
+        snap,_,_ = Transfers.SNAP(cpi*H*W,0.,year,md.numkids,tanf)
     else
         tanf = 0.
         snap = 0.
@@ -165,7 +165,7 @@ function basic_model_fit(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data
     D = vcat(fetch.(tasks)...)
     d = combine(groupby(D,[:source,:arm,:app_status,:est_sample,:year,:Q]),:EMP => Statistics.mean => :EMP,:AFDC => Statistics.mean => :AFDC, :EARN => Statistics.mean => :EARN, 
         :LOGINC => (x->Statistics.mean(x[.!isnan.(x)])) => :LOGINC, :LOGFULL => Statistics.mean => :LOGFULL)
-    CSV.write(string("../output/",fname),d)
+    CSV.write(string("output/",fname),d)
     return d
 end
 
@@ -207,8 +207,8 @@ function model_stats(em::EM_data,md::model_data,m::ddc_model,data::likelihood_da
         A[t] = em_mean(em.q_s,t,m,nothing,nothing,f_afdc)
         E[t] = em_mean(em.q_s,t,m,p,md,f_earn) #,x->job_offer(x,s_inv,k_inv))
         #l_inc[t] = em_mean(em.q_s,t,m,p,md,log_inc)
-        #l_inc[t] = em_mean(em.q_s,t,m,p,md,benefits)
-        l_inc[t] = 0.0001 + em_mean(em.q_s,t,m,p,md,benefits)
+        l_inc[t] = em_mean(em.q_s,t,m,p,md,benefits)
+        #l_inc[t] = 0.0001 + em_mean(em.q_s,t,m,p,md,benefits)
         #l_inc[t] = em_mean(em.q_s,t,m,p,md,log_earn,x->work(x,s_inv))
         l_full[t] = em_mean(em.q_s,t,m,p,md,log_full)
     end
