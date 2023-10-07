@@ -59,7 +59,7 @@ function log_likelihood_bench!(x,G::Matrix{Float64},solvetime::Vector{Float64},M
 
         # ------- Step 1: get the log-likelihood of choices --------
         # to save on memory allocations we to do this for each t over all observations that fit this case, then we update and discard data from t.
-
+ 
         @views ll = log_likelihood_choices(p,G[:,threadid()],M[m_idx,threadid()],∂M[m_idx,threadid()],EM,data,md,n_idx)
 
         # ------- Step 2: get the log-likelihood of prices and transitions ----- #
