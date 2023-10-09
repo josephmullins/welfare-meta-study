@@ -197,3 +197,13 @@ function loadpars!(p::pars,f::String)
     p.σ_W = sigma[1]
     p.σ_PF = sigma[2]
 end
+# NEXT: split this into an update_full function, with loading and saving.
+
+function savepars_vec(p::pars,f::String)
+    x = update_inv_full(p)
+    writedlm("output/" * f,x)
+end
+function loadpars_vec!(p::pars,f::String)
+    x = readdlm("output/" * f)[:]
+    update_full!(x,p)
+end

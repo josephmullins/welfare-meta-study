@@ -157,7 +157,7 @@ function paid_care(s_idx,t,model,p::pars,md::model_data)
     return F
 end
 
-function basic_model_fit(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,fname = "model_stats.csv")
+function basic_model_fit(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,fname = "model_stats.csv",write = true)
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
         Threads.@spawn basic_model_fit_chunk(p,EM,chunk,data,n_idx)
@@ -165,7 +165,9 @@ function basic_model_fit(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data
     D = vcat(fetch.(tasks)...)
     d = combine(groupby(D,[:source,:arm,:app_status,:est_sample,:year,:Q]),:EMP => Statistics.mean => :EMP,:AFDC => Statistics.mean => :AFDC, :EARN => Statistics.mean => :EARN, 
         :LOGINC => (x->Statistics.mean(x[.!isnan.(x)])) => :LOGINC, :LOGFULL => Statistics.mean => :LOGFULL)
-    CSV.write(string("output/",fname),d)
+    if write
+        CSV.write(string("output/",fname),d)
+    end
     return d
 end
 

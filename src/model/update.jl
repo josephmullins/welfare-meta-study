@@ -57,6 +57,19 @@ function update!(x,p::pars)
     return nothing
 end
 
+function update_full!(x,p::pars)
+    np = 9p.Kτ + 24
+    update!(x[1:np],p)
+    K = prod(size(p.βτ))
+    p.βτ[:] = x[(np+1):(np+K)]
+    np += K
+    K = prod(size(p.πη))
+    p.πη[:] = x[(np+1):(np+K)]
+    np += K
+    p.σ_W = x[np+1]
+    p.σ_PF = x[np+2]
+end
+
 function update_inv(p::pars)
     u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
     F = [logit_inv.(p.λ);logit_inv.(p.δ);logit_inv(p.πW)]
@@ -64,6 +77,15 @@ function update_inv(p::pars)
     β = logit_inv(p.β)
     return [u;F;σ;β]
 end
+
+function update_inv_full(p::pars)
+    x = update_inv(p)
+    push!(x,p.βτ...)
+    push!(x,p.πη...)
+    push!(x,p.σ_W)
+    push!(x,p.σ_PF)
+end
+
 # update the derivative g to account for the fact that many parameters are transformed.
 function apply_chain_rule!(g,p::pars,σ_idx::UnitRange{Int64},β_idx::UnitRange{Int64})
     # note: transformation of parameters of utility are accounted for already in utility()
