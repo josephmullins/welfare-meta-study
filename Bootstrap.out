@@ -1,0 +1,7 @@
+┌ Warning: Assignment to `d` in soft scope is ambiguous because a global variable by the same name exists: `d` will be treated as a new local. Disambiguate by using `local d` to suppress this warning or `global d` to assign to the existing global variable.
+└ @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:43
+ERROR: LoadError: UndefVarError: `Gstore` not defined
+Stacktrace:
+ [1] top-level scope
+   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:40
+in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:39

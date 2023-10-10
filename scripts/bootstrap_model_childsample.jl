@@ -4,6 +4,7 @@ include("../src/estimation.jl")
 Kτ = 3 #
 Kη = 6
 p = pars(Kτ,Kη)
+x0 = update_inv_full(p)
 
 loadpars_vec!(p,"est_childsample")
 
@@ -30,14 +31,13 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,M,MD,data,n_idx)
 
 B = 100 #<- number of bootstrap trials
-x0 = update_inv_full(p)
 np = length(x0)
 BP = zeros(np,B) #<- storage for bootstrap
 
 Random.seed!(3030)
-d = DataFrame()
+global d = DataFrame()
 for b in 1:B
-    xb,db = bootstrap_trial(p,Gstore,LL,M,∂M,EM,MD,n_idx)
+    xb,db = bootstrap_trial(p,G,LL,M,∂M,EM,MD,n_idx)
     BP[:,b] .= xb
     db[!,:boottrial] .= b
     d = vcat(d,db)
