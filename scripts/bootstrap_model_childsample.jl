@@ -4,7 +4,6 @@ include("../src/estimation.jl")
 Kτ = 3 #
 Kη = 6
 p = pars(Kτ,Kη)
-x0 = update_inv_full(p)
 
 loadpars_vec!(p,"est_childsample")
 
@@ -22,6 +21,7 @@ end
 
 M,∂M,MD,EM,data,n_idx = estimation_setup(panel);
 
+x0 = update_inv(p)
 G = zeros(length(x0),nthreads())
 LL = zeros(nthreads())
 
@@ -31,6 +31,7 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,M,MD,data,n_idx)
 
 B = 100 #<- number of bootstrap trials
+x0 = update_inv_full(p)
 np = length(x0)
 BP = zeros(np,B) #<- storage for bootstrap
 
