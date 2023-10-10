@@ -1,4 +1,4 @@
-function expectation_maximization!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx::Vector{Vector{Int64}},max_iter = 1000,save = false)
+function expectation_maximization!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,max_iter = 1000,save = false)
     LL = zeros(nthreads())
     x0 = update_inv(p)
     Gstore = zeros(length(x0),nthreads())

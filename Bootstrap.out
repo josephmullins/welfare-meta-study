@@ -1,9 +1,16 @@
 ┌ Warning: Assignment to `d` in soft scope is ambiguous because a global variable by the same name exists: `d` will be treated as a new local. Disambiguate by using `local d` to suppress this warning or `global d` to assign to the existing global variable.
 └ @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:43
-ERROR: LoadError: UndefVarError: `b_idx` not defined
+ERROR: LoadError: MethodError: no method matching mstep_major!(::pars, ::Matrix{Float64}, ::Vector{Float64}, ::Matrix{ddc_model}, ::Matrix{ddc_derivative}, ::Vector{EM_data}, ::Vector{model_data}, ::Vector{Vector{Any}})
+
+Closest candidates are:
+  mstep_major!(::pars, ::Matrix{Float64}, ::Vector{Float64}, ::Matrix{ddc_model}, ::Matrix{ddc_derivative}, ::Vector{EM_data}, ::Vector{model_data}, !Matched::Vector{Vector{Int64}})
+   @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/maximization.jl:3
+  mstep_major!(::pars, ::Matrix{Float64}, ::Vector{Float64}, ::Matrix{ddc_model}, ::Matrix{ddc_derivative}, ::Vector{EM_data}, ::Vector{model_data}, !Matched::Vector{Vector{Int64}}, !Matched::Any)
+   @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/maximization.jl:3
+
 Stacktrace:
  [1] bootstrap_trial(p::pars, Gstore::Matrix{Float64}, LL::Vector{Float64}, M::Matrix{ddc_model}, ∂M::Matrix{ddc_derivative}, EM::Vector{EM_data}, MD::Vector{model_data}, n_idx::Vector{Vector{Int64}})
-   @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/bootstrap.jl:14
+   @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/bootstrap.jl:17
  [2] top-level scope
    @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:40
 in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/bootstrap_model_childsample.jl:39

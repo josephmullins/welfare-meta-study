@@ -1,7 +1,7 @@
 
 function get_bootsample(data::Vector{likelihood_data},MD::Vector{model_data})
     N = length(data)
-    b_idx = [[] for md in MD] #<- initialize
+    b_idx = Vector{Int64}[[] for md in MD] #<- initialize
     bt = rand(1:N,N)
     for b in bt
         c_idx = data[b].case_idx
