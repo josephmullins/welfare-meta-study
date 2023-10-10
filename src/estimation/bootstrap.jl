@@ -11,7 +11,7 @@ function get_bootsample(data::Vector{likelihood_data},MD::Vector{model_data})
 end
 
 function bootstrap_trial(p::pars,Gstore,LL,M,∂M,EM,MD,n_idx)
-    b_idx = get_bootsample(data,b_idx)
+    b_idx = get_bootsample(data,MD)
     J = M[1,1].J
     # Run the M-step one time.
     mstep_major!(p,Gstore,LL,M,∂M,EM,MD,b_idx)
