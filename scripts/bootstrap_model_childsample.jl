@@ -36,8 +36,9 @@ np = length(x0)
 BP = zeros(np,B) #<- storage for bootstrap
 
 Random.seed!(3030)
-global d = DataFrame()
+d = DataFrame()
 for b in 1:B
+    global d
     xb,db = bootstrap_trial(p,G,LL,M,∂M,EM,MD,n_idx)
     BP[:,b] .= xb
     db[!,:boottrial] .= b
