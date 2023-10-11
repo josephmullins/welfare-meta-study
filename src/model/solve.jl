@@ -15,7 +15,7 @@ function solve!(m::ddc_model,md::model_data,p::pars)
                     kA,kη,kω,kτ = Tuple(k_inv[k])
                     S,A,P,H,F = j_inv(j)
                     age_yng = md.ageyng + fld(t,4)
-                    eligible = (kω<md.Kω) && (age_yng<18)
+                    eligible = (kω<md.Kω || !md.TL) && (age_yng<18) #<- change what we mean by eligible
 
                     @inbounds m.v[j] = utility(S,A,H,F,p,md,kA,kη,kτ,t,eligible)
 
@@ -52,7 +52,7 @@ function solve!(m::ddc_model,∂m::ddc_derivative,md::model_data,p::pars,t::Int6
                 kA,kη,kω,kτ = Tuple(k_inv[k])
                 S,A,P,H,F = j_inv(j)
                 age_yng = md.ageyng + fld(t,4)
-                eligible = (kω<md.Kω) && (age_yng<18)
+                eligible = (kω<md.Kω || !md.TL) && (age_yng<18) #<- change what we mean by eligible
 
                 @inbounds @views m.v[j] = utility(∂m.v[:,j],S,A,H,F,p,md,kA,kη,kτ,t,eligible)
 
