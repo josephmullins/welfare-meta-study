@@ -1,7 +1,7 @@
 # define the data that we're going to use:
 using .Threads, Random
 
-function log_likelihood_threaded(x,LL::Vector{Float64},M::Matrix{ddc_model},EM::Vector{EM_data},MD::Vector{model_data},p::pars,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}})
+function log_likelihood_threaded(x,LL::Vector{Float64},M::Matrix{ddc_model},EM::Vector{EM_data},MD::Vector{model_data},p::pars,data::Vector{likelihood_data},n_idx)
     update!(x,p)
     update!(p,M,(1,8,9))
     fill!(LL,0.)
@@ -21,7 +21,7 @@ function log_likelihood_threaded(x,LL::Vector{Float64},M::Matrix{ddc_model},EM::
     return sum(LL)
 end
 
-function log_likelihood_threaded(x,G::Matrix{Float64},LL::Vector{Float64},M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},p::pars,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}})
+function log_likelihood_threaded(x,G::Matrix{Float64},LL::Vector{Float64},M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},p::pars,data::Vector{likelihood_data},n_idx)
     fill!(G,0.)
     fill!(LL,0.)
     update!(x,p)
@@ -51,7 +51,7 @@ end
 
 # this function combines model solution with evaluation of choice probabilities
 # it reduces memeory requirements in ∂m.logP
-function log_likelihood_choices(p::pars,g,m::ddc_model,∂m::ddc_derivative,EM::Vector{EM_data},data::Vector{likelihood_data},md::model_data,n_idx::Vector{Vector{Int64}})
+function log_likelihood_choices(p::pars,g,m::ddc_model,∂m::ddc_derivative,EM::Vector{EM_data},data::Vector{likelihood_data},md::model_data,n_idx)
     T = max((17-md.ageyng)*4,md.T)
     fill!(m.V,0.)
     fill!(∂m.v,0.)
@@ -77,7 +77,7 @@ function log_likelihood_choices(p::pars,g,m::ddc_model,∂m::ddc_derivative,EM::
     return ll
 end
 
-function prices_log_likelihood(x,EM::Vector{EM_data},MD,p::pars,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
+function prices_log_likelihood(x,EM::Vector{EM_data},MD,p::pars,data::Vector{likelihood_data},n_idx,J::Int64)
     update!(x,p)
     ll = 0.
     for md ∈ MD #
@@ -92,7 +92,7 @@ function prices_log_likelihood(x,EM::Vector{EM_data},MD,p::pars,data::Vector{lik
     end
     return ll
 end
-function prices_log_likelihood(x,g,EM::Vector{EM_data},MD,p::pars,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
+function prices_log_likelihood(x,g,EM::Vector{EM_data},MD,p::pars,data::Vector{likelihood_data},n_idx,J::Int64)
     update!(x,p)
     ll = 0.
     for md ∈ MD #

@@ -1,6 +1,6 @@
 using Optim
 
-function mstep_major!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx::Vector{Vector{Int64}},iterations = 40)
+function mstep_major!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
     function fg!(F,G,x)
         if G !== nothing
@@ -18,7 +18,7 @@ function mstep_major!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},M::Mat
     update!(res.minimizer,p)
 end
 
-function mstep_major_block!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},block,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx::Vector{Vector{Int64}},iterations = 40)
+function mstep_major_block!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},block,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
     x0 = update_inv(p)
     function fg!(F,G,x)
@@ -61,7 +61,7 @@ function mstep_types!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::V
     end
 end
 
-function mstep_πη!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
+function mstep_πη!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
     denom = zeros(2,1,p.Kτ,3)
     fill!(p.πη,0.)
     for md in MD
@@ -87,7 +87,7 @@ function mstep_πη!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Ve
     p.πη ./= denom
 end
 
-function mstep_σ!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
+function mstep_σ!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
     denom_w = 0.
     denom_pf = 0.
     numer_w = 0.

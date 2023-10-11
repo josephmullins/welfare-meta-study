@@ -21,6 +21,7 @@ end
 
 M,∂M,MD,EM,data,n_idx = estimation_setup(panel);
 
+x0 = update_inv(p)
 G = zeros(length(x0),nthreads())
 LL = zeros(nthreads())
 
@@ -37,7 +38,8 @@ BP = zeros(np,B) #<- storage for bootstrap
 Random.seed!(3030)
 d = DataFrame()
 for b in 1:B
-    xb,db = bootstrap_trial(p,Gstore,LL,M,∂M,EM,MD,n_idx)
+    global d
+    xb,db = bootstrap_trial(p,G,LL,M,∂M,EM,MD,n_idx)
     BP[:,b] .= xb
     db[!,:boottrial] .= b
     d = vcat(d,db)
