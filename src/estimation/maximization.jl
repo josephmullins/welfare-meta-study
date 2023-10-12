@@ -14,7 +14,7 @@ function mstep_major!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},M::Mat
         end
     end
     x0 = update_inv(p)
-    res = Optim.optimize(Optim.only_fg!(fg!),x0,LBFGS(),Optim.Options(show_trace = true,iterations=15))
+    res = Optim.optimize(Optim.only_fg!(fg!),x0,LBFGS(),Optim.Options(show_trace = true,iterations=iterations))
     update!(res.minimizer,p)
 end
 
@@ -34,7 +34,7 @@ function mstep_major_block!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},
         end
     end
     xstart = x0[block]
-    res = Optim.optimize(Optim.only_fg!(fg!),xstart,LBFGS(),Optim.Options(show_trace = true,iterations=10))
+    res = Optim.optimize(Optim.only_fg!(fg!),xstart,LBFGS(),Optim.Options(show_trace = true,iterations=iterations))
     x0[block] .= res.minimizer
     update!(x0,p)
 end

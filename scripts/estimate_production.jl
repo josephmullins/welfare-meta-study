@@ -8,7 +8,7 @@ include("../src/estimation/FactorAnalysis.jl")
 Kτ = 3 #
 Kη = 6
 p = pars(Kτ,Kη)
-loadpars!(p,"est_childsample")
+loadpars_vec!(p,"est_childsample")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 scores = @orderby(scores,:source,:id)

@@ -44,7 +44,7 @@ shuffle!(MD)
 expectation_maximization!(p,M,∂M,EM,MD,n_idx,100,true)
 
 basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample.csv")
-savepars(p,"est_childsample")
+savepars_vec(p,"est_childsample")
 
 # now do all the data
 # forward_back_threaded!(p,EM,M,MD,data,n_idx)
