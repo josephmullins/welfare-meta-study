@@ -28,11 +28,7 @@ LL = zeros(nthreads())
 Random.seed!(2020)
 shuffle!(MD)
 
-forward_back_threaded!(p,EM,M,MD,data,n_idx)
-x0 = update_inv_full(p)
-# run the M-step
-mstep_major!(p,G,LL,M,∂M,EM,MD,n_idx,100)
-x1 = update_inv_full(p)
-eps = norm(x1 .- x0,Inf)
-println("the error is $eps")
-display([x0 x1])
+expectation_maximization!(p,M,∂M,EM,MD,n_idx,100,true,major = 50,minor = 10)
+
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample.csv")
+savepars_vec(p,"est_childsample")

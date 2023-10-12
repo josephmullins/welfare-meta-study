@@ -1,4 +1,4 @@
-function expectation_maximization!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,max_iter = 1000,save = false)
+function expectation_maximization!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,max_iter = 1000,save = false;major = 15,minor = 10)
     LL = zeros(nthreads())
     x0 = update_inv(p)
     Gstore = zeros(length(x0),nthreads())
@@ -14,10 +14,10 @@ function expectation_maximization!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc
         forward_back_threaded!(p,EM,M,MD,data,n_idx)
         # M-step in 4 parts:
         # (1) most parameters here:
-        mstep_major!(p,Gstore,LL,M,∂M,EM,MD,n_idx,15)
+        mstep_major!(p,Gstore,LL,M,∂M,EM,MD,n_idx,major)
         # (1.1): for robustness, a few steps of just preferences:
         block = [1:(5p.Kτ+6);(7p.Kτ+19):(9p.Kτ+23)]
-        mstep_major_block!(p,Gstore,LL,block,M,∂M,EM,MD,n_idx,10)
+        mstep_major_block!(p,Gstore,LL,block,M,∂M,EM,MD,n_idx,minor)
         # block2 = 
         # mstep_major_block!(p,Gstore,LL,block2,M,∂M,EM,MD,n_idx)
         # (2) type selection
