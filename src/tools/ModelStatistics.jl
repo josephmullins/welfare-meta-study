@@ -1,14 +1,16 @@
 # this function can't be called until after BaumWelch.jl defines s_inv
 # it gives a distribution over choices and states jointly
-function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},P,model::ddc_model) #<- need choice probs? T?
+function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,model::ddc_model) #<- need choice probs? T?
     fill!(Π,0.)
-    J,K,T = size(model.u)
+    J = model.J
+    K = size(model.V,1)
+    T = size(Π,2)
     # initialize the first period:
     for k in 1:K
         if model.π0[k]>0
             for j in 1:J
                 s = (k-1)*J + j
-                Π[s,1] = model.π0[k] * P[j,k,1]
+                Π[s,1] = model.π0[k] * exp(logP[j,k,1])
             end
         end
     end
@@ -16,6 +18,7 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},P,mod
     for t in 1:T-1 #
         for s in nzrange(Π,t)
             s_idx = Π.rowval[s]
+            qs = Π.nzval[s]
             j,k_idx = s_inv(s_idx,J)
             for kn in nzrange(model.F[j,t],k_idx)
                 kn_idx = model.F[j,t].rowval[kn]
@@ -23,7 +26,7 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},P,mod
                 for jn in 1:J
                     if model.choice_set[jn,kn_idx,t+1]
                         sn = (kn_idx - 1)*J + jn
-                        Π[sn,t+1] += fkk * P[jn,kn_idx,t+1]
+                        Π[sn,t+1] += fkk * exp(logP[jn,kn_idx,t+1]) * qs
                     end
                 end
             end
