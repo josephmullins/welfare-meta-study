@@ -27,7 +27,15 @@ Random.seed!(2020)
 shuffle!(MD)
 
 MD_ = MD[1:400];
-mstep_major(p,EM,MD,n_idx,20)
+
+# this introduces the issue
+forward_back_threaded!(p,EM,MD_,data,n_idx)
+
+forward_back_chunk!(p,EM,MD_[1:10],data,n_idx)
+
+mstep_major(p,EM,MD_,n_idx,20)
+
+log_likelihood_chunk(p,MD_[1:10],EM,data,n_idx)
 
 break
 #c_subset = DataFrame(case_idx = [md.case_idx for md in MD_subset])

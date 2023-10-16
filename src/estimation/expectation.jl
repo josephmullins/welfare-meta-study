@@ -3,11 +3,14 @@ using .Threads
 function forward_back_threaded!(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}})
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn forward_back_chunk!(p,MD,EM,data,n_idx)
+        Threads.@spawn forward_back_chunk!(p,EM,MD,data,n_idx)
     end
+    fetch.(tasks)
+    return nothing
 end
 
 function forward_back_chunk!(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
+    T = 18*4
     K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
     logP = zeros(9,K,T)
     V = zeros(K,2)
@@ -20,6 +23,7 @@ function forward_back_chunk!(p,EM::Vector{EM_data},MD,data::Vector{likelihood_da
             forward_back!(EM[n])
         end
     end
+    return nothing
 end
 
 # a function for updating EM_data with initial probabilities (α0) and transition probabilities P[s'|s] where s is a combination of states and choices. This allows for choices to be partially observed (which they are in my setting)
@@ -27,7 +31,7 @@ end
 # P[t][s_{t+1},s_{t}] holds P[y_{t+1}|s_{t+1}]P[s_{t+1}|s_{t}] where recall that s_{t} is the choice *and* the state
 
 function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data)
-    J = model.J
+    J = size(logP,1)
     log_type_prob!(logπτ,p,md,data)
     t0 = data.t0
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
@@ -65,7 +69,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 end
                 _,kη_next,_,_ = Tuple(k_inv[kn])
                 fkk = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,p.Kη)
-                EM.P[t][sn_idx,s_idx] = fkk*exp(ll)
+                EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end
         end
     end

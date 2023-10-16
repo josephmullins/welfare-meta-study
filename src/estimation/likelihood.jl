@@ -142,3 +142,33 @@ function log_likelihood_transitions(em::EM_data,p,k_inv,s_inv)
     end
     return ll
 end
+
+function prices_log_like(em::EM_data,p,md::model_data,data::likelihood_data,J::Int64,s_inv,k_inv)
+    ll = 0.
+    t0 = data.t0
+    for t in eachindex(data.logW)
+        if data.wage_valid[t]
+            logW = data.logW[t]
+            for s in nzrange(em.q_s,t)
+                s_idx = em.q_s.rowval[s]
+                wght = em.q_s.nzval[s]
+                _,k = Tuple(s_inv[s_idx])
+                _,kη,_,kτ = Tuple(k_inv[k]) 
+                llW = wage_log_like(logW,p,md,kτ,kη,t+t0)
+                ll += wght * llW
+            end
+        end
+        if data.chcare_valid[t] && data.chcare[t]>0
+            logP = data.log_chcare[t]
+            for s in nzrange(em.q_s,t)
+                s_idx = em.q_s.rowval[s]
+                wght = em.q_s.nzval[s]
+                _,k = Tuple(s_inv[s_idx])
+                _,_,_,kτ = Tuple(k_inv[k]) 
+                llW = chcare_log_like(logP,p,md,kτ,t+t0)
+                ll += wght * llW
+            end
+        end
+    end
+    return ll
+end
