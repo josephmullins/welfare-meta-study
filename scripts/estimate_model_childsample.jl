@@ -4,23 +4,16 @@ include("../src/estimation.jl")
 Kτ = 3 #
 Kη = 6
 p = pars(Kτ,Kη)
-p.βw[1:Kτ] .= LinRange(6,7.5,Kτ)
-p.βw[Kτ+1] = -0.2
-p.βw[Kτ+2] = 0.003
-p.βf[1:Kτ] .= 3.
-p.σ[:] .= [2.,2.,2.]
-p.ση = 2.
-p.σ_W = 2.
-p.σ_PF = 2.
+nests = get_nests()
+p = (;p...,nests)
 
-x0 = update_inv(p)
-update!(x0,p)
+x0 = pars_inv(p)
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
 #select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
 
-# we have to split the panel and then put it back together again :-)
+# we have to split the panel and then put it back together again
 sipp = @subset panel :source.=="SIPP"
 panel = @chain scores begin
     @select :id :source
@@ -28,14 +21,15 @@ panel = @chain scores begin
     vcat(sipp)
 end
 
-M,∂M,MD,EM,data,n_idx = estimation_setup(panel);
-
-G = zeros(length(x0),nthreads())
-LL = zeros(nthreads())
+MD,EM,data,n_idx = estimation_setup(panel);
 
 Random.seed!(2020)
 shuffle!(MD)
 
+MD_ = MD[1:400];
+mstep_major(p,EM,MD,n_idx,20)
+
+break
 #c_subset = DataFrame(case_idx = [md.case_idx for md in MD_subset])
 #CSV.write("../output/case_subset.csv",c_subset)
 

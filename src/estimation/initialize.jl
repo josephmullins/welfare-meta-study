@@ -44,11 +44,6 @@ function estimation_setup(panel::DataFrame)
         @orderby(:case_idx,:n)
     end
 
-    # initialize the versions of the model we want:
-    Kω = [1,8,9] #<- in order: static case, FTP, CTJF
-    M = [ddc_model(p,NL,kω) for kω in Kω, t in 1:nthreads()]
-    ∂M = [ddc_derivative(p,M[j],Kω[j]) for j in 1:3, t in 1:nthreads()]
-
     # put the data together for evaluating the likelihood
     data = likelihood_data[]
     EM = EM_data[]
@@ -58,12 +53,12 @@ function estimation_setup(panel::DataFrame)
         case_idx = d.case_idx
         md = MD[case_idx]
         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-        em = get_EM_data(p,M[m_idx],md,d)
+        em = get_EM_data(p,md,d)
         push!(data,d)
         push!(EM,em)
     end
     
-    return M,∂M,MD,EM,data,n_idx
+    return MD,EM,data,n_idx
 end
 
 # function to get model data from the dataframe df, used in estimation_setup()
@@ -181,8 +176,8 @@ end
 
 # function to initialize EM data given model and data
 # this function is important! It determines the sparsity structure of each EM_data object, which all calls to the likelihood function will use
-function get_EM_data(p::pars,model::ddc_model,md::model_data,data::likelihood_data)
-    J = model.G.nchoices
+function get_EM_data(p,md::model_data,data::likelihood_data)
+    J = 9
     T = data.T #
     t0 = data.t0
     Kτ = p.Kτ
@@ -234,10 +229,13 @@ function get_EM_data(p::pars,model::ddc_model,md::model_data,data::likelihood_da
         for s in nzrange(α,t)
             s_idx = α.rowval[s]
             j,k = Tuple(s_inv[s_idx])
-            for kn in nzrange(model.F[j,t+t0],k)
-                kn_idx = model.F[j,t+t0].rowval[kn]
-                kA,kη,kω,kτ = Tuple(k_inv[kn_idx])
-                if !data.wage_valid[t+1] || kη>1 #<- rule out states when kη=1 and EARN>0
+            _,A,_,_,_ = j_inv(j)
+            _,_,kω,kτ = Tuple(k_inv[k])
+            kω_next = min(kω + A,md.Kω)
+            kA_next = 1 + A
+            for kη_next in 1:Kη
+                kn_idx = k_idx[kA_next,kη_next,kω_next,kτ]
+                if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
                     if !data.choice_missing[t+1] #y[t+1]!=-1
                         AFDC = data.AFDC[t+1]
                         FS = max(AFDC,data.FS[t+1]) #<- AFDC=1 implies FS=1 in the model
