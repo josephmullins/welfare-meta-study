@@ -10,7 +10,7 @@ end
 
 function mstep_major_block(p,block,EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
-    x0 = update_inv(p)
+    x0 = pars_inv(p)
     function objective(x)
         x0[block] .= x
         return -log_likelihood_threaded(x0,p,EM,MD,data,n_idx) / N_
@@ -34,7 +34,7 @@ function mstep_types!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{
         x0 = reshape(p.βτ[block,:],nβ)
         type_obj(x) = -log_likelihood_type(x,kx,source,EM,MD,p,data,n_idx,J)
         res = Optim.optimize(type_obj,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
-        p.βτ[block,:] .= res.minimizer
+        @views p.βτ[block,:][:] .= res.minimizer
         pos += nβ
     end
 end
@@ -65,7 +65,7 @@ function mstep_πη!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{l
     p.πη ./= denom 
 end
 
-function mstep_σ!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
+function mstep_σ(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
     denom_w = 0.
     denom_pf = 0.
     numer_w = 0.

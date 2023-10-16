@@ -26,12 +26,42 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
-MD_ = MD[1:400];
+MD_ = MD[1:200];
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
 @time log_likelihood_threaded(x0,p,EM,MD,data,n_idx)
 @time log_likelihood_threaded(x0,p,EM,MD,data,n_idx)
+
+p = mstep_major(p,EM,MD_,n_idx,2)
+# (1.1): for robustness, a few steps of just preferences:
+block = [1:(5p.Kτ+6);(7p.Kτ+19):(9p.Kτ+23)]
+p = mstep_major_block(p,block,EM,MD_,n_idx,2)
+# block2 = 
+# mstep_major_block!(p,Gstore,LL,block2,M,∂M,EM,MD_,n_idx)
+
+sources = ("SIPP","FTP","CTJF","MFIP")
+blocks = (1:5,6:11,12:18,19:27)
+pos = 1
+s = 1
+
+Kx = (5,6,7,9) #
+source = sources[s]
+block = blocks[s]
+kx = Kx[s]
+nβ = kx * (p.Kτ-1)
+x0 = reshape(p.βτ[block,:],nβ)
+type_obj(x) = -log_likelihood_type(x,kx,source,EM,MD,p,data,n_idx,J)
+res = Optim.optimize(type_obj,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
+@views p.βτ[block,:][:] .= res.minimizer[:]
+
+
+# (2) type selection
+mstep_types!(p,EM,MD_,data,n_idx,J)
+# (3) η draw:
+mstep_πη!(p,EM,MD_,data,n_idx,J)
+# (4) measurement error
+p = mstep_σ(p,EM,MD_,data,n_idx,J)
 
 #optimize(x->-log_likelihood_chunk(,MD_[1:10],EM,data,n_idx))
 
