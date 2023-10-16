@@ -17,7 +17,7 @@ function Fη(kη_next,kη,λ,δ,πW,Kη)
         if kη_next==1
             return δ
         else
-            p = (kη_next==kη)*πW + (kη_next==max(kη-1,2)) * (1-πW/2) + (kη_next==min(kη+1,Kη)) * (1-πW/2)
+            p = (kη_next==kη)*πW + (kη_next==max(kη-1,2)) * (1-πW)/2 + (kη_next==min(kη+1,Kη)) * (1-πW)/2
             return (1-δ) * p
         end
     end

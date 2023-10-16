@@ -40,12 +40,18 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     S,A,_,H,F = j_inv(j)
     v = utility(S,A,H,F,pars,md,kA,kη,kτ,t,eligible)
     kA_next,kω_next = next(A,kA,kω;md.Kω)
+    wght = 0.
     for kη_next in 1:pars.Kη
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
-        v += pars.β * Fη(kη_next, kη, pars.λ[kτ], pars.δ[kτ],pars.πW, pars.Kη) * V[k_next]
+        fkk = Fη(kη_next, kη, pars.λ[kτ], pars.δ[kτ],pars.πW, pars.Kη) 
+        v += pars.β * fkk * V[k_next]
+        wght += fkk
     end
     return v
 end
+
+
+
 
 # this algorithm works as long as the partitions are written with nodes in ascending order. For example:
 # the partition B[l] = [[1,2],[3,4,5]] is ok because the value for nest [1,2] will be written to vj[1] and vj[2] for nest [3,4,5]
@@ -56,18 +62,23 @@ function nested_logit(logP,vj;B,C,σ)
         Cₗ = C[l] #<- each Cₗ is a K(l)-vector of vectors containing the choices that belong to that node.
         for k ∈ eachindex(B[l])
             bₖ = B[l][k] #<- indicates which nodes are in the kth partition of layer l
+            vmax = -Inf
+            # find the maximum
+            for j ∈ bₖ
+                vj[j]>vmax ? vmax=vj[j] : nothing
+            end
             norm = 0.
             for j ∈ bₖ
-                norm += exp(vj[j]/σ[l])
+                norm += exp((vj[j] - vmax) / σ[l])
             end
             norm = log(norm)
             # then: 
             for jₗ ∈ bₖ
                 for j ∈ Cₗ[jₗ]
-                    logP[j] += vj[jₗ] / σ[l] - norm
+                    logP[j] += (vj[jₗ] - vmax) / σ[l] - norm
                 end
             end
-            vj[k] = σ[l] * norm
+            vj[k] = vmax + σ[l] * norm
         end
     end
     return vj[1]
@@ -75,12 +86,16 @@ end
 
 function plain_logit(logP,vj;B,σ)
     norm = 0.
-    for j in B
-        norm += exp(vj[j] / σ)
+    vmax = -Inf
+    for j ∈ B
+        vj[j]>vmax ? vmax=vj[j] : nothing
+    end
+    for j ∈ B
+        norm += exp((vj[j] - vmax) / σ)
     end
     norm = log(norm)
-    for j in B
-        logP[j] = vj[j] / σ - norm
+    for j ∈ B
+        logP[j] = (vj[j] - vmax) / σ - norm
     end
-    vj[1] = σ * norm
+    vj[1] = vmax + σ * norm
 end

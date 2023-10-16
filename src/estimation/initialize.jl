@@ -230,44 +230,47 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
             s_idx = α.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             _,A,_,_,_ = j_inv(j)
-            _,_,kω,kτ = Tuple(k_inv[k])
+            _,kη,kω,kτ = Tuple(k_inv[k])
             kω_next = min(kω + A,md.Kω)
             kA_next = 1 + A
             for kη_next in 1:Kη
                 kn_idx = k_idx[kA_next,kη_next,kω_next,kτ]
-                if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
-                    if !data.choice_missing[t+1] #y[t+1]!=-1
-                        AFDC = data.AFDC[t+1]
-                        FS = max(AFDC,data.FS[t+1]) #<- AFDC=1 implies FS=1 in the model
-                        EMP = data.EMP[t+1]
-                        if EMP==0
-                            jn = j_idx(FS,AFDC,EMP,0)
-                            sn = (kn_idx-1)*J+jn
-                            P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                            α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
-                        else
-                            if data.chcare_valid[t+1]
-                                FC = data.FC[t+1]
-                                jn = j_idx(FS,AFDC,EMP,FC)
+                fkk = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,p.Kη)
+                if fkk>0
+                    if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
+                        if !data.choice_missing[t+1] #y[t+1]!=-1
+                            AFDC = data.AFDC[t+1]
+                            FS = max(AFDC,data.FS[t+1]) #<- AFDC=1 implies FS=1 in the model
+                            EMP = data.EMP[t+1]
+                            if EMP==0
+                                jn = j_idx(FS,AFDC,EMP,0)
                                 sn = (kn_idx-1)*J+jn
                                 P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
                                 α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
                             else
-                                jn1 = j_idx(FS,AFDC,EMP,0)
-                                jn2 = j_idx(FS,AFDC,EMP,1)
-                                sn1 = (kn_idx-1)*J+jn1
-                                P[t][sn1,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                                α[sn1,t+1] = 1. #p_y[jn,k_idx,t+1]
-                                sn2 = (kn_idx-1)*J+jn2
-                                P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                                α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                if data.chcare_valid[t+1]
+                                    FC = data.FC[t+1]
+                                    jn = j_idx(FS,AFDC,EMP,FC)
+                                    sn = (kn_idx-1)*J+jn
+                                    P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                else
+                                    jn1 = j_idx(FS,AFDC,EMP,0)
+                                    jn2 = j_idx(FS,AFDC,EMP,1)
+                                    sn1 = (kn_idx-1)*J+jn1
+                                    P[t][sn1,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn1,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                    sn2 = (kn_idx-1)*J+jn2
+                                    P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                end
                             end
-                        end
-                    else
-                        for jn in 1:J
-                            sn = (kn_idx-1)*J+jn
-                            P[t][sn,s_idx] =  1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                            α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                        else
+                            for jn in 1:J
+                                sn = (kn_idx-1)*J+jn
+                                P[t][sn,s_idx] =  1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                            end
                         end
                     end
                 end

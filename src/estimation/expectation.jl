@@ -3,7 +3,7 @@ using .Threads
 function forward_back_threaded!(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}})
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn forward_back_chunk!(p,EM,MD,data,n_idx)
+        Threads.@spawn forward_back_chunk!(p,EM,chunk,data,n_idx)
     end
     fetch.(tasks)
     return nothing
@@ -55,20 +55,23 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
             s_idx = EM.α.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             _,kη,_,kτ = Tuple(k_inv[k])
-            for sn in nzrange(EM.P[t],s_idx)
+            for sn in nzrange(EM.P[t],s_idx)                    
                 sn_idx = EM.P[t].rowval[sn]
                 jn,kn = Tuple(s_inv[sn_idx])
+                _,kη_next,_,_ = Tuple(k_inv[kn])
+
                 @views ll = logP[j,kn,t+t0+1]
                 if data.wage_valid[t+1]
-                    _,kη,_,kτ = Tuple(k_inv[kn])
-                    ll += wage_log_like(data.logW[t+1],p,md,kτ,kη,t)
+                    if kη_next==1
+                        @show md.case_idx, t, sn_idx
+                    end
+                    ll += wage_log_like(data.logW[t+1],p,md,kτ,kη_next,t)
                 end
                 if data.chcare_valid[t+1] && data.chcare[t+1]>0
-                    _,_,_,kτ = Tuple(k_inv[kn])
                     ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t)
                 end
-                _,kη_next,_,_ = Tuple(k_inv[kn])
                 fkk = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,p.Kη)
+                #@show t, sn_idx, s_idx, kη_next, kη, fkk
                 EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end
         end

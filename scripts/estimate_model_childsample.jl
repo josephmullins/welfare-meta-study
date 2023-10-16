@@ -28,14 +28,12 @@ shuffle!(MD)
 
 MD_ = MD[1:400];
 
-# this introduces the issue
-forward_back_threaded!(p,EM,MD_,data,n_idx)
+forward_back_threaded!(p,EM,MD,data,n_idx)
 
-forward_back_chunk!(p,EM,MD_[1:10],data,n_idx)
+@time log_likelihood_threaded(x0,p,EM,MD,data,n_idx)
+@time log_likelihood_threaded(x0,p,EM,MD,data,n_idx)
 
-mstep_major(p,EM,MD_,n_idx,20)
-
-log_likelihood_chunk(p,MD_[1:10],EM,data,n_idx)
+#optimize(x->-log_likelihood_chunk(,MD_[1:10],EM,data,n_idx))
 
 break
 #c_subset = DataFrame(case_idx = [md.case_idx for md in MD_subset])

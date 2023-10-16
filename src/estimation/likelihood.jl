@@ -23,10 +23,10 @@ using .Threads, Random
 # end
 
 function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
-    x = pars(x,p)
+    p = pars(x,p)
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn log_likelihood_chunk(p,MD,EM,data,n_idx)
+        Threads.@spawn log_likelihood_chunk(p,chunk,EM,data,n_idx)
     end
     ll = fetch.(tasks)
     return sum(ll)
@@ -136,6 +136,7 @@ function log_likelihood_transitions(em::EM_data,p,k_inv,s_inv)
                 _,kη_next,_,_ = Tuple(k_inv[kn])
                 f_ss = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,Kη)
                 wght = em.q_ss[t].nzval[sn]
+                #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)
             end
         end
