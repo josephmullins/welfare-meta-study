@@ -37,11 +37,12 @@ function f_work(s_idx,t,logP,s_inv,k_inv)
     return EH
     #return H
 end
-function f_afdc(s_idx,t,logP,s_inv)
-    j,k = Tuple(s_inv[s_idx])
+function f_afdc(s_idx,t,logP,s_inv,k_inv)
+    _,k = Tuple(s_inv[s_idx])
+    _,kη,_,_ = Tuple(k_inv[k])
     #_,A,_,_,_ = j_inv(j)
     EA = 0
-    for j in 1:9
+    for j in choice_set(kη>1)
         _,A,_,_,_ = j_inv(j)
         EA += A * exp(logP[j,k,t])
     end
@@ -144,7 +145,7 @@ function model_stats(p,logP,em::EM_data,md::model_data,data::likelihood_data)
     Q = mod.(md.q0 .+ (0:T-1),4) #<- as above
     for t in 1:T
         H[t] = em_mean(em.q_s,t,s->f_work(s,t,logP,s_inv,k_inv))
-        A[t] = em_mean(em.q_s,t,s->f_afdc(s,t,logP,s_inv))
+        A[t] = em_mean(em.q_s,t,s->f_afdc(s,t,logP,s_inv,k_inv))
         E[t] = em_mean(em.q_s,t,s->f_earn(s,t,logP,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
         l_full[t] = em_mean(em.q_s,t,s->log_full(s,t,logP,s_inv,k_inv,p,md))
     end
