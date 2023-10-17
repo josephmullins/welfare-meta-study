@@ -79,7 +79,7 @@ end
 
 function pars_inv(p)
     u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
-    F = [logit_inv.(p.λₒ);logit_inv.(p.δ);logit_inv(p.λ₁);p.μₒ;log(p.σₒ)]
+    F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)
     return [u;F;σ;β]

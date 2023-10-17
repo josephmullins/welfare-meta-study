@@ -12,17 +12,17 @@ function update_transitions(p)
     πₛ = zeros(R,p.Kη,p.Kτ)
     Fη = zeros(R,p.Kη,p.Kη,p.Kτ)
     for kτ in 1:p.Kτ
-        πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ)
-        λ₁ = p.λ₁ * p.λₒ[kτ]
+        πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
+        λ₁ = p.λ₁ * p.λ₀[kτ]
         Fη[:,:,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], λ₁, p.δ[kτ], p.Kη-1)
-        πₛ[:,kτ] .= stat_dist(πₒ, p.λₒ[kτ], λ₁, p.δ[kτ])
+        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], λ₁, p.δ[kτ])
     end
     return (;p...,Fη,πₛ)
 end
 
-function get_offer_dist(ηgrid,μ,σ)
+function get_offer_dist(ηgrid,μ,σ,R)
     K = length(ηgrid)
-    π0 = zeros(length(ηgrid))
+    π0 = zeros(R,length(ηgrid))
     norm = Φ(ηgrid[end],μ,σ)
     π0[1] = Φ(ηgrid[1], μ, σ) / norm
     for k in 2:K
@@ -32,8 +32,9 @@ function get_offer_dist(ηgrid,μ,σ)
 end
 
 function stat_dist(πₒ,λ₀,λ₁,δ)
+    R = eltype(πₒ)
     K = length(πₒ)
-    πₛ = zeros(K+1)
+    πₛ = zeros(R,K+1)
     u = δ / (δ + λ₀)
     πₛ[1] = u
     inₖ = u * λ₀
