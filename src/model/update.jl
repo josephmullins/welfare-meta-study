@@ -39,7 +39,7 @@ function pars(x,p)
     pos += Kτ
     δ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
-    λ₁ = logit(x[pos:pos+Kτ-1])
+    λ₁ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
     μₒ = x[pos+1]
     σₒ = exp(x[pos+2])
