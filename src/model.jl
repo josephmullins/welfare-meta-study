@@ -4,6 +4,16 @@ using LinearAlgebra
 logit(x) = exp(x) / (1 + exp(x))
 logit_inv(x) = log(x / (1 - x))
 
+function get_model(p)
+    T = 18*4
+    K = 2 * p.Kη * 9 * p.Kτ
+    R = eltype(p.αA)
+    logP = zeros(R,9,K,T)
+    V = zeros(R,K,T)
+    vj = zeros(R,J)
+    return (;logP,vj,V)
+end
+
 function pars(Kτ::Int64,Kη::Int64)
     β = 0.98
     wq = 1.
@@ -74,7 +84,7 @@ function savepars_vec(p,f::String)
     x = pars_inv_full(p)
     writedlm("output/" * f,x)
 end
-function loadpars_vec!(p,f::String)
+function loadpars_vec(p,f::String)
     x = readdlm("output/" * f)[:]
     p = pars_full(x,p)
 end

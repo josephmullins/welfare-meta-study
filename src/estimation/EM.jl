@@ -1,4 +1,4 @@
-function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx;max_iter = 1000,save = false,mstep_iter = 20)
+function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx;max_iter = 1000,save = false,mstep_iter = 20)
     J = 9
     err = Inf
     iter = 0
@@ -31,11 +31,12 @@ function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},
         iter += 1 
         println("current likelihood: $ll")
         println("current error: $err")
-        # if save & mod(iter,1)==0
-        #     d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
-        #     savepars(p,"current_est")
-        # end
+        if save & mod(iter,1)==0
+            d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
+            savepars(p,"current_est")
+        end
     end
+    return p
 end
 
 

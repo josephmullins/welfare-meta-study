@@ -1,8 +1,8 @@
 #!/bin/bash -l        
-#SBATCH --time=36:00:00
+#SBATCH --time=24:00:00
 #SBATCH --ntasks=120
-#SBATCH --mem=120g
-#SBATCH --tmp=120g
+#SBATCH --mem=10g
+#SBATCH --tmp=10g
 #SBATCH --mail-type=ALL  
 #SBATCH --mail-user=mullinsj@umn.edu 
 #SBATCH --output=Estimation.out
