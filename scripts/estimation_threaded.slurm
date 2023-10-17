@@ -1,6 +1,6 @@
 #!/bin/bash -l        
 #SBATCH --time=24:00:00
-#SBATCH --ntasks=120
+#SBATCH --ntasks=80
 #SBATCH --mem=100g
 #SBATCH --tmp=100g
 #SBATCH --mail-type=ALL  
@@ -8,4 +8,4 @@
 #SBATCH --output=Estimation.out
 
 cd ~/welfare-meta-study
-~/julia-1.9.3/bin/julia -t 120 scripts/estimate_model_childsample.jl
+~/julia-1.9.3/bin/julia -t 80 scripts/estimate_model_childsample.jl
