@@ -28,4 +28,7 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
+# get the initial conditions this way
+forward_back_threaded!(p,EM,MD,data,n_idx)
+
 d = basic_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")

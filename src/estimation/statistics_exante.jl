@@ -9,7 +9,8 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,
     # initialize the first period:
     for k in 1:K
         if π0[k]>0
-            for j in 1:J
+            _,kη,_,_ = Tuple(k_inv[k])
+            for j in choice_set(kη>1)
                 s = (k-1)*J + j
                 Π[s,1] = π0[k] * exp(logP[j,k,1])
             end
@@ -26,7 +27,7 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,
             kω_next = min(kω+A,Kω)
             kA_next = 1 + A
             for kη_next in 1:p.Kη
-                fkk = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,p.Kη)
+                fkk = p.Fη[kη_next,kη,kτ]
                 kn = k_idx[kA_next,kη_next,kω_next,kτ]
                 for jn in choice_set(kη_next>1)
                     sn = (kn - 1)*J + jn
@@ -105,7 +106,8 @@ function basic_model_fit_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_
         π0 = zeros(K)
         #println(md.case_idx)
         for n in n_idx[md.case_idx]
-            initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv))
+            #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
+            initialize!(π0,EM[n],s_inv) #<- get initial dist from posterior
             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p) #<- nice.
             d = model_stats(p,EM[n],md,data[n])
             d[!,:n_idx] .= n
@@ -168,3 +170,16 @@ function initialize!(logπτ,EM::EM_data,π0,p,md::model_data,data::likelihood_d
     π0 ./= sum(π0)
     return nothing
 end
+# fill π0 states with the posterior distribution instead
+function initialize!(π0,EM::EM_data,s_inv)
+    fill!(π0,0.)
+    # start with the initial conditions:
+    for s in nzrange(EM.q_s,1)
+        s_idx = EM.q_s.rowval[s]
+        _,k = Tuple(s_inv[s_idx])
+        π0[k] += EM.q_s[s_idx,1]
+    end
+    #π0 ./= sum(π0)
+    return nothing
+end
+
