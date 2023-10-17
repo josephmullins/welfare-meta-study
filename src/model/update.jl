@@ -35,12 +35,15 @@ function pars(x,p)
     pos += 1
 
     # ----- F_idx ------ #
-    λ = logit.(x[pos:pos+Kτ-1])
+    λ₀ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
     δ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
-    πW = logit(x[pos])
-    pos += 1
+    λ₁ = logit(x[pos])
+    μₒ = x[pos+1]
+    σₒ = exp(x[pos+2])
+    pos += 3
+    
 
     # ----- σ_idx (nested logit dispersion) ---- #
     # σ (shock dispersion)
@@ -55,11 +58,11 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    return (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ,δ,πW,σ,β)
+    return (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
 end
 
 function pars_full(x,p)
-    np = 9p.Kτ + 24
+    np = 9p.Kτ + 26
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],27,p.Kτ-1)
@@ -74,7 +77,7 @@ end
 
 function pars_inv(p)
     u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
-    F = [logit_inv.(p.λ);logit_inv.(p.δ);logit_inv(p.πW)]
+    F = [logit_inv.(p.λₒ);logit_inv.(p.δ);logit_inv(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)
     return [u;F;σ;β]
