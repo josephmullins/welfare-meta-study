@@ -58,7 +58,9 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    return (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = update_transitions(p)
+    return p
 end
 
 function pars_full(x,p)
