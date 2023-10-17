@@ -40,12 +40,9 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     S,A,_,H,F = j_inv(j)
     v = utility(S,A,H,F,pars,md,kA,kη,kτ,t,eligible)
     kA_next,kω_next = next(A,kA,kω;md.Kω)
-    wght = 0.
     for kη_next in 1:pars.Kη
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
-        fkk = Fη(kη_next, kη, pars.λ[kτ], pars.δ[kτ],pars.πW, pars.Kη) 
-        v += pars.β * fkk * V[k_next]
-        wght += fkk
+        v += pars.β * pars.Fη[kη_next,kη,kτ] * V[k_next]
     end
     return v
 end
