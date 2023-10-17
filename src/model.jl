@@ -32,7 +32,7 @@ function pars(Kτ::Int64,Kη::Int64)
 
     δ = 0.1*ones(Kτ)
     λ₀ = 0.5*ones(Kτ)
-    λ₁ = 0.5
+    λ₁ = 0.5*ones(Kτ)
     μₒ = 0.
     σₒ = 1.
 

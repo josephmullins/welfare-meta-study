@@ -13,9 +13,8 @@ function update_transitions(p)
     Fη = zeros(R,p.Kη,p.Kη,p.Kτ)
     for kτ in 1:p.Kτ
         πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
-        λ₁ = p.λ₁ * p.λ₀[kτ]
-        Fη[:,:,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], λ₁, p.δ[kτ], p.Kη-1)
-        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], λ₁, p.δ[kτ])
+        Fη[:,:,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ])
     end
     return (;p...,Fη,πₛ)
 end

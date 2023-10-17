@@ -39,10 +39,11 @@ function pars(x,p)
     pos += Kτ
     δ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
-    λ₁ = logit(x[pos])
+    λ₁ = logit(x[pos:pos+Kτ-1])
+    pos += Kτ
     μₒ = x[pos+1]
     σₒ = exp(x[pos+2])
-    pos += 3
+    pos += 2
     
 
     # ----- σ_idx (nested logit dispersion) ---- #
@@ -64,7 +65,7 @@ function pars(x,p)
 end
 
 function pars_full(x,p)
-    np = 9p.Kτ + 26
+    np = 10p.Kτ + 25
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],27,p.Kτ-1)
@@ -79,7 +80,7 @@ end
 
 function pars_inv(p)
     u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
-    F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv(p.λ₁);p.μₒ;log(p.σₒ)]
+    F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)
     return [u;F;σ;β]
