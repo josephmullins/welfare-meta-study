@@ -1,27 +1,6 @@
 # define the data that we're going to use:
 using .Threads, Random
 
-# function log_likelihood_threaded(x,LL::Vector{Float64},model,EM::Vector{EM_data},MD::Vector{model_data},p,data::Vector{likelihood_data},n_idx)
-#     (;logP,vj,V,nests) = model #?
-#     update!(x,p) #<- need to change this!
-#     fill!(LL,0.)
-#     @threads :static for i in eachindex(MD)
-#         # would we not rather just allocate the memory here? I think so?
-#         md = MD[i]
-#         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-#         # update the number of time periods, the choice set, the utilities, and solve.
-#         solve!(logP,V,vj,p,md,nests)
-#         ll = 0.
-#         for n ∈ n_idx[md.case_idx]
-#             if data[n].use
-#                 ll += log_likelihood(EM[n],md,p,logP,data[n])
-#             end
-#         end
-#         LL[threadid()] += ll
-#     end
-#     return sum(LL)
-# end
-
 function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p)
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
@@ -30,6 +9,23 @@ function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},
     end
     ll = fetch.(tasks)
     return sum(ll)
+end
+
+# writes each answer to a vector LL, for calculating the score
+function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+    N = sum(length(n_idx[md.case_idx]) for md in MD) #<-?
+    p = pars(x,p)
+    LL = zeros(eltype(x),N)
+    @threads for md in MD
+        (;vj,V,logP) = get_model(p)
+        solve!(logP,V,vj,p,md)
+        for n ∈ n_idx[md.case_idx]
+            if data[n].use
+                LL[n] = log_likelihood(EM[n],md,p,logP,data[n])
+            end
+        end
+    end
+    return LL
 end
 
 function log_likelihood_chunk(p,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
