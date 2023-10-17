@@ -1,4 +1,4 @@
-function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,max_iter = 1000,save = false)
+function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx;max_iter = 1000,save = false,mstep_iter = 20)
     J = 9
     err = Inf
     iter = 0
@@ -11,7 +11,7 @@ function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},
         forward_back_threaded!(p,EM,MD,data,n_idx)
         # M-step in 4 parts:
         # (1) most parameters here:
-        p = mstep_major(p,EM,MD,n_idx,15)
+        p = mstep_major(p,EM,MD,n_idx,mstep_iter)
         # (1.1): for robustness, a few steps of just preferences:
         # block = [1:(5p.Kτ+6);(7p.Kτ+19):(9p.Kτ+23)]
         # p = mstep_major_block(p,block,EM,MD,n_idx,10)
@@ -31,10 +31,10 @@ function expectation_maximization!(p,EM::Vector{EM_data},MD::Vector{model_data},
         iter += 1 
         println("current likelihood: $ll")
         println("current error: $err")
-        if save & mod(iter,1)==0
-            d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
-            savepars(p,"current_est")
-        end
+        # if save & mod(iter,1)==0
+        #     d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
+        #     savepars(p,"current_est")
+        # end
     end
 end
 
