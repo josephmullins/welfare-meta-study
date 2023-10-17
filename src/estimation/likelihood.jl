@@ -82,16 +82,6 @@ function chcare_log_like(chcare,p,md::model_data,kτ::Int64,t::Int64)
     return ll
 end
 
-# have to edit this if we want to add π offer dist.
-function log_likelihood_η0(kτ,kη,p)
-    h = p.λ[kτ] / (p.δ[kτ] + p.λ[kτ])
-    if kη==1
-        return log(1-h)
-    else
-        return log(h)
-    end
-end
-
 function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     ll = 0.
     for s in nzrange(em.q_s,1)
@@ -99,7 +89,7 @@ function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
         _,k = Tuple(s_inv[s_idx])
         _,kη,_,kτ = Tuple(k_inv[k])
         wght = em.q_s.nzval[s]
-        llk = log_likelihood_η0(kτ,kη,p)
+        llk = log(p.πₛ[kη,kτ])
         ll += llk*wght
     end
     return ll
@@ -134,7 +124,7 @@ function log_likelihood_transitions(em::EM_data,p,k_inv,s_inv)
                 sn_idx = em.q_ss[t].rowval[sn]
                 _,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
-                f_ss = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,Kη)
+                f_ss = p.Fη[kη_next,kη,kτ]
                 wght = em.q_ss[t].nzval[sn]
                 #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)
