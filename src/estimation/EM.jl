@@ -33,7 +33,7 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         println("current error: $err")
         if save & mod(iter,1)==0
             d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
-            savepars(p,"current_est")
+            savepars_vec(p,"current_est")
         end
     end
     return p
