@@ -70,7 +70,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 if data.chcare_valid[t+1] && data.chcare[t+1]>0
                     ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t)
                 end
-                fkk = Fη(kη_next,kη,p.λ[kτ],p.δ[kτ],p.πW,p.Kη)
+                fkk = p.Fη[kη_next, kη, kτ]
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
                 EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end
@@ -81,12 +81,7 @@ end
 # initial probability
 function initial_prob(kA,kη,kτ,logπτ,p,md::model_data)
     if md.source=="SIPP"
-        h = p.λ[kτ] / (p.δ[kτ] + p.λ[kτ])
-        if kη==1
-            πη = 1 - h
-        else
-            πη = h * 1 / (p.Kη - 1)
-        end
+        πη = p.πₛ[kη,kτ]
     else
         loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
         πη = p.πη[kA,kη,kτ,loc]
