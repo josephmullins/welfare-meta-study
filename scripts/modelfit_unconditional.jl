@@ -1,5 +1,6 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
+include("../src/estimation/statistics_exante.jl")
 
 Kτ = 3 #
 Kη = 6
@@ -29,22 +30,11 @@ LL = zeros(nthreads())
 Random.seed!(2020)
 shuffle!(MD)
 
-forward_back_threaded!(p,EM,M,MD,data,n_idx)
+# remove ∂M, we don't need it.
+∂M = 0.
 
-B = 100 #<- number of bootstrap trials
-x0 = update_inv_full(p)
-np = length(x0)
-BP = zeros(np,B) #<- storage for bootstrap
+basic_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
 
-Random.seed!(3030)
-d = DataFrame()
-for b in 1:B
-    global d
-    xb,db = bootstrap_trial(p,G,LL,M,∂M,EM,MD,n_idx)
-    BP[:,b] .= xb
-    db[!,:boottrial] .= b
-    d = vcat(d,db)
-end
-
-writedlm("output/boot_childsample",DP)
-CSV.write("output/model_stats_childsample_boot.csv",d)
+# NEXT: 
+# (2) get new functionsd for model stats
+# (3) write function to put it all together. yes.
