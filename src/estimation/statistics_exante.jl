@@ -105,7 +105,8 @@ function basic_model_fit_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_
         π0 = zeros(K)
         #println(md.case_idx)
         for n in n_idx[md.case_idx]
-            initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv))
+            #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv))
+            initialize!(π0,EM[n],s_inv)
             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p) #<- nice.
             d = model_stats(p,EM[n],md,data[n])
             d[!,:n_idx] .= n
@@ -166,5 +167,18 @@ function initialize!(logπτ,EM::EM_data,π0,p,md::model_data,data::likelihood_d
         end
     end
     π0 ./= sum(π0)
+    return nothing
+end
+
+# fill π0 states with the posterior distribution instead
+function initialize!(π0,EM::EM_data,s_inv)
+    fill!(π0,0.)
+    # start with the initial conditions:
+    for s in nzrange(EM.q_s,1)
+        s_idx = EM.q_s.rowval[s]
+        _,k = Tuple(s_inv[s_idx])
+        π0[k] += EM.q_s[s_idx,1]
+    end
+    #π0 ./= sum(π0)
     return nothing
 end
