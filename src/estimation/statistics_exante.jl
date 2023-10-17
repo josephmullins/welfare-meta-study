@@ -8,8 +8,9 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,
     T = size(Π,2)
     # initialize the first period:
     for k in 1:K
+        _,kη,_,_ = Tuple(k_inv[k])
         if π0[k]>0
-            for j in 1:J
+            for j in choice_set(kη>1)
                 s = (k-1)*J + j
                 Π[s,1] = π0[k] * exp(logP[j,k,1])
             end
