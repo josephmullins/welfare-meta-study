@@ -39,4 +39,4 @@ N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates th
 
 scores = [scores[:,1:49] scores[:,51:end]]
 
-var = inv(cov(scores)) / N
+V = cov(scores) / N
