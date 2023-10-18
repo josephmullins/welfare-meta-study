@@ -11,11 +11,11 @@ function log_likelihood_threaded(p,EM::Vector{EM_data},MD::Vector{model_data},da
 end
 function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p)
-    return log_likelihood_threaded(x,p,EM,MD,data,n_idx)
+    return log_likelihood_threaded(p,EM,MD,data,n_idx)
 end
 function log_likelihood_threaded(x,p,fname::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p,fname,ft)
-    return log_likelihood_threaded(x,p,EM,MD,data,n_idx)
+    return log_likelihood_threaded(p,EM,MD,data,n_idx)
 end
 
 
