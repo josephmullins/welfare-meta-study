@@ -29,8 +29,14 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
-p = expectation_maximization(p,EM,MD,n_idx; max_iter = 5, mstep_iter = 20,save = true)
-p = expectation_maximization(p,EM,MD,n_idx;mstep_iter = 100,save = true)
+forward_back_threaded!(p,EM,MD,data,n_idx)
+LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
+using ForwardDiff
+scores = ForwardDiff.jacobian(ll,x_est)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample.csv")
-savepars_vec(p,"est_childsample")
+N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
+
+scores = [scores[:,1:49] scores[:,51:end]]
+
+var = inv(cov(scores)) / N
