@@ -8,17 +8,12 @@ function mstep_major(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,iteratio
     return pars(res.minimizer,p)
 end
 
-function mstep_major_block(p,block,EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
+function mstep_major_block(p,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
-    x0 = pars_inv(p)
-    function objective(x)
-        x0[block] .= x
-        return -log_likelihood_threaded(x0,p,EM,MD,data,n_idx) / N_
-    end
-    xstart = x0[block]
-    res = Optim.optimize(objective,xstart,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
-    x0[block] .= res.minimizer
-    return pars(x0,p)
+    x0 = pars_inv(p,fnames,ft)
+    objective(x) = -log_likelihood_threaded(x,p,fnames,ft,EM,MD,data,n_idx) / N_
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
+    return pars(res.minimizer,p)
 end
 
 function mstep_types!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)

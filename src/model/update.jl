@@ -41,10 +41,9 @@ function pars(x,p)
     pos += Kτ
     λ₁ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
-    μₒ = x[pos+1]
-    σₒ = exp(x[pos+2])
+    μₒ = x[pos] #?
+    σₒ = exp(x[pos+1])
     pos += 2
-    
 
     # ----- σ_idx (nested logit dispersion) ---- #
     # σ (shock dispersion)
@@ -76,6 +75,55 @@ function pars_full(x,p)
     σ_W = x[np+1]
     σ_PF = x[np+2]
     return (;p...,βτ,πη,σ_W,σ_PF)
+end
+
+function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
+    pos = 1
+    R = eltype(x)
+    Xnew = Union{R,Vector{R}}[]
+    for kf in eachindex(f)
+        v = getfield(p,f[kf])
+        K = length(v)
+        if tf[kf]==1
+            if K==1
+                vnew = x[pos]
+            else
+                vnew = x[pos:(pos+K-1)]
+            end
+        elseif tf[kf]==2
+            if K==1
+                vnew = exp(x[pos])
+            else
+                vnew = exp.(x[pos:(pos+K-1)])
+            end  
+        elseif tf[kf]==3
+            if K==1
+                vnew = logit(x[pos])
+            else
+                vnew = logit.(x[pos:(pos+K-1)])
+            end
+        end
+        pos += K
+        push!(Xnew,vnew)
+    end
+    pnew = NamedTuple(zip(f,Xnew))
+    p = (;p...,pnew...)
+    p = update_transitions(p)
+    return p
+end
+
+function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
+    x = []
+    for kf in eachindex(f)
+        if ft[kf]==1
+            push!(x,getfield(p,f[kf]))
+        elseif ft[kf]==2
+            push!(x,log.(getfield(p,f[kf])))
+        elseif ft[kf]==3
+            push!(x,logit_inv.(getfield(p,f[kf])))
+        end
+    end
+    return x
 end
 
 function pars_inv(p)

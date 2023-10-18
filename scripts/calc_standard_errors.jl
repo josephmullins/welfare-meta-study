@@ -37,6 +37,17 @@ scores = ForwardDiff.jacobian(ll,x_est)
 
 N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
 
-scores = [scores[:,1:49] scores[:,51:end]]
+break
 
-V = cov(scores) / N
+V = inv(cov(scores)) / N
+se = sqrt.(diag(V))
+
+function test(x,p)
+    p = pars(x,p)
+    return p.πₛ
+end
+
+J = ForwardDiff.jacobian(x->test(x,p),x_est)
+
+p_off(x) = get_offer_dist(p.ηgrid,x,1.1,typeof(x))
+J = ForwardDiff.derivative(x->stat_dist(p_off(x),0.3,0.4,0.1),0.4)
