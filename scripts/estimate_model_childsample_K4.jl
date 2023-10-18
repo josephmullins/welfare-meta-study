@@ -27,6 +27,14 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
+x0 = pars_inv(p,block,ft)
+p2 = pars(x,p,block,ft)
+log_likelihood_threaded(x0,p,block,ft,EM,MD,data,n_idx) / N_
+
+p = mstep_major_block(p,block,ft,EM,MD,n_idx,20)
+
+
+
 p = expectation_maximization(p,EM,MD,n_idx; max_iter = 1, mstep_iter = 20,save = true)
 p = expectation_maximization(p,EM,MD,n_idx;mstep_iter = 100,save = true)
 

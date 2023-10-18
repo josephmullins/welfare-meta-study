@@ -113,14 +113,14 @@ function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
 end
 
 function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
-    x = []
+    x = Float64[]
     for kf in eachindex(f)
         if ft[kf]==1
-            push!(x,getfield(p,f[kf]))
+            push!(x,getfield(p,f[kf])...)
         elseif ft[kf]==2
-            push!(x,log.(getfield(p,f[kf])))
+            push!(x,log.(getfield(p,f[kf]))...)
         elseif ft[kf]==3
-            push!(x,logit_inv.(getfield(p,f[kf])))
+            push!(x,logit_inv.(getfield(p,f[kf]))...)
         end
     end
     return x
