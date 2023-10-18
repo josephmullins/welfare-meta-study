@@ -15,9 +15,7 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         # (1.1): for robustness, a few steps of just preferences:
         block = [:αθ,:αH,:αA,:αS,:αF,:αP,:αR,:wq,:βΓ]
         ft = [2,1,1,1,1,1,1,2,1]
-        # block = [1:(5p.Kτ+6);(7p.Kτ+19):(9p.Kτ+23)]
         p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-        # mstep_major_block!(p,Gstore,LL,block2,M,∂M,EM,MD,n_idx)
 
         # (2) type selection
         mstep_types!(p,EM,MD,data,n_idx,J)
