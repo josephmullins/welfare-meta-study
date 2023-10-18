@@ -71,6 +71,7 @@ function model_data(df)
     end
     arm = df.arm[1]
     # locations: FTP0,FTP1,CT0,CT1,MF0,MF1,MF2 (SIPP excluded)
+    # these are used to create dummy variables for the price of childcare
     loc_ind = 1*(source=="FTP") + (source=="CTJF")*3 + (source=="MFIP")*5 + arm
     if source=="FTP" && arm==1
         Kω = 1 + 7 #<- 21 month time limit
