@@ -103,3 +103,34 @@ function mstep_σ(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{like
     σ_PF = sqrt( numer_pf / denom_pf )
     return (;p...,σ_W,σ_PF)
 end
+
+# this calcualtes Fη non-parametrically
+function mstep_F(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
+    denom = zeros(1,p.Kη)
+    F = zeros(p.Kη,p.Kη)
+    for md in MD
+        K = 2 * p.Kη * md.Kω * p.Kτ
+        s_inv = CartesianIndices((J,K))
+        k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+        for n in n_idx[md.case_idx]
+            if data[n].use
+                for t in eachindex(EM[n].q_ss)
+                    for s in nzrange(EM[n].q_s,t)
+                        s_idx = EM[n].q_s.rowval[s]
+                        _,k = Tuple(s_inv[s_idx])
+                        _,kη,_,_ = Tuple(k_inv[k])
+                        for s2 in nzrange(EM[n].q_ss[t],s_idx)
+                            s2_idx = EM[n].q_ss[t].rowval[s2]
+                            _,k = Tuple(s_inv[s2_idx])
+                            _,kη2,_,_ = Tuple(k_inv[k])
+                            wght = EM[n].q_ss[t].nzval[s2] 
+                            F[kη2,kη] += wght 
+                            denom[kη] += wght
+                        end
+                    end
+                end
+            end
+        end
+    end
+    F ./= denom 
+end
