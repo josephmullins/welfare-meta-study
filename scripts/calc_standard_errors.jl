@@ -1,14 +1,14 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 3 #
-Kη = 6
+Kτ = 4 #
+Kη = 5
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"est_childsample")
+p = loadpars_vec(p,"est_childsample_K4")
 
 x_est = pars_inv(p)
 
@@ -37,10 +37,10 @@ scores = ForwardDiff.jacobian(ll,x_est)
 
 N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
 
-break
-
 V = inv(cov(scores)) / N
 se = sqrt.(diag(V))
+
+break
 
 function test(x,p)
     p = pars(x,p)
