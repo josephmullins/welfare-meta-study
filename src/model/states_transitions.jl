@@ -19,11 +19,11 @@ function update_transitions(p)
     return (;p...,Fη,πₛ)
 end
 
-function stat_dist(Fη)
-    K = size(Fη,1)
-    πₛ = eigen(I(K) .- Fη).vectors[:,1] #<- first eigen vector corresponds to zero
-    return πₛ ./ sum(πₛ)
-end
+function stat_dist(F)
+    K = size(F,1)
+    πₛ = @views inv(I(K-1) .+ diagm(F[1:K-1,K]) * ones(K-1,K-1) .- F[1:K-1,1:K-1]) * F[1:K-1,K]
+    return [πₛ;1-sum(πₛ)]
+end 
 
 function Fη_mat(μη ,K)
     F = zeros(eltype(μη),K,K)
