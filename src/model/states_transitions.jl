@@ -4,46 +4,34 @@
 # kω: cumulative time use
 # kη: wage shock
 # kA: indicator for whether you participated last year in welfare
-using Distributions
+using LinearAlgebra
 
 function update_transitions(p)
     Fηk = Fη_mat(p.μη,p.Kη)
+    πₛₖ = stat_dist(Fηk)
     R = eltype(p.μη)
     πₛ = zeros(R,p.Kη,p.Kτ)
     Fη = zeros(R,p.Kη,p.Kη,p.Kτ)
     for kτ in 1:p.Kτ
         Fη[:,:,kτ] .= Fηk
-        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ])
+        πₛ[:,kτ] .= πₛₖ
     end
     return (;p...,Fη,πₛ)
 end
 
-πK = (1-∑ₖπₖ)
-
-
-function stat_dist(πₒ,λ₀,λ₁,δ)
-    R = eltype(πₒ)
-    K = length(πₒ)
-    πₛ = zeros(R,K+1)
-    u = δ / (δ + λ₀)
-    πₛ[1] = u
-    inₖ = u * λ₀
-    keepₖ = (1-λ₁)
-    for k in 1:K
-        keepₖ += λ₁ * πₒ[k]
-        πₛ[k+1] = πₒ[k] * inₖ / ((1 - (1-δ)*keepₖ))
-        inₖ += (1-δ) * λ₁ * πₛ[k+1]
-    end
-    return πₛ
+function stat_dist(Fη)
+    K = size(Fη,1)
+    πₛ = eigen(I(K) .- Fη).vectors[:,1] #<- first eigen vector corresponds to zero
+    return πₛ ./ sum(πₛ)
 end
 
 function Fη_mat(μη ,K)
-    F = zeros(eltype(πₒ),K+1,K+1)
+    F = zeros(eltype(μη),K,K)
     for k in 1:K
         @views norm = 1 + sum(exp.(μη[:,k]))
         F[1,k] = 1 / norm
         for kn in 2:K
-            F[kn,k] = exp(μη[kn]) / norm
+            F[kn,k] = exp(μη[kn-1,k]) / norm
         end
     end
     return F     

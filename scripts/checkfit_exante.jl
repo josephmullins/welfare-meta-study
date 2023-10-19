@@ -4,7 +4,7 @@ include("../src/estimation.jl")
 include("../src/estimation/statistics_exante.jl") #<- overwrites some of the functions in statistics.jl
 
 Kτ = 4 #
-Kη = 5
+Kη = 4
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)

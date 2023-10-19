@@ -1,7 +1,7 @@
 
 # a version here that calculates derivatives also
 function pars(x,p)
-    (;Kτ) = p
+    (;Kτ,Kη) = p
     # -- u_idx -- #
     # α parameters
     pos = 1
@@ -35,15 +35,9 @@ function pars(x,p)
     pos += 1
 
     # ----- F_idx ------ #
-    λ₀ = logit.(x[pos:pos+Kτ-1])
-    pos += Kτ
-    δ = logit.(x[pos:pos+Kτ-1])
-    pos += Kτ
-    λ₁ = logit.(x[pos:pos+Kτ-1])
-    pos += Kτ
-    μₒ = x[pos] #?
-    σₒ = exp(x[pos+1])
-    pos += 2
+    nF = (Kη - 1) * Kη
+    μη = reshape(x[pos:pos+nF-1],Kη-1,Kη)
+    pos += nF
 
     # ----- σ_idx (nested logit dispersion) ---- #
     # σ (shock dispersion)
@@ -58,13 +52,13 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,μη,σ,β)
     p = update_transitions(p)
     return p
 end
 
 function pars_full(x,p)
-    np = 10p.Kτ + 25
+    np = 7p.Kτ + 23 + p.Kη * (p.Kη - 1)
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],27,p.Kτ-1)
@@ -128,7 +122,7 @@ end
 
 function pars_inv(p)
     u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
-    F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
+    F = vec(p.μη)
     σ = log.(p.σ)
     β = logit_inv(p.β)
     return [u;F;σ;β]
