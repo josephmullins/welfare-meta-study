@@ -27,7 +27,7 @@ function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::V
     @threads for md in MD
         (;vj,V,logP) = get_model(p)
         solve!(logP,V,vj,p,md)
-        logπτ = zeros(p.Kτ)
+        logπτ = zeros(eltype(x),p.Kτ)
         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
         K = prod(size(k_inv))
         s_inv = CartesianIndices((9,K))
@@ -35,7 +35,7 @@ function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::V
             if data[n].use
                 LL[n] = log_likelihood(EM[n],md,p,logP,data[n])
                 @views LL[n] += log_likelihood_type(logπτ,p.βτ[md.type_block,:],EM[n],data[n],s_inv,k_inv)
-                LL[n] += log_likelihood_η0_full(p,EM[n],s_inv,k_inv) #<- probably still a rank issue here
+                LL[n] += log_likelihood_η0_full(p,md,EM[n],s_inv,k_inv) #<- probably still a rank issue here
             end
         end
     end
@@ -105,7 +105,7 @@ function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     return ll
 end
 
-function log_likelihood_η0_full(p,em::EM_data,s_inv,k_inv)
+function log_likelihood_η0_full(p,md::model_data,em::EM_data,s_inv,k_inv)
     ll = 0.
     for s in nzrange(em.q_s,1)
         s_idx = em.q_s.rowval[s]
