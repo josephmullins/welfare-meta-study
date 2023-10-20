@@ -32,3 +32,5 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
 d = basic_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
+
+#write everything to file here.

@@ -10,7 +10,7 @@ p = (;p...,nests)
 
 p = loadpars_vec(p,"est_childsample_K4")
 
-x_est = pars_inv(p)
+x_est = pars_inv_full(p)
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -40,14 +40,3 @@ N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates th
 V = inv(cov(scores)) / N
 se = sqrt.(diag(V))
 
-break
-
-function test(x,p)
-    p = pars(x,p)
-    return p.πₛ
-end
-
-J = ForwardDiff.jacobian(x->test(x,p),x_est)
-
-p_off(x) = get_offer_dist(p.ηgrid,x,1.1,typeof(x))
-J = ForwardDiff.derivative(x->stat_dist(p_off(x),0.3,0.4,0.1),0.4)
