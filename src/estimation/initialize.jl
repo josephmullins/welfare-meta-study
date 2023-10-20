@@ -130,9 +130,9 @@ function likelihood_data(df)
     FC = coalesce.(df.chcare.>0,-1)
     X_type = []
     source = df.source[1]
-    Kx = 5 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
+    Kx = 4 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
     X_type = zeros(Kx)
-    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 4*df.coll[1]
+    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 3*df.coll[1]
     X_type[1] = 1.
     if ed_dum>1
         X_type[ed_dum] = 1.

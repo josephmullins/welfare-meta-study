@@ -41,7 +41,7 @@ function pars(Kτ::Int64,Kη::Int64)
     βΓ = zeros(2)
     βw = [LinRange(6,7.5,Kτ);-0.2;0.003]
     βf = [fill(3.,Kτ);zeros(10)]
-    βτ = zeros(27,Kτ-1)
+    βτ = zeros(23,Kτ-1)
     πη = ones(2,Kη,Kτ,3) / Kη
     
     ηgrid = LinRange(-1,1,Kη-1)
