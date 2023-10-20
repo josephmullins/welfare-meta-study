@@ -1,7 +1,7 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 4 #
+Kτ = 5 #
 Kη = 4
 p = pars(Kτ,Kη)
 p = update_transitions(p)
@@ -30,5 +30,5 @@ shuffle!(MD)
 #p = expectation_maximization(p,EM,MD,n_idx; max_iter = 5, mstep_iter = 20,save = true)
 p = expectation_maximization(p,EM,MD,n_idx;mstep_iter = 100,save = true)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample.csv")
-savepars_vec(p,"est_childsample")
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample_K5.csv")
+savepars_vec(p,"est_childsample_K5")
