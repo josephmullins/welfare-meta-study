@@ -3,13 +3,14 @@ include("../src/model.jl")
 include("../src/estimation.jl")
 include("../src/estimation/statistics_exante.jl") #<- overwrites some of the functions in statistics.jl
 
-Kτ = 4 #
+Kτ = 5 #
 Kη = 4
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"est_childsample")
+#p = loadpars_vec(p,"est_childsample")
+p = loadpars_vec(p,"current_est")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
