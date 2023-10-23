@@ -100,13 +100,13 @@ function model_data(df)
     end
     # get the type block:
     if source=="SIPP"
-        type_block = 1:5
+        type_block = 1:4
     elseif source=="FTP"
-        type_block = 6:11
+        type_block = 5:9
     elseif source=="CTJF"
-        type_block = 12:18
+        type_block = 10:15
     elseif source=="MFIP"
-        type_block = 19:27
+        type_block = 16:23
     end
 
     return model_data(df.case_idx[1],df.year[1],df.Q[1],T,df.age[1],df.ageyng[1],source,arm,loc_ind,df.SOI[1],df.numkids[1],
@@ -132,22 +132,22 @@ function likelihood_data(df)
     source = df.source[1]
     Kx = 4 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
     X_type = zeros(Kx)
-    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 3*df.coll[1]
+    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 3*df.coll[1] #<- grouping some_coll and coll
     X_type[1] = 1.
     if ed_dum>1
         X_type[ed_dum] = 1.
     end
-    X_type[5] = df.numkids[1]
+    X_type[4] = df.numkids[1]
     if source=="FTP"
-        X_type[6] = df.app_status[1] #<- new applicant (recipient excluded)
+        X_type[5] = df.app_status[1] #<- new applicant (recipient excluded)
     elseif source=="CTJF"
-        X_type[6] = df.app_status[1] #<- new applicant (recipient excluded)
-        X_type[7] = df.county[1]==2 #<- New Haven county (Manchester excluded)
+        X_type[5] = df.app_status[1] #<- new applicant (recipient excluded)
+        X_type[6] = df.county[1]==2 #<- New Haven county (Manchester excluded)
     elseif source=="MFIP"
-        X_type[6] = df.app_status[1]==1 #<- new applicant (recipient excluded)
-        X_type[7] = df.app_status[1]==2 #<- re-applicant
-        X_type[8] = df.county[1]==2 #<- Anoka county (Hennepin excluded)
-        X_type[9] = df.county[1]==3 #<- Dakota county (Hennepin excluded)
+        X_type[5] = df.app_status[1]==1 #<- new applicant (recipient excluded)
+        X_type[6] = df.app_status[1]==2 #<- re-applicant
+        X_type[7] = df.county[1]==2 #<- Anoka county (Hennepin excluded)
+        X_type[8] = df.county[1]==3 #<- Dakota county (Hennepin excluded)
     end
     # leave-out sample is non-control group new applicants in Anoka county, dakota county, and Manchester county
     leaveout = (source=="MFIP" && df.arm[1]>0 && df.county[1]>1 && df.app_status[1]==1) || (source=="CTJF" && df.arm[1]==1 && df.county[1]==1 && df.app_status[1]==1)
