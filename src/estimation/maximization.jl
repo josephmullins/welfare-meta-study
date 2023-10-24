@@ -17,9 +17,9 @@ function mstep_major_block(p,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector
 end
 
 function mstep_types!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
-    Kx = (5,6,7,9) #
+    Kx = (4,5,6,8) #
     sources = ("SIPP","FTP","CTJF","MFIP")
-    blocks = (1:5,6:11,12:18,19:27)
+    blocks = (1:4,5:9,10:15,16:23)
     pos = 1
     for s in eachindex(sources)
         source = sources[s]
