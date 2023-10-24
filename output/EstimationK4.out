@@ -1,520 +1,521 @@
  ===== EM-algorithm: iteration 0 =====
 Iter     Function value   Gradient norm 
      0     2.364766e+00     2.568848e+00
- * time: 0.02596902847290039
+ * time: 0.042919158935546875
      1     2.362192e+00     1.830014e+00
- * time: 68.8197090625763
+ * time: 53.94177508354187
      2     2.361644e+00     2.397634e+00
- * time: 77.02199196815491
+ * time: 61.28195905685425
      3     2.357245e+00     4.678282e+00
- * time: 89.73315191268921
+ * time: 72.59773707389832
      4     2.356865e+00     2.963917e-01
- * time: 97.81588006019592
+ * time: 80.26541709899902
      5     2.356858e+00     1.050128e-01
- * time: 113.66254496574402
+ * time: 91.4468641281128
      6     2.356778e+00     1.186473e+00
- * time: 134.65863609313965
+ * time: 110.56971597671509
      7     2.341349e+00     5.160699e+00
- * time: 167.4105019569397
+ * time: 132.9104781150818
      8     2.312390e+00     4.596751e+00
- * time: 176.04858493804932
+ * time: 140.1678020954132
      9     2.304598e+00     6.543181e+00
- * time: 184.59668493270874
+ * time: 147.52669310569763
     10     2.267361e+00     1.022770e+01
- * time: 193.1450068950653
+ * time: 155.1960461139679
     11     2.254655e+00     1.109359e+01
- * time: 215.6529688835144
+ * time: 170.46681809425354
     12     2.163679e+00     6.101981e-01
- * time: 237.12896394729614
+ * time: 189.04906296730042
     13     2.150222e+00     2.261977e-01
- * time: 249.96256494522095
+ * time: 200.51734709739685
     14     2.143025e+00     2.727790e-01
- * time: 262.4035201072693
+ * time: 211.60002207756042
     15     2.096538e+00     1.375705e+00
- * time: 275.5288848876953
+ * time: 223.2412440776825
     16     2.091420e+00     7.465964e-01
- * time: 283.79841804504395
+ * time: 230.47421503067017
     17     2.083472e+00     2.233719e-01
- * time: 291.8564438819885
+ * time: 237.9186270236969
     18     2.066176e+00     2.541358e+00
- * time: 308.58808302879333
+ * time: 252.76331305503845
     19     2.019809e+00     1.681589e+00
- * time: 328.6239929199219
+ * time: 264.26749205589294
     20     2.003724e+00     9.305702e-01
- * time: 341.5831310749054
+ * time: 276.11317205429077
     21     1.992657e+00     5.777031e-01
- * time: 354.24282002449036
+ * time: 287.30195713043213
     22     1.984368e+00     1.197862e-01
- * time: 374.2531979084015
+ * time: 298.49829602241516
     23     1.981687e+00     4.458200e-01
- * time: 387.24772906303406
+ * time: 309.73322916030884
     24     1.955075e+00     3.384453e-01
- * time: 404.347158908844
+ * time: 324.7767610549927
     25     1.946541e+00     3.595711e-01
- * time: 412.7215368747711
+ * time: 332.40856313705444
     26     1.943369e+00     3.298500e-01
- * time: 421.12917399406433
+ * time: 339.80766010284424
     27     1.940700e+00     5.121682e-02
- * time: 429.17997694015503
+ * time: 347.130695104599
     28     1.937970e+00     2.350338e-01
- * time: 437.3628330230713
+ * time: 354.5943250656128
     29     1.936162e+00     7.031703e-02
- * time: 449.29533195495605
+ * time: 365.8829200267792
     30     1.935861e+00     2.620404e-01
- * time: 457.5422639846802
+ * time: 373.2870969772339
     31     1.935662e+00     1.181033e-01
- * time: 476.61157488822937
+ * time: 385.01385712623596
     32     1.934376e+00     3.476587e-02
- * time: 494.1273651123047
+ * time: 400.14800000190735
     33     1.932603e+00     3.008134e-01
- * time: 506.93390798568726
+ * time: 411.3005130290985
     34     1.930865e+00     3.168957e-02
- * time: 519.5612359046936
+ * time: 422.72361397743225
     35     1.930045e+00     7.243466e-02
- * time: 539.8047630786896
+ * time: 434.12417793273926
     36     1.929018e+00     1.461410e-01
- * time: 548.2790770530701
+ * time: 441.8998341560364
     37     1.928577e+00     3.485336e-02
- * time: 560.9392650127411
+ * time: 453.1467320919037
     38     1.927334e+00     4.566881e-02
- * time: 577.9448668956757
+ * time: 468.1292040348053
     39     1.927179e+00     3.976968e-01
- * time: 593.8934030532837
+ * time: 475.4667270183563
     40     1.926099e+00     1.982019e-01
- * time: 606.7975010871887
+ * time: 486.7295949459076
     41     1.925356e+00     2.147308e-02
- * time: 619.1207339763641
+ * time: 498.04022097587585
     42     1.925017e+00     1.293421e-01
- * time: 631.9930369853973
+ * time: 509.3058979511261
     43     1.924562e+00     2.264747e-01
- * time: 648.8516840934753
+ * time: 516.8566620349884
     44     1.924014e+00     2.757620e-01
- * time: 661.4748311042786
+ * time: 528.1326849460602
     45     1.923257e+00     1.319684e-02
- * time: 678.0708708763123
+ * time: 543.2825751304626
     46     1.921770e+00     5.961010e-02
- * time: 690.6256530284882
+ * time: 554.9416451454163
     47     1.921433e+00     1.740218e-02
- * time: 710.0816740989685
+ * time: 566.2243220806122
     48     1.921202e+00     3.330370e-02
- * time: 718.6424748897552
+ * time: 573.5713231563568
     49     1.920528e+00     7.553898e-02
- * time: 731.1023070812225
+ * time: 584.7025771141052
     50     1.919929e+00     1.298354e-01
- * time: 743.778785943985
+ * time: 595.9377629756927
     51     1.919641e+00     1.885871e-01
- * time: 761.6565110683441
+ * time: 607.8515751361847
     52     1.919516e+00     5.680179e-02
- * time: 774.1566359996796
+ * time: 619.1670031547546
     53     1.919279e+00     9.105989e-02
- * time: 786.9368660449982
+ * time: 630.7359759807587
     54     1.919214e+00     1.246266e-02
- * time: 799.3379340171814
+ * time: 642.0530791282654
     55     1.919011e+00     1.089930e-01
- * time: 823.5687808990479
+ * time: 657.7892150878906
     56     1.918572e+00     1.927801e-02
- * time: 836.1700460910797
+ * time: 669.1662380695343
     57     1.918354e+00     1.007407e-02
- * time: 844.6932559013367
+ * time: 676.8034989833832
     58     1.917626e+00     1.627450e-01
- * time: 857.5102119445801
+ * time: 687.9914171695709
     59     1.917278e+00     4.629681e-02
- * time: 877.2954668998718
+ * time: 699.2306461334229
     60     1.917039e+00     8.360740e-02
- * time: 889.7176580429077
+ * time: 710.7595601081848
     61     1.916923e+00     2.206491e-02
- * time: 902.4681088924408
+ * time: 722.1245319843292
     62     1.916884e+00     9.394737e-02
- * time: 910.7044539451599
+ * time: 729.542720079422
     63     1.916820e+00     4.915275e-03
- * time: 930.3887450695038
+ * time: 740.5659880638123
     64     1.916767e+00     1.616016e-02
- * time: 943.1017799377441
+ * time: 751.8949811458588
     65     1.916765e+00     7.443303e-03
- * time: 951.1674060821533
+ * time: 759.4571709632874
     66     1.916765e+00     2.944017e-02
- * time: 963.747936964035
+ * time: 771.4147510528564
     67     1.916702e+00     5.644479e-03
- * time: 976.0877161026001
+ * time: 778.8756840229034
     68     1.916648e+00     9.095685e-03
- * time: 988.7713379859924
+ * time: 789.9484281539917
     69     1.916573e+00     1.016084e-01
- * time: 997.296688079834
+ * time: 797.416689157486
     70     1.915777e+00     3.984082e-02
- * time: 1014.3327300548553
+ * time: 812.5470299720764
     71     1.915543e+00     3.504247e-02
- * time: 1029.1804161071777
+ * time: 820.2720611095428
     72     1.915235e+00     3.624683e-02
- * time: 1041.5120849609375
+ * time: 831.160747051239
     73     1.915223e+00     1.740789e-02
- * time: 1049.8959939479828
+ * time: 838.5715420246124
     74     1.915218e+00     8.405350e-03
- * time: 1062.1130299568176
+ * time: 849.782546043396
     75     1.915146e+00     1.315017e-01
- * time: 1070.6275780200958
+ * time: 857.1461999416351
     76     1.914853e+00     1.112193e-02
- * time: 1094.2716550827026
+ * time: 872.8902621269226
     77     1.914839e+00     7.646095e-03
- * time: 1106.6786060333252
+ * time: 884.1412041187286
     78     1.914732e+00     8.267045e-02
- * time: 1115.4506900310516
+ * time: 891.5200459957123
     79     1.914021e+00     2.691223e-01
- * time: 1135.1668100357056
+ * time: 906.3910961151123
     80     1.913699e+00     7.782137e-02
- * time: 1148.0412690639496
+ * time: 917.6485199928284
     81     1.913627e+00     1.508887e-02
- * time: 1161.239207983017
+ * time: 929.107330083847
     82     1.913594e+00     1.615191e-02
- * time: 1174.026720046997
+ * time: 940.3564260005951
     83     1.913559e+00     3.057339e-02
- * time: 1182.8493039608002
+ * time: 947.8359041213989
     84     1.913520e+00     3.357176e-02
- * time: 1191.0928180217743
+ * time: 955.4848091602325
     85     1.913504e+00     1.866016e-02
- * time: 1203.569284915924
+ * time: 966.6370930671692
     86     1.913494e+00     4.000584e-02
- * time: 1211.895623922348
+ * time: 974.1626930236816
     87     1.913364e+00     5.966485e-02
- * time: 1228.178181886673
+ * time: 989.4461979866028
     88     1.913217e+00     3.718689e-02
- * time: 1241.476527929306
+ * time: 1000.8038029670715
     89     1.913093e+00     7.779615e-02
- * time: 1253.7866070270538
+ * time: 1012.1520910263062
     90     1.913025e+00     7.327279e-03
- * time: 1262.1289489269257
+ * time: 1019.6030321121216
     91     1.912993e+00     6.427557e-03
- * time: 1274.5467879772186
+ * time: 1031.0535380840302
     92     1.912986e+00     4.429223e-02
- * time: 1290.5650780200958
+ * time: 1038.8029100894928
     93     1.912932e+00     3.284902e-02
- * time: 1307.791657924652
+ * time: 1053.7488310337067
     94     1.912882e+00     9.979394e-03
- * time: 1320.7853019237518
+ * time: 1065.1235830783844
     95     1.912880e+00     2.842579e-02
- * time: 1329.4096291065216
+ * time: 1072.42719912529
     96     1.912854e+00     5.534747e-02
- * time: 1347.4322690963745
+ * time: 1087.5625131130219
     97     1.912824e+00     6.043769e-03
- * time: 1356.1563410758972
+ * time: 1095.8437759876251
     98     1.912784e+00     8.708942e-03
- * time: 1368.613203048706
+ * time: 1107.1649100780487
     99     1.912767e+00     2.173349e-02
- * time: 1381.0494930744171
+ * time: 1118.346009016037
    100     1.912616e+00     9.842510e-02
- * time: 1404.2610449790955
+ * time: 1133.3882689476013
    101     1.912544e+00     6.824211e-03
- * time: 1416.5265889167786
+ * time: 1144.6792731285095
    102     1.912459e+00     2.503344e-02
- * time: 1429.2332210540771
+ * time: 1156.5892820358276
    103     1.912455e+00     1.287781e-02
- * time: 1437.5363590717316
+ * time: 1164.2210161685944
    104     1.912440e+00     5.175142e-03
- * time: 1457.4065458774567
+ * time: 1175.518562078476
    105     1.912441e+00     3.593222e-02
- * time: 1469.971796989441
+ * time: 1186.7451710700989
    106     1.912413e+00     3.904327e-03
- * time: 1482.3619809150696
+ * time: 1198.1435570716858
    107     1.912369e+00     1.527724e-02
- * time: 1502.3208029270172
+ * time: 1210.104197025299
    108     1.912325e+00     1.417590e-02
- * time: 1514.8475160598755
+ * time: 1221.5757720470428
    109     1.912190e+00     1.961546e-02
- * time: 1527.7302129268646
+ * time: 1232.7943511009216
    110     1.912134e+00     5.337094e-02
- * time: 1536.2387239933014
+ * time: 1240.1988451480865
    111     1.912098e+00     1.008378e-02
- * time: 1548.7248408794403
+ * time: 1251.4683270454407
    112     1.912092e+00     4.112386e-03
- * time: 1568.800369977951
+ * time: 1262.9814031124115
    113     1.912057e+00     6.058762e-02
- * time: 1581.3075668811798
+ * time: 1274.4535989761353
    114     1.912052e+00     1.103896e-02
- * time: 1593.7556369304657
+ * time: 1285.8440811634064
    115     1.912022e+00     3.584515e-03
- * time: 1612.4013049602509
+ * time: 1296.9815740585327
    116     1.912010e+00     3.514166e-02
- * time: 1625.1254210472107
+ * time: 1308.5338940620422
    117     1.912010e+00     2.351480e-02
- * time: 1869.6921598911285
+ * time: 1513.8257160186768
    118     1.912010e+00     2.351480e-02
- * time: 2247.25647687912
+ * time: 1822.912045955658
 Iter     Function value   Gradient norm 
      0     1.912010e+00     1.306091e-03
- * time: 2.5987625122070312e-5
+ * time: 6.699562072753906e-5
      1     1.911973e+00     3.508195e-03
- * time: 6.803956985473633
+ * time: 6.035956144332886
      2     1.911924e+00     2.225967e-03
- * time: 11.749800205230713
+ * time: 10.715662002563477
      3     1.911878e+00     1.592006e-03
- * time: 16.849964141845703
+ * time: 15.25965404510498
      4     1.911838e+00     2.047027e-03
- * time: 21.862797021865845
+ * time: 19.817865133285522
      5     1.911804e+00     6.299275e-04
- * time: 27.075201988220215
+ * time: 24.520618200302124
      6     1.911791e+00     7.800682e-04
- * time: 32.12518310546875
+ * time: 29.131591081619263
      7     1.911779e+00     6.869027e-04
- * time: 37.327038049697876
+ * time: 34.7910041809082
      8     1.911773e+00     1.920638e-04
- * time: 42.73579120635986
+ * time: 39.30226707458496
      9     1.911770e+00     1.743876e-04
- * time: 48.29240417480469
+ * time: 43.97024321556091
     10     1.911768e+00     1.222195e-04
- * time: 53.56518006324768
+ * time: 48.60600018501282
     11     1.911768e+00     1.126519e-04
- * time: 56.98651313781738
+ * time: 51.59265398979187
     12     1.911767e+00     5.555627e-05
- * time: 62.268357038497925
+ * time: 56.19144105911255
     13     1.911767e+00     1.854148e-04
- * time: 65.9884262084961
+ * time: 59.40120220184326
     14     1.911767e+00     1.211510e-04
- * time: 71.02605199813843
+ * time: 64.049063205719
     15     1.911767e+00     4.748190e-05
- * time: 75.75708103179932
+ * time: 68.67727708816528
     16     1.911767e+00     8.317977e-05
- * time: 80.71306610107422
+ * time: 73.18871116638184
     17     1.911767e+00     6.299340e-05
- * time: 85.69507002830505
+ * time: 77.88852119445801
     18     1.911766e+00     7.935143e-05
- * time: 99.90917706489563
+ * time: 84.20052409172058
     19     1.911766e+00     8.009004e-05
- * time: 103.64549612998962
+ * time: 87.25786304473877
     20     1.911766e+00     5.399556e-05
- * time: 108.69361114501953
+ * time: 92.00803709030151
     21     1.911766e+00     3.609542e-05
- * time: 113.96133708953857
+ * time: 96.81822109222412
     22     1.911766e+00     5.440243e-05
- * time: 119.33887004852295
+ * time: 101.3874762058258
     23     1.911766e+00     6.866771e-05
- * time: 124.41771817207336
+ * time: 105.92332100868225
     24     1.911765e+00     1.267717e-04
- * time: 129.55072808265686
+ * time: 110.35705900192261
     25     1.911764e+00     3.667246e-04
- * time: 134.70350813865662
+ * time: 114.99447107315063
     26     1.911764e+00     7.315356e-05
- * time: 137.98662114143372
+ * time: 118.03354811668396
     27     1.911764e+00     3.149350e-04
- * time: 145.22897601127625
+ * time: 124.02547407150269
     28     1.911762e+00     2.403306e-04
- * time: 150.40703701972961
+ * time: 128.56010603904724
     29     1.911761e+00     1.887926e-04
- * time: 155.47152614593506
+ * time: 133.13546419143677
     30     1.911759e+00     5.097871e-04
- * time: 160.57809615135193
+ * time: 137.64680910110474
     31     1.911752e+00     2.519830e-04
- * time: 165.67767906188965
+ * time: 142.6276981830597
     32     1.911747e+00     2.547967e-04
- * time: 171.1520721912384
+ * time: 147.12312817573547
     33     1.911742e+00     2.426857e-04
- * time: 176.33170819282532
+ * time: 151.88243508338928
     34     1.911740e+00     1.459532e-04
- * time: 179.64506316184998
+ * time: 154.99485802650452
     35     1.911740e+00     6.457605e-05
- * time: 184.80051112174988
+ * time: 159.50809907913208
     36     1.911740e+00     8.348491e-05
- * time: 190.26908016204834
+ * time: 164.31454706192017
     37     1.911740e+00     1.094131e-04
- * time: 195.40190601348877
+ * time: 167.40058302879333
     38     1.911740e+00     6.725396e-05
- * time: 200.6332972049713
+ * time: 171.9369010925293
     39     1.911739e+00     4.535315e-05
- * time: 205.80961298942566
+ * time: 176.54120898246765
     40     1.911739e+00     4.903427e-05
- * time: 209.43279600143433
+ * time: 179.6825680732727
     41     1.911739e+00     2.117621e-05
- * time: 212.85326313972473
+ * time: 182.73309016227722
     42     1.911739e+00     1.882673e-05
- * time: 218.10521602630615
+ * time: 187.4702980518341
     43     1.911739e+00     4.145692e-05
- * time: 223.33306002616882
+ * time: 192.0078639984131
     44     1.911739e+00     1.361010e-05
- * time: 228.4364311695099
+ * time: 196.77168321609497
     45     1.911739e+00     1.027653e-05
- * time: 233.67370009422302
+ * time: 201.26038718223572
     46     1.911739e+00     9.198187e-06
- * time: 238.81393909454346
+ * time: 205.95050501823425
     47     1.911739e+00     8.728487e-06
- * time: 245.34973311424255
+ * time: 208.9270031452179
     48     1.911739e+00     1.861357e-05
- * time: 250.4925730228424
+ * time: 213.4969232082367
     49     1.911739e+00     9.156958e-06
- * time: 255.72872710227966
+ * time: 218.00599098205566
     50     1.911739e+00     5.801522e-06
- * time: 262.2495241165161
+ * time: 224.01059699058533
     51     1.911739e+00     8.191079e-06
- * time: 267.4594051837921
+ * time: 228.39335417747498
     52     1.911739e+00     2.482648e-05
- * time: 272.4834830760956
+ * time: 232.90634202957153
     53     1.911739e+00     1.153704e-05
- * time: 275.99927711486816
+ * time: 235.96542310714722
     54     1.911739e+00     1.202080e-05
- * time: 282.7382161617279
+ * time: 242.1088831424713
     55     1.911739e+00     3.314622e-05
- * time: 287.74253606796265
+ * time: 246.72462105751038
     56     1.911739e+00     2.513013e-05
- * time: 292.8139681816101
+ * time: 251.52983713150024
     57     1.911739e+00     5.010541e-05
- * time: 298.21359300613403
+ * time: 256.0363621711731
     58     1.911739e+00     6.482967e-05
- * time: 303.4211390018463
+ * time: 260.62176418304443
     59     1.911739e+00     5.946999e-05
- * time: 306.7586500644684
+ * time: 263.6422610282898
     60     1.911739e+00     5.787550e-05
- * time: 310.0757520198822
+ * time: 266.7414472103119
     61     1.911739e+00     3.482759e-05
- * time: 316.7484509944916
+ * time: 272.81474804878235
     62     1.911739e+00     2.690491e-05
- * time: 321.9563841819763
+ * time: 277.56138610839844
     63     1.911739e+00     2.098217e-05
- * time: 327.08081817626953
+ * time: 282.0786681175232
     64     1.911739e+00     2.897415e-05
- * time: 330.5537910461426
+ * time: 285.1386811733246
     65     1.911739e+00     2.118373e-05
- * time: 335.6838791370392
+ * time: 289.7323532104492
     66     1.911739e+00     1.970979e-05
- * time: 340.84118914604187
+ * time: 294.3391070365906
     67     1.911739e+00     1.974394e-05
- * time: 350.22899413108826
+ * time: 298.89143800735474
     68     1.911739e+00     1.487772e-05
- * time: 355.16785502433777
+ * time: 303.85102820396423
     69     1.911739e+00     8.324482e-06
- * time: 360.2919361591339
+ * time: 308.4309401512146
     70     1.911739e+00     1.310714e-05
- * time: 365.6313741207123
+ * time: 312.8909180164337
     71     1.911739e+00     1.815090e-05
- * time: 369.2366180419922
+ * time: 315.94744420051575
     72     1.911739e+00     6.773017e-06
- * time: 374.3708350658417
+ * time: 320.69246912002563
     73     1.911739e+00     1.100656e-05
- * time: 381.3087000846863
+ * time: 326.6579360961914
     74     1.911739e+00     4.785707e-06
- * time: 386.5173101425171
+ * time: 331.3017690181732
     75     1.911739e+00     6.467586e-06
- * time: 391.91223311424255
+ * time: 335.81898403167725
     76     1.911739e+00     1.078528e-05
- * time: 395.5688261985779
+ * time: 338.84149718284607
     77     1.911739e+00     7.158033e-06
- * time: 402.3775169849396
+ * time: 344.958603143692
     78     1.911739e+00     7.137198e-06
- * time: 405.82766819000244
+ * time: 348.0287981033325
     79     1.911739e+00     5.545511e-06
- * time: 410.9332501888275
+ * time: 352.6579701900482
     80     1.911739e+00     5.735767e-06
- * time: 417.738272190094
+ * time: 359.08335614204407
     81     1.911739e+00     1.456110e-05
- * time: 422.6874191761017
+ * time: 363.635644197464
     82     1.911739e+00     1.283175e-05
- * time: 427.74769020080566
+ * time: 368.1584870815277
     83     1.911739e+00     1.512244e-05
- * time: 431.26701521873474
+ * time: 371.25144720077515
     84     1.911739e+00     1.155255e-05
- * time: 438.2196800708771
+ * time: 377.3976950645447
     85     1.911739e+00     3.292182e-05
- * time: 445.64190220832825
+ * time: 381.89613604545593
     86     1.911739e+00     1.462115e-05
- * time: 450.7537200450897
+ * time: 386.50486612319946
     87     1.911739e+00     1.889737e-05
- * time: 455.8461740016937
+ * time: 390.90224599838257
     88     1.911739e+00     2.287689e-05
- * time: 460.8989851474762
+ * time: 395.4701211452484
     89     1.911739e+00     7.582069e-06
- * time: 464.16023421287537
+ * time: 398.4499251842499
     90     1.911739e+00     1.302283e-05
- * time: 470.77416014671326
+ * time: 404.6254680156708
     91     1.911739e+00     6.274175e-06
- * time: 474.27811002731323
+ * time: 408.1160261631012
     92     1.911739e+00     1.238338e-05
- * time: 480.93132400512695
+ * time: 414.1410870552063
     93     1.911739e+00     1.182497e-05
- * time: 485.9313521385193
+ * time: 418.73881101608276
     94     1.911739e+00     4.350487e-05
- * time: 491.3501651287079
+ * time: 423.44209814071655
     95     1.911739e+00     1.767209e-05
- * time: 496.4791820049286
+ * time: 427.98808121681213
     96     1.911739e+00     1.496852e-05
- * time: 501.7036051750183
+ * time: 432.5311369895935
     97     1.911739e+00     1.743107e-05
- * time: 506.90969610214233
+ * time: 437.0068600177765
     98     1.911739e+00     2.260254e-05
- * time: 512.3201651573181
+ * time: 441.6067650318146
     99     1.911739e+00     2.705399e-05
- * time: 517.4716041088104
+ * time: 446.1389319896698
    100     1.911738e+00     5.825295e-05
- * time: 520.8616881370544
+ * time: 449.20493602752686
    101     1.911738e+00     3.567225e-05
- * time: 526.0770661830902
+ * time: 453.9040410518646
    102     1.911738e+00     2.426361e-05
- * time: 531.5494141578674
+ * time: 458.4566650390625
    103     1.911738e+00     3.202366e-05
- * time: 536.633563041687
+ * time: 463.24096417427063
    104     1.911738e+00     4.637900e-05
- * time: 539.9215500354767
+ * time: 466.3067979812622
    105     1.911738e+00     6.577275e-05
- * time: 547.2934441566467
+ * time: 472.22767400741577
    106     1.911738e+00     6.505953e-05
- * time: 550.5532641410828
+ * time: 475.189768075943
    107     1.911738e+00     7.336964e-05
- * time: 557.2803699970245
+ * time: 481.419242143631
    108     1.911738e+00     3.921363e-05
- * time: 562.3629732131958
+ * time: 485.9990711212158
    109     1.911738e+00     6.367133e-05
- * time: 567.4678981304169
+ * time: 490.4813811779022
    110     1.911738e+00     2.762206e-05
- * time: 572.844663143158
+ * time: 494.9602470397949
    111     1.911738e+00     2.812728e-05
- * time: 577.8271582126617
+ * time: 499.4497981071472
    112     1.911738e+00     2.540461e-05
- * time: 581.250981092453
+ * time: 502.5565650463104
    113     1.911738e+00     1.217168e-05
- * time: 588.0235660076141
+ * time: 508.7106111049652
    114     1.911738e+00     2.207256e-05
- * time: 597.5619840621948
+ * time: 513.3348300457001
    115     1.911738e+00     1.184097e-05
- * time: 602.9475431442261
+ * time: 518.1709151268005
    116     1.911738e+00     2.154286e-05
- * time: 606.624006986618
+ * time: 521.103600025177
    117     1.911738e+00     1.561053e-05
- * time: 611.7447969913483
+ * time: 525.6928520202637
    118     1.911738e+00     1.886838e-05
- * time: 615.3277461528778
+ * time: 528.7735819816589
    119     1.911738e+00     8.548307e-06
- * time: 622.5258541107178
+ * time: 534.8447041511536
    120     1.911738e+00     1.520716e-05
- * time: 627.6383202075958
-ERROR: LoadError: DimensionMismatch: first array has length 5 which does not match the length of the second, 4.
+ * time: 539.3053681850433
+ERROR: LoadError: TaskFailedException
 Stacktrace:
-  [1] dot(x::SubArray{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}, 1, Matrix{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, Tuple{Base.Slice{Base.OneTo{Int64}}, Int64}, true}, y::Vector{Float64})
-    @ LinearAlgebra /panfs/jay/groups/5/mullinsj/mullinsj/julia-1.9.3/share/julia/stdlib/v1.9/LinearAlgebra/src/generic.jl:881
-  [2] log_type_prob!(logπτ::Vector{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, β::Matrix{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, X::Vector{Float64})
-    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/type_probabilities.jl:9
-  [3] log_likelihood_type(logπτ::Vector{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, β::Matrix{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, em::EM_data, data::likelihood_data, s_inv::CartesianIndices{2, Tuple{Base.OneTo{Int64}, Base.OneTo{Int64}}}, k_inv::CartesianIndices{4, NTuple{4, Base.OneTo{Int64}}})
-    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/type_probabilities.jl:37
-  [4] log_likelihood_type(x::Vector{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}, Kx::Int64, source::String, EM::Vector{EM_data}, MD::Vector{model_data}, p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, data::Vector{likelihood_data}, n_idx::Vector{Vector{Int64}}, J::Int64)
-    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/type_probabilities.jl:28
-  [5] type_obj
-    @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/maximization.jl:30 [inlined]
-  [6] chunk_mode_gradient!(result::DiffResults.MutableDiffResult{1, Float64, Tuple{Vector{Float64}}}, f::var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, x::Vector{Float64}, cfg::ForwardDiff.GradientConfig{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8, Vector{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}})
-    @ ForwardDiff ~/.julia/packages/ForwardDiff/PcZ48/src/gradient.jl:123
-  [7] gradient!
-    @ ~/.julia/packages/ForwardDiff/PcZ48/src/gradient.jl:39 [inlined]
-  [8] gradient!
-    @ ~/.julia/packages/ForwardDiff/PcZ48/src/gradient.jl:35 [inlined]
-  [9] (::NLSolversBase.var"#14#18"{Float64, var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, ForwardDiff.GradientConfig{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8, Vector{ForwardDiff.Dual{ForwardDiff.Tag{var"#type_obj#33"{NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{model_data}, Vector{likelihood_data}, Vector{Vector{Int64}}, Int64, Int64, String}, Float64}, Float64, 8}}}})(out::Vector{Float64}, x::Vector{Float64})
-    @ NLSolversBase ~/.julia/packages/NLSolversBase/kavn7/src/objective_types/oncedifferentiable.jl:70
- [10] value_gradient!!(obj::OnceDifferentiable{Float64, Vector{Float64}, Vector{Float64}}, x::Vector{Float64})
-    @ NLSolversBase ~/.julia/packages/NLSolversBase/kavn7/src/interface.jl:82
- [11] initial_state(method::LBFGS{Nothing, LineSearches.InitialStatic{Float64}, LineSearches.HagerZhang{Float64, Base.RefValue{Bool}}, Optim.var"#19#21"}, options::Optim.Options{Float64, Nothing}, d::OnceDifferentiable{Float64, Vector{Float64}, Vector{Float64}}, initial_x::Vector{Float64})
-    @ Optim ~/.julia/packages/Optim/Adqv3/src/multivariate/solvers/first_order/l_bfgs.jl:164
- [12] optimize
-    @ ~/.julia/packages/Optim/Adqv3/src/multivariate/optimize/optimize.jl:36 [inlined]
- [13] #optimize#89
-    @ ~/.julia/packages/Optim/Adqv3/src/multivariate/optimize/interface.jl:143 [inlined]
- [14] optimize
-    @ ~/.julia/packages/Optim/Adqv3/src/multivariate/optimize/interface.jl:139 [inlined]
- [15] mstep_types!(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::Vector{model_data}, data::Vector{likelihood_data}, n_idx::Vector{Vector{Int64}}, J::Int64)
-    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/maximization.jl:31
- [16] expectation_maximization(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::Vector{model_data}, n_idx::Vector{Vector{Int64}}; max_iter::Int64, save::Bool, mstep_iter::Int64)
-    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/EM.jl:21
- [17] top-level scope
+  [1] wait
+    @ ./task.jl:349 [inlined]
+  [2] fetch
+    @ ./task.jl:369 [inlined]
+  [3] _broadcast_getindex_evalf
+    @ ./broadcast.jl:683 [inlined]
+  [4] _broadcast_getindex
+    @ ./broadcast.jl:656 [inlined]
+  [5] getindex
+    @ ./broadcast.jl:610 [inlined]
+  [6] copy
+    @ ./broadcast.jl:912 [inlined]
+  [7] materialize
+    @ ./broadcast.jl:873 [inlined]
+  [8] basic_model_fit(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::Vector{model_data}, data::Vector{likelihood_data}, n_idx::Vector{Vector{Int64}}, fname::String, write::Bool)
+    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/statistics.jl:105
+  [9] basic_model_fit(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::Vector{model_data}, data::Vector{likelihood_data}, n_idx::Vector{Vector{Int64}}, fname::String)
+    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/statistics.jl:101
+ [10] expectation_maximization(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::Vector{model_data}, n_idx::Vector{Vector{Int64}}; max_iter::Int64, save::Bool, mstep_iter::Int64)
+    @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/EM.jl:35
+ [11] top-level scope
     @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_childsample_K4.jl:31
+
+    nested task error: BoundsError: attempt to access 5-element Vector{Float64} at index [6]
+    Stacktrace:
+     [1] getindex
+       @ ./essentials.jl:13 [inlined]
+     [2] model_stats(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, logP::Array{Float64, 3}, em::EM_data, md::model_data, data::likelihood_data)
+       @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/statistics.jl:156
+     [3] basic_model_fit_chunk(p::NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, EM::Vector{EM_data}, MD::SubArray{model_data, 1, Vector{model_data}, Tuple{UnitRange{Int64}}, true}, data::Vector{likelihood_data}, n_idx::Vector{Vector{Int64}})
+       @ Main /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/src/estimation/statistics.jl:122
+     [4] (::var"#38#40"{SubArray{model_data, 1, Vector{model_data}, Tuple{UnitRange{Int64}}, true}, NamedTuple{(:Kτ, :Kη, :β, :wq, :αC, :αθ, :αH, :αA, :αS, :αF, :αR, :αP, :σ, :σ_W, :σ_PF, :δ, :λ₀, :λ₁, :μₒ, :σₒ, :ση, :βΓ, :βw, :βf, :βτ, :πη, :ηgrid, :Fη, :πₛ, :nests), Tuple{Int64, Int64, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Vector{Float64}, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Float64, Float64, Float64, Vector{Float64}, Vector{Float64}, Vector{Float64}, Matrix{Float64}, Array{Float64, 4}, LinRange{Float64, Int64}, Array{Float64, 3}, Matrix{Float64}, NamedTuple{(:B, :C), Tuple{Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}, Tuple{Vector{Vector{Int64}}, Vector{Vector{Int64}}, Vector{Vector{Int64}}}}}}}, Vector{EM_data}, Vector{likelihood_data}, Vector{Vector{Int64}}})()
+       @ Main ./threadingconstructs.jl:410
 in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_childsample_K4.jl:31
+current likelihood: -151176.3051385486
+current error: 4.062317104411827

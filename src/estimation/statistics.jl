@@ -151,9 +151,9 @@ function model_stats(p,logP,em::EM_data,md::model_data,data::likelihood_data)
     end
     keep = .!data.choice_missing
     if md.source=="MFIP"
-        app_status = 3 - 2*data.X_type[6] - data.X_type[7]
+        app_status = 3 - 2*data.X_type[5] - data.X_type[6]
     elseif md.source=="FTP" || md.source=="CTJF"
-        app_status = data.X_type[6]
+        app_status = data.X_type[5]
     else
         app_status = 0
     end
