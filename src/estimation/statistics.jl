@@ -69,7 +69,7 @@ function job_offer(s_idx,s_inv,k_inv)
     return kη>1
 end
 
-function log_full(s_idx,t,logP,s_inv,k_inv,pars,md::model_data)
+function log_full(s_idx,t,s_inv,k_inv,pars,md::model_data)
     j,k = Tuple(s_inv[s_idx])
     _,kη,_,kτ = Tuple(k_inv[k])
     S,A,P,H,F = j_inv(j)
@@ -147,7 +147,7 @@ function model_stats(p,logP,em::EM_data,md::model_data,data::likelihood_data)
         H[t] = em_mean(em.q_s,t,s->f_work(s,t,logP,s_inv,k_inv))
         A[t] = em_mean(em.q_s,t,s->f_afdc(s,t,logP,s_inv,k_inv))
         E[t] = em_mean(em.q_s,t,s->f_earn(s,t,logP,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
-        l_full[t] = em_mean(em.q_s,t,s->log_full(s,t,logP,s_inv,k_inv,p,md))
+        l_full[t] = em_mean(em.q_s,t,s->log_full(s,t,s_inv,k_inv,p,md))
     end
     keep = .!data.choice_missing
     if md.source=="MFIP"

@@ -49,7 +49,7 @@ function production_pars(x,num_X)
     β = reshape(x[9:(8+num_X*2)],num_X,2))
 end
 
-function get_controls(p::pars,md::model_data,em::EM_data,data::likelihood_data)
+function get_controls(p,md::model_data,em::EM_data,data::likelihood_data)
     # control for: location, type, in MFIP control for application status and county.
     # location * type
     # (MFIP*app_status==2, MFIP*app_status==3) * county==anoka,
@@ -66,21 +66,21 @@ function get_controls(p::pars,md::model_data,em::EM_data,data::likelihood_data)
         end
     end
     if md.source=="MFIP"
-        push!(X,data.X_type[6:7]...)
-        push!(X,data.X_type[8:9]...)
-        push!(X,kron(data.X_type[6:7],data.X_type[8:9])...)
+        push!(X,data.X_type[5:6]...)
+        push!(X,data.X_type[7:8]...)
+        push!(X,kron(data.X_type[5:6],data.X_type[7:8])...)
     else
         push!(X,fill(0.,8)...)
     end
     return X
 end
-function get_instruments(p::pars,md::model_data,em::EM_data,data::likelihood_data)
+function get_instruments(p,md::model_data,em::EM_data,data::likelihood_data)
     X = get_controls(p,md,em,data)
     Z = X[1:(3*p.Kτ)] .* (md.arm==1)
     push!(Z,(X[(2p.Kτ+1):(3p.Kτ)] .* (md.arm==2))...) #<- extra dummy for MFIP
     return [X;Z]
 end
-function get_controls_simple(p::pars,md::model_data,em::EM_data,data::likelihood_data)
+function get_controls_simple(p,md::model_data,em::EM_data,data::likelihood_data)
     # control for type only, see how it all looks
     sz = (2,p.Kη,md.Kω,p.Kτ)
     k_inv = CartesianIndices(sz)
@@ -102,7 +102,7 @@ function k_assign(em::EM_data,Kτ,s_inv,k_inv)
     return argmax(pτ)
 end
 
-function production_data(p::pars,em::EM_data,md::model_data,m::ddc_model,data::likelihood_data)
+function production_data(p,em::EM_data,md::model_data,data::likelihood_data)
     X = get_controls(p,md,em,data)
     #X = get_controls_simple(p,md,em,data) #<- do this instead? what happens?
     Z = get_instruments(p,md,em,data)
@@ -115,13 +115,19 @@ function production_data(p::pars,em::EM_data,md::model_data,m::ddc_model,data::l
     H = zeros(T)
     F = zeros(T)
 
+    sz = (2,p.Kη,md.Kω,p.Kτ)
+    k_inv = CartesianIndices(sz)
+    K = prod(sz)
+    s_inv = CartesianIndices((9,K))
+
     # adding some alternative instruments to see what happens
     # d = 0.95
     # Z = zeros(4)
     for t in 1:T
-        logY[t] = em_mean(em.q_s,t,m,p,md,log_full)
-        H[t] = em_mean(em.q_s,t,m,p,md,unpaid_care)
-        F[t] = em_mean(em.q_s,t,m,p,md,paid_care)
+
+        logY[t] = em_mean(em.q_s,t,s->log_full(s,t,s_inv,k_inv,p,md))
+        H[t] = em_mean(em.q_s,t,s->unpaid_care(s,s_inv))
+        F[t] = em_mean(em.q_s,t,s->paid_care(s,s_inv))
         # decay = d^(T-t)
         # Z[1] += decay * logY[t]
         # Z[2] += decay * H[t]
@@ -147,20 +153,18 @@ function predict_skills(pars,data) #<- data is a named tuple?
     return thB,thC
 end
 
-
-function production_data(M::Vector{ddc_model},panel::DataFrame,p::pars)
-    update!(p,M,(1,8,9))
+function production_data(panel::DataFrame,p)
+    (;vj,V,logP) = get_model(p)
     logπτ = zeros(p.Kτ)
     est_data = []
     for d in groupby(panel,[:source,:id])
         md = model_data(d)
-        m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-        solve!(M[m_idx],md,p)
         dat = likelihood_data(d)
-        em = get_EM_data(p,M[m_idx],md,dat)
-        @views update!(logπτ,em,M[m_idx],p,md,dat)
+        em = get_EM_data(p,md,dat)
+        solve!(logP,V,vj,p,md)
+        update!(logπτ,em,logP,p,md,dat)
         forward_back!(em)
-        ed = production_data(p,em,md,M[m_idx],dat)
+        ed = production_data(p,em,md,dat)
         push!(est_data,ed)
     end
     return est_data

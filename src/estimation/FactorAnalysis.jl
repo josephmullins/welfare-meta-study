@@ -30,25 +30,30 @@ end
 
 function measurement_system(x)
     Λ = zeros(eltype(x),8,2)
-    Σ = zeros(eltype(x),2,2,3)
+    Σ = zeros(eltype(x),2,2,3) #<- do we have to do this? I don't think so?
     # update:
     # site ordering: MFIP,FTP,CTJF
 
     # assumed ordering: BPIE,BPN,PBS,ENGAGE,REPEAT,SUSPEND,ACHIEVE,TCH_AVG (potential issues with age in the last case!)
     # normalizations:
-    Λ[1,1] = -1.
-    Λ[7,2] = 1.
-    @views Λ[2:6,1] = x[1:5]
-    @views Λ[[4,5,6,8],2] = x[6:9]
+    @views Λ[1:6,1] = x[1:6]
+    @views Λ[4:8,2] = x[7:11]
+
+    # set covariance in Minnesota
+    Σ[1,1,1] = 1. 
+    Σ[2,2,1] = 1.
+    c = logit(x[12]) #<- this sign restriction is also a normalization with the sign of the factor loadings
+    Σ[1,2,1] = c 
+    Σ[2,1,1] = c
+
     dσ = zeros(eltype(x),2,2)
-    for l in 1:3
-        dσ[[1,2,4]] .= x[(9+(l-1)*3+1):(9+(l*3))]
-        @views Σ[:,:,l] = dσ * dσ'
+    for l in 1:2
+        dσ[[1,2,4]] .= x[(12+(l-1)*3+1):(12+(l*3))]
+        @views Σ[:,:,l+1] = dσ * dσ'
     end
     D = diagm(x[19:26].^2)
     return Λ,Σ,D
 end
-
 
 # other arguments here are the weighting matrix and the data
 function FA_objective(x,v_data,wght)
@@ -96,6 +101,7 @@ function factor_analysis(data::DataFrame,columns,bootseed = 1823,bootsamples = 5
     wght = get_weighting_matrix(data,bootseed,bootsamples)
 
     x0 = ones(26)
+    #x0[1:3] .= -1. 
     res = Optim.optimize(x->FA_objective(x,v_data,wght),x0,LBFGS(),autodiff=:forward)
     est = res.minimizer
     Xb = zeros(26,bootsamples)
