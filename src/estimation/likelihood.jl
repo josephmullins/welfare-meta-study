@@ -1,21 +1,23 @@
 # define the data that we're going to use:
 using .Threads, Random
 
-function log_likelihood_threaded(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+function log_likelihood_threaded(p,R::DataType,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn log_likelihood_chunk(p,chunk,EM,data,n_idx)
+        Threads.@spawn log_likelihood_chunk(p,R,chunk,EM,data,n_idx)
     end
     ll = fetch.(tasks)
     return sum(ll)
 end
 function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p)
-    return log_likelihood_threaded(p,EM,MD,data,n_idx)
+    R = eltype(x)
+    return log_likelihood_threaded(p,R,EM,MD,data,n_idx)
 end
 function log_likelihood_threaded(x,p,fname::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p,fname,ft)
-    return log_likelihood_threaded(p,EM,MD,data,n_idx)
+    R = eltype(x)
+    return log_likelihood_threaded(p,R,EM,MD,data,n_idx)
 end
 
 
@@ -42,11 +44,10 @@ function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::V
     return LL
 end
 
-function log_likelihood_chunk(p,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
+function log_likelihood_chunk(p,R::DataType,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
     # setup data:
     T = 18*4
     K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
-    R = eltype(p.αH)
     logP = zeros(R,9,K,T)
     V = zeros(R,K,2)
     vj = zeros(R,J)
