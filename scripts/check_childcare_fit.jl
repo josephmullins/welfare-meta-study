@@ -32,9 +32,11 @@ shuffle!(MD)
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
+break
+
 block = [:αH,:αF]
 ft = [1,1]
-p = mstep_major_block(p,block,ft,EM,MD,n_idx,100)
+p2 = mstep_major_block(p,block,ft,EM,MD,n_idx,100)
 
 block = [:αH,:αF,:σ]
 ft = [1,1,2]
