@@ -13,7 +13,7 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         # (1) most parameters here:
         # do the M-step for 9 separate blocks:
         println(" -- doing the blocked step --- ")
-        p = mstep_blocks(p,EM,MD,n_idx,20)
+        p = mstep_blocks(p,EM,MD,n_idx,10)
         println(" -- now doing everything simulataneously --- ")
         p = mstep_major(p,EM,MD,n_idx,mstep_iter)
         # (1.1): for robustness, a few steps of just preferences:

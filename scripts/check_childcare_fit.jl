@@ -32,11 +32,19 @@ shuffle!(MD)
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
+chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
+chunks = Iterators.partition(MD,length(MD) ÷ 2)
+R = eltype(p.αH)
+tasks = map(chunks) do chunk
+    Threads.@spawn log_likelihood_chunk(p,R,chunk,EM,data,n_idx)
+end
+ll = fetch.(tasks)
+
 break
 
 block = [:αH,:αF]
 ft = [1,1]
-p2 = mstep_major_block(p,block,ft,EM,MD,n_idx,100)
+p2 = mstep_major_block(p,block,ft,EM,MD,n_idx,10)
 
 block = [:αH,:αF,:σ]
 ft = [1,1,2]

@@ -113,7 +113,7 @@ est2 = (δI = mean(group(chain_1,:δI)).nt.mean,
 )
 V = get_variance(th,X,Z,est2) / N
 
-chain_2 = sample(gmm_likelihood(zy,zx,V),NUTS(),1000)
+chain_2 = sample(gmm_likelihood(zy,zx,V),NUTS(),2000)
 
 chain_data = chain_2.value.data[:,1:8,1]
 names = [:Ib,:Ic,:Db,:Dc,:gNb,:gNc,:gFb,:gFc]

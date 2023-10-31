@@ -54,7 +54,6 @@ function log_likelihood_chunk(p,R::DataType,MD,EM::Vector{EM_data},data::Vector{
     ll = 0.
     for md in MD
         solve!(logP,V,vj,p,md)
-        ll = 0.
         for n ∈ n_idx[md.case_idx]
             if data[n].use
                 ll += log_likelihood(EM[n],md,p,logP,data[n])
