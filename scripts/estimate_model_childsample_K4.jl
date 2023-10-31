@@ -28,18 +28,7 @@ Random.seed!(2020)
 shuffle!(MD)
 
 #p = expectation_maximization(p,EM,MD,n_idx; max_iter = 4, mstep_iter = 20,save = true)
-p = expectation_maximization(p,EM,MD,n_idx;max_iter = 1,mstep_iter = 2,save = true)
-
-md = MD[1]
-n = n_idx[md.case_idx][1]
-em = EM[n]
-J = 9 #<- pass as parameter instead?
-k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-K = prod(size(k_inv))
-s_inv2 = CartesianIndices((J,K))
-log_likelihood_transitions(em,p,k_inv,s_inv2)
-prices_log_like(em,p,md,data[n],J,s_inv2,k_inv)
-
+p = expectation_maximization(p,EM,MD,n_idx;max_iter = 1000,mstep_iter = 120,save = true)
 
 basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample_K4.csv")
 savepars_vec(p,"est_childsample_K4")
