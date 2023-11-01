@@ -1,7 +1,6 @@
 # a script to check the model's unconditional fit of the data
 include("../src/model.jl")
 include("../src/estimation.jl")
-include("../src/estimation/statistics_exante.jl") #<- overwrites some of the functions in statistics.jl
 
 Kτ = 4 #
 Kη = 5
@@ -31,6 +30,6 @@ shuffle!(MD)
 # get the initial conditions this way
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
-d = basic_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
+d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
 
 #write everything to file here.
