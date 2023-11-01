@@ -60,7 +60,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 jn,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
 
-                @views ll = logP[j,kn,t+t0+1]
+                ll = logP[jn,kn,t+t0+1]
                 if data.wage_valid[t+1]
                     if kη_next==1
                         @show md.case_idx, t, sn_idx

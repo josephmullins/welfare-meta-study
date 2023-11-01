@@ -1,4 +1,37 @@
-function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx;max_iter = 1000,save = false,mstep_iter = 20)
+include("../src/model.jl")
+include("../src/estimation.jl")
+
+Kτ = 4 #
+Kη = 5
+p = pars(Kτ,Kη)
+p = update_transitions(p)
+nests = get_nests()
+p = (;p...,nests)
+
+p = loadpars_vec(p,"est_childsample_K4")
+
+x_est = pars_inv_full(p)
+
+scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
+panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
+#select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
+
+# we have to split the panel and then put it back together again
+sipp = @subset panel :source.=="SIPP"
+panel = @chain scores begin
+    @select :id :source
+    innerjoin(panel,on=[:id,:source])
+    vcat(sipp)
+end
+
+MD,EM,data,n_idx = estimation_setup(panel);
+
+Random.seed!(2020)
+shuffle!(MD)
+
+forward_back_threaded!(p,EM,MD,data,n_idx)
+
+function expectation_maximization_nomax(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx;max_iter = 1000)
     J = 9
     err = Inf
     iter = 0
@@ -6,14 +39,14 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
 
     while err>1e-8 && iter<max_iter
         println(" ===== EM-algorithm: iteration $iter =====")
-        x0 = pars_inv(p) #<- use these parameters to measure convergence
+        x0 = copy(p.πη) #<- use these parameters to measure convergence
         # E-step:
         forward_back_threaded!(p,EM,MD,data,n_idx)
         # M-step in 4 parts:
         # (1) most parameters here:
         # do the M-step for 9 separate blocks:
         #println(" -- doing the blocked step --- ")
-        p = mstep_blocks(p,EM,MD,n_idx,20)
+        #p = mstep_blocks(p,EM,MD,n_idx,20)
         #println(" -- now doing everything simulataneously --- ")
         #p = mstep_major(p,EM,MD,n_idx,mstep_iter)
         # (1.1): for robustness, a few steps of just preferences:
@@ -29,30 +62,16 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         p = mstep_σ(p,EM,MD,data,n_idx,J)
 
         ll = log_likelihood(EM,MD,data,n_idx)
-        x1 = pars_inv(p)
+        x1 = p.πη
         err = min(ll - ll0,norm(x1 .- x0,Inf)) # convergence if likelihood starts to decrease
         ll0 = ll #<- update likelihood of current ests
         iter += 1 
         println("current likelihood: $ll")
         println("current error: $err")
-        if save & mod(iter,1)==0
-            d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
-            savepars_vec(p,"current_est")
-        end
     end
     return p
 end
 
+expectation_maximization_nomax(p,EM,MD,n_idx)
 
-# this function calculates the full log-likelihood for the subset of cases in MD
-function log_likelihood(EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
-    ll = 0.
-    for md in MD
-        for n in n_idx[md.case_idx]
-            if data[n].use
-                ll += log(sum(EM[n].α[:,1] .* EM[n].β[:,1]))
-            end
-        end
-    end
-    return ll
-end
+# this converges. The issue is with the m-step, maybe it goes down very marginally or something?
