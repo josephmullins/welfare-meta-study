@@ -70,7 +70,7 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
     s_inv = CartesianIndices((J,K))
 
     ll = 0.
-    ll += log_likelihood_choices(em,logP,s_inv)
+    ll += log_likelihood_choices(em,data.t0,logP,s_inv)
     ll += log_likelihood_transitions(em,p,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
     if md.source=="SIPP"
@@ -129,14 +129,14 @@ end
 # - here the choices and the states are partially unobserved
 # UPDATE THESE.
 # have only parameters
-function log_likelihood_choices(em::EM_data,logP,s_inv)
+function log_likelihood_choices(em::EM_data,t0,logP,s_inv)
     ll = 0.
     for t in axes(em.q_s,2)
         for s in nzrange(em.q_s,t)
             s_idx = em.q_s.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             wght = em.q_s.nzval[s]
-            ll += wght * logP[j,k,t]
+            ll += wght * logP[j,k,t+t0]
         end
     end
     return ll
