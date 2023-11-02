@@ -57,6 +57,7 @@ struct model_data #<- should this contain everything!?!?
     age0::Int64 # <- mother's age at start of sample
     ageyng::Int64 #<- age of youngest kid
     source::String #<- what's the location
+    budget::String #<- something separate from source, this is useful for modeling counterfactual budgets
     arm::Int64 #<- treatment arm in the location
     loc_ind::Int64 #<- indexes for the "location" (source x arm combo)
     SOI::Int64 #<- state SOI

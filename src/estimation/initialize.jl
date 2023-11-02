@@ -109,7 +109,7 @@ function model_data(df)
         type_block = 16:23
     end
 
-    return model_data(df.case_idx[1],df.year[1],df.Q[1],T,df.age[1],df.ageyng[1],source,arm,loc_ind,df.SOI[1],df.numkids[1],
+    return model_data(df.case_idx[1],df.year[1],df.Q[1],T,df.age[1],df.ageyng[1],source,source,arm,loc_ind,df.SOI[1],df.numkids[1],
     df.unemp,df.cpi,R,Kω,TL,type_block)
 end
 
