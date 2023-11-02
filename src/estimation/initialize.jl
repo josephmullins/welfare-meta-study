@@ -211,12 +211,13 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
                     s = (k-1)*J + j
                     α[s,1] = 1 / (Kη*Kτ)
                 else
+                    # childcare always missing in the first period
                     j1 = j_idx(FS,AFDC,EMP,0)
-                    j2 = j_idx(FS,AFDC,EMP,1)
+                    #j2 = j_idx(FS,AFDC,EMP,1)
                     s1 = (k-1)*J + j1
-                    s2 = (k-1)*J + j2
+                    #s2 = (k-1)*J + j2
                     α[s1,1] = 0.5 / (Kη*Kτ)
-                    α[s2,1] = 0.5 / (Kη*Kτ)
+                    #α[s2,1] = 0.5 / (Kη*Kτ)
                 end
             else
                 for j in 1:J
@@ -257,14 +258,15 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
                                     P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
                                     α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
                                 else
+                                    # we will integrate out in this case
                                     jn1 = j_idx(FS,AFDC,EMP,0)
-                                    jn2 = j_idx(FS,AFDC,EMP,1)
+                                    #jn2 = j_idx(FS,AFDC,EMP,1)
                                     sn1 = (kn_idx-1)*J+jn1
                                     P[t][sn1,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
                                     α[sn1,t+1] = 1. #p_y[jn,k_idx,t+1]
-                                    sn2 = (kn_idx-1)*J+jn2
-                                    P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                                    α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                    #sn2 = (kn_idx-1)*J+jn2
+                                    #P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    #α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
                                 end
                             end
                         else
@@ -287,3 +289,17 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
     
     return EM_data(α,β,q_s,q_ss,P)
 end
+
+# for n in eachindex(EM)
+#     em = EM[n]
+#     d = data[n]
+#     T = size(em.q_s,2)
+#     for t in 1:T-1
+#         for s in nzrange(em.α,t)
+#             s_idx = em.α.rowval[s]
+#             for s2 in nzrange(em.P[t],s_idx)
+#                 s2_idx = P[t].rowvals[s2]
+#                 j,k = Tuple(s_inv[s2_idx])
+                
+
+            

@@ -43,7 +43,8 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
         t = 1
         s_idx = EM.α.rowval[s]
         j,k = Tuple(s_inv[s_idx])
-        @views ll = logP[j,k,t+t0]
+        _,_,_,H,_ = j_inv(j)
+        ll = choice_probability(j,k,t,data,logP)
         kA,kη,_,kτ = Tuple(k_inv[k])
         if data.wage_valid[t]
             ll += wage_log_like(data.logW[t],p,md,kτ,kη,t)
@@ -60,7 +61,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 jn,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
 
-                ll = logP[jn,kn,t+t0+1]
+                ll = choice_probability(jn,kn,t+1,data,logP)
                 if data.wage_valid[t+1]
                     if kη_next==1
                         @show md.case_idx, t, sn_idx

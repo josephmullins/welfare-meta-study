@@ -70,7 +70,7 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
     s_inv = CartesianIndices((J,K))
 
     ll = 0.
-    ll += log_likelihood_choices(em,logP,s_inv)
+    ll += log_likelihood_choices(em,data,logP,s_inv)
     ll += log_likelihood_transitions(em,p,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
     if md.source=="SIPP"
@@ -129,14 +129,24 @@ end
 # - here the choices and the states are partially unobserved
 # UPDATE THESE.
 # have only parameters
-function log_likelihood_choices(em::EM_data,logP,s_inv)
+# this function assumes that t is the same for logP and for data (not true in setup)
+function choice_probability(j,k,t,data::likelihood_data,logP)
+    _,_,_,H,_ = j_inv(j)
+    tᵒ = t+data.t0
+    if data.chcare_valid[t] || H==0 || data.choice_missing[t]
+        ll = logP[j,k,tᵒ]
+    else
+        ll = log(exp(logP[j,k,tᵒ])+exp(logP[j+1,k,tᵒ]))
+    end
+end
+function log_likelihood_choices(em::EM_data,data::likelihood_data,logP,s_inv)
     ll = 0.
     for t in axes(em.q_s,2)
         for s in nzrange(em.q_s,t)
             s_idx = em.q_s.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             wght = em.q_s.nzval[s]
-            ll += wght * logP[j,k,t]
+            ll += wght * choice_probability(j,k,t,data,logP)
         end
     end
     return ll
