@@ -2,14 +2,14 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 4 #
-Kη = 5
+Kτ = 5 #
+Kη = 4
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"est_childsample_K4")
+p = loadpars_vec(p,"est_childsample_K5")
 
 x_est = pars_inv_full(p)
 
@@ -32,7 +32,6 @@ shuffle!(MD)
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
-break
 
 # a couple of functions for getting the childcare fit.
 function childcare_fit(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
