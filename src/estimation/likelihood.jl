@@ -53,7 +53,7 @@ function log_likelihood_chunk(p,R::DataType,MD,EM::Vector{EM_data},data::Vector{
     vj = zeros(R,J)
     ll = 0.
     for md in MD
-        solve!(logP,V,vj,p,md)
+        #solve!(logP,V,vj,p,md)
         for n ∈ n_idx[md.case_idx]
             if data[n].use
                 ll += log_likelihood(EM[n],md,p,logP,data[n])
@@ -70,7 +70,7 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
     s_inv = CartesianIndices((J,K))
 
     ll = 0.
-    ll += log_likelihood_choices(em,data.t0,logP,s_inv)
+    #ll += log_likelihood_choices(em,data.t0,logP,s_inv)
     ll += log_likelihood_transitions(em,p,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
     if md.source=="SIPP"

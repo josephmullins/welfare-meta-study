@@ -17,36 +17,9 @@ function mstep_major_block(p,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector
 end
 
 function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_iter = 40)
-    block = [:αH,:βw,:ση]
-    ft = [1,1,2]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:αF,:βf]
-    ft = [1,1]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    block = [:λ₀,:λ₁,:δ,:μₒ,:σₒ]
-    ft = [3,3,3,1,2]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    block = [:αA,:αS,:αH,:σ]
-    ft = [1,1,1,2]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    # block = [:αA,:αH,:σ]
-    # ft = [1,1,2]
-    # p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    block = [:αA,:αH,:αR,:αP,:σ]
-    ft = [1,1,1,1,2]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    block = [:wq,:β,:σ]
-    ft = [2,3,2]
-    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
-
-    block = [:αθ,:βΓ]
-    ft = [2,1]
+    block = [:βw,:βf,:ση,:λ₀,:λ₁,:δ,:μₒ,:σₒ]
+    ft = [1,1,2,3,3,3,1,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     return p
