@@ -43,10 +43,10 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
         t = 1
         s_idx = EM.α.rowval[s]
         j,k = Tuple(s_inv[s_idx])
-        @views ll = logP[j,k,t+t0]
+        ll = logP[j,k,t+t0]
         kA,kη,_,kτ = Tuple(k_inv[k])
         if data.wage_valid[t]
-            ll += wage_log_like(data.logW[t],p,md,kτ,kη,t)
+            ll += wage_log_like(data.logW[t],p,md,kτ,kη,t+t0)
         end
         EM.α.nzval[s] = initial_prob(kA,kη,kτ,logπτ,p,md) * exp(ll)
     end
@@ -65,10 +65,10 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                     if kη_next==1
                         @show md.case_idx, t, sn_idx
                     end
-                    ll += wage_log_like(data.logW[t+1],p,md,kτ,kη_next,t)
+                    ll += wage_log_like(data.logW[t+1],p,md,kτ,kη_next,t+t0+1)
                 end
                 if data.chcare_valid[t+1] && data.chcare[t+1]>0
-                    ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t)
+                    ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t+t0+1)
                 end
                 fkk = p.Fη[kη_next, kη, kτ]
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
