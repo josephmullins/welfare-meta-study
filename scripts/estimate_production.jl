@@ -70,7 +70,7 @@ V = get_variance(th,X,Z,pd) / N
     num_Z,num_X = size(zx)
     δI ~ filldist(Uniform(0,3), 2) #[Uniform(0,3) for i in 1:2]
     δθ ~ filldist(Uniform(0.8,1.),2)
-    g ~ filldist(Uniform(-10,10), 2, 2) #[Uniform(-2,2) for i in 1:2, j in 1:2]
+    g ~ filldist(Uniform(-2,2), 2, 2) #[Uniform(-2,2) for i in 1:2, j in 1:2]
     β ~ filldist(Turing.Flat(),num_X - 48,2) #[Flat() for i in 1:num_X]
     zxb = zx * get_β(;δI,g,δθ,β)
     zy ~ MvNormal(reshape(zxb,2num_Z), V)
@@ -90,9 +90,10 @@ chain = sample(gmm_likelihood(zy,zx,V),NUTS(),1000)
 chain_data = chain.value.data[:,1:8,1]
 names = [:Ib,:Ic,:Db,:Dc,:gNb,:gNc,:gFb,:gFc]
 d = DataFrame(Dict((names[i],chain_data[:,i]) for i in 1:8))
-CSV.write("../output/prod_ests_chain.csv",d)
+CSV.write("output/prod_ests_chain.csv",d)
 
 # try something else here
+break
 
 @model function gmm_likelihood(zy,zx,V)
     num_Z,num_X = size(zx)
