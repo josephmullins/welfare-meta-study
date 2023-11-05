@@ -103,8 +103,13 @@ end
 function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
     ll = 0.
     for md in MD
+        k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+        K = prod(size(k_inv))
+        s_inv = CartesianIndices((J,K))
+    
         for n in n_idx[md.case_idx]
             em = EM[n]
+            t0 = data[n].t0
             for t in eachindex(data[n].logW)    
                 if data[n].chcare_valid[t] && data[n].pay_care[t]
                     for s in nzrange(em.q_s,t)

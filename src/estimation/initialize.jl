@@ -119,7 +119,7 @@ function likelihood_data(df)
     t0 = df.t0[1] 
     T = size(df,1)
     pay_care_valid = .!ismissing.(df.pay_care)
-    pay_care = coalesce.(df.chcare,false)
+    pay_care = coalesce.(df.pay_care,false)
     chcare_valid = .!ismissing.(df.chcare)
     chcare = coalesce.(df.chcare,-1.)
     log_chcare = log.(coalesce.(max.(df.chcare,0.),0.))

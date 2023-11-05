@@ -143,8 +143,9 @@ end
 function mstep_chcare(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     fname = [:μ_PF,:σ_PF2]
     ft = [1,2]
-    objective(x) = - chcare_log_like(pars(x,p,fname,ft),EM,MD,data,n_idx)
-    res = Optim.optimize(type_obj,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
+    objective(x) = - chcare_log_like(pars(x,p,fname,ft),MD,EM,data,n_idx)
+    x0 = pars_inv(p,fname,ft)
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
     p = pars(res.minimizer,p,fname,ft)
     return p
 end
