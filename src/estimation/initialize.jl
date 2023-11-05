@@ -118,6 +118,8 @@ function likelihood_data(df)
     case_idx = df.case_idx[1]
     t0 = df.t0[1] 
     T = size(df,1)
+    pay_care_valid = .!ismissing.(df.pay_care)
+    pay_care = coalesce.(df.chcare,false)
     chcare_valid = .!ismissing.(df.chcare)
     chcare = coalesce.(df.chcare,-1.)
     log_chcare = log.(coalesce.(max.(df.chcare,0.),0.))
@@ -127,7 +129,7 @@ function likelihood_data(df)
     AFDC = coalesce.(df.AFDC,-1)
     EMP = coalesce.(df.EMP,-1)
     FS = coalesce.(df.FS,-1)
-    FC = coalesce.(df.chcare.>0,-1)
+    FC = coalesce.(df.pay_care,-1)
     X_type = []
     source = df.source[1]
     Kx = 4 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
@@ -158,7 +160,7 @@ function likelihood_data(df)
         # - similarly subtract one from T
         kA = AFDC[1]
         return likelihood_data(
-        case_idx,t0+1,T-1,chcare_valid[2:end],chcare[2:end],log_chcare[2:end],wage_valid[2:end],logW[2:end],
+        case_idx,t0+1,T-1,pay_care_valid[2:end],pay_care[2:end],chcare_valid[2:end],chcare[2:end],log_chcare[2:end],wage_valid[2:end],logW[2:end],
         choice_missing[2:end],AFDC[2:end],EMP[2:end],FS[2:end],FC[2:end],
         df.less_hs[1],df.hs[1],df.some_coll[1],df.coll[1],X_type,kA,true
         )
@@ -169,7 +171,7 @@ function likelihood_data(df)
             kA = df.app_status[1]==2
         end
         return likelihood_data(
-        case_idx,t0,T,chcare_valid,chcare,log_chcare,wage_valid,logW,
+        case_idx,t0,T,pay_care_valid,pay_care,chcare_valid,chcare,log_chcare,wage_valid,logW,
         choice_missing,AFDC,EMP,FS,FC,
         df.less_hs[1],df.hs[1],df.some_coll[1],df.coll[1],X_type,AFDC[1],use
         )
@@ -250,7 +252,7 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
                                 P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
                                 α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
                             else
-                                if data.chcare_valid[t+1]
+                                if data.pay_care_valid[t+1]
                                     FC = data.FC[t+1]
                                     jn = j_idx(FS,AFDC,EMP,FC)
                                     sn = (kn_idx-1)*J+jn

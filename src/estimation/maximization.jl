@@ -121,7 +121,7 @@ function mstep_σ(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{like
                             end
                         end
                     end
-                    if data[n].log_chcare[t]>0
+                    if data[n].pay_care[t] && data[n].chcare[t]>0
                         for s in nzrange(EM[n].q_s,t)
                             s_idx = EM[n].q_s.rowval[s]
                             _,k = Tuple(s_inv[s_idx])
@@ -138,4 +138,13 @@ function mstep_σ(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{like
     σ_W = sqrt( numer_w / denom_w )
     σ_PF = sqrt( numer_pf / denom_pf )
     return (;p...,σ_W,σ_PF)
+end
+
+function mstep_chcare(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+    fname = [:μ_PF,:σ_PF2]
+    ft = [1,2]
+    objective(x) = - chcare_log_like(pars(x,p,fname,ft),EM,MD,data,n_idx)
+    res = Optim.optimize(type_obj,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
+    p = pars(res.minimizer,p,fname,ft)
+    return p
 end

@@ -27,6 +27,8 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         mstep_πη!(p,EM,MD,data,n_idx,J)
         # (4) measurement error
         p = mstep_σ(p,EM,MD,data,n_idx,J)
+        # (5) measurement error for child care:
+        p = mstep_chcare(p,EM,MD,data,n_idx)
 
         ll = log_likelihood(EM,MD,data,n_idx)
         x1 = pars_inv(p)

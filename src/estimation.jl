@@ -7,6 +7,8 @@ struct likelihood_data
     t0::Int64 #<- this indicates the quarter the first observation relative to the first quarter in the model to map t in this data to t in the model.
     # wages and childcare
     T::Int64 #<- length of the panel (useful)
+    pay_care_valid::Vector{Bool}
+    pay_care::Vector{Bool}
     chcare_valid::Vector{Bool}
     chcare::Vector{Float64}
     log_chcare::Vector{Float64}

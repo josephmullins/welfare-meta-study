@@ -74,7 +74,9 @@ function pars_full(x,p)
     np += K
     σ_W = x[np+1]
     σ_PF = x[np+2]
-    return (;p...,βτ,πη,σ_W,σ_PF)
+    μ_PF = x[np+3]
+    σ_PF2 = exp(x[np+4])
+    return (;p...,βτ,πη,σ_W,σ_PF,μ_PF,σ_PF2)
 end
 
 function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
@@ -140,4 +142,6 @@ function pars_inv_full(p)
     push!(x,p.πη...)
     push!(x,p.σ_W)
     push!(x,p.σ_PF)
+    push!(x,p.μ_PF)
+    push!(x,log(p.σ_PF2))
 end
