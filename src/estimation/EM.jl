@@ -4,7 +4,7 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
     iter = 0
     ll0 = -Inf
 
-    while err>1e-8 && iter<max_iter
+    while err>1e-3 && iter<max_iter
         println(" ===== EM-algorithm: iteration $iter =====")
         x0 = pars_inv(p) #<- use these parameters to measure convergence
         # E-step:
