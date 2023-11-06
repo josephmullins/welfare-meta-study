@@ -68,7 +68,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                     ll += wage_log_like(data.logW[t+1],p,md,kτ,kη_next,t+t0+1)
                 end
                 if md.source=="SIPP" && data.chcare_valid[t+1] && data.pay_care[t+1]
-                    ll += chcare_log_like(data.chcare[t+1],p,md,kτ,t+t0+1)
+                    ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t+t0+1)
                 end
                 fkk = p.Fη[kη_next, kη, kτ]
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
