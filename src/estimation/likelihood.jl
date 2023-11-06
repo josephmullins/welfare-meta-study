@@ -86,46 +86,46 @@ function wage_log_like(logW,p,md::model_data,kτ::Int64,kη::Int64,t::Int64)
 end
 
 # - childcare price log-likelihood
-# -- observed positive care if logpriceF - σ_PF2*ϵ > μ_PF
 # one (potential issue): no correlation between observed measurement error and whether>0. Surely correlation?
 function chcare_log_like(chcare,p,md::model_data,kτ::Int64,t::Int64)
     logPF = logpriceF(p,md,kτ,t)
-    pF_seen = Φ(logPF,p.μ_PF,p.σ_PF2)
-    if chcare==0
-        return log(1-pF_seen)
-    else
-        resid = log(chcare) - logpriceF(p,md,kτ,t)
-        ll = -0.5 * (resid / p.σ_PF)^2 - log(p.σ_PF)
-        return ll + log(pF_seen)
-    end
+    resid = chcare - logPF
+    ll = -0.5 * (resid / p.σ_PF)^2 - log(p.σ_PF)
+    return ll
+    # pF_seen = Φ(logPF,p.μ_PF,p.σ_PF2)
+    # if chcare==0
+    #     return log(1-pF_seen)
+    # else
+    #     return ll + log(pF_seen)
+    # end
 end
 
-function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
-    ll = 0.
-    for md in MD
-        k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-        K = prod(size(k_inv))
-        s_inv = CartesianIndices((J,K))
+# function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
+#     ll = 0.
+#     for md in MD
+#         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+#         K = prod(size(k_inv))
+#         s_inv = CartesianIndices((J,K))
     
-        for n in n_idx[md.case_idx]
-            em = EM[n]
-            t0 = data[n].t0
-            for t in eachindex(data[n].logW)    
-                if data[n].chcare_valid[t] && data[n].pay_care[t]
-                    for s in nzrange(em.q_s,t)
-                        s_idx = em.q_s.rowval[s]
-                        wght = em.q_s.nzval[s]
-                        _,k = Tuple(s_inv[s_idx])
-                        _,_,_,kτ = Tuple(k_inv[k]) 
-                        llW = chcare_log_like(data[n].chcare[t],p,md,kτ,t+t0)
-                        ll += wght * llW
-                    end
-                end
-            end
-        end
-    end
-    return ll
-end
+#         for n in n_idx[md.case_idx]
+#             em = EM[n]
+#             t0 = data[n].t0
+#             for t in eachindex(data[n].logW)    
+#                 if data[n].chcare_valid[t] && data[n].pay_care[t]
+#                     for s in nzrange(em.q_s,t)
+#                         s_idx = em.q_s.rowval[s]
+#                         wght = em.q_s.nzval[s]
+#                         _,k = Tuple(s_inv[s_idx])
+#                         _,_,_,kτ = Tuple(k_inv[k]) 
+#                         llW = chcare_log_like(data[n].chcare[t],p,md,kτ,t+t0)
+#                         ll += wght * llW
+#                     end
+#                 end
+#             end
+#         end
+#     end
+#     return ll
+# end
 
 function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     ll = 0.
@@ -214,14 +214,14 @@ function prices_log_like(em::EM_data,p,md::model_data,data::likelihood_data,J::I
                 ll += wght * llW
             end
         end
-        if data.chcare_valid[t] && data.pay_care[t]
+        if md.source=="SIPP" && data.chcare_valid[t] && data.pay_care[t]
             #logP = data.log_chcare[t]
             for s in nzrange(em.q_s,t)
                 s_idx = em.q_s.rowval[s]
                 wght = em.q_s.nzval[s]
                 _,k = Tuple(s_inv[s_idx])
                 _,_,_,kτ = Tuple(k_inv[k]) 
-                llW = chcare_log_like(data.chcare[t],p,md,kτ,t+t0)
+                llW = chcare_log_like(data.log_chcare[t],p,md,kτ,t+t0)
                 ll += wght * llW
             end
         end
