@@ -198,6 +198,7 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
     q_s = spzeros(S,T)
     q_ss = [spzeros(S,S) for t in 1:T-1]
     P = [spzeros(S,S) for t in 1:T-1]
+    t_care = findfirst(data.pay_care_valid)
     # initialize α: (which provides an index for which states have positive probability)
     # start with period 1:
     for kτ in 1:Kτ, kη in 1:Kη
@@ -213,12 +214,19 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
                     s = (k-1)*J + j
                     α[s,1] = 1 / (Kη*Kτ)
                 else
-                    j1 = j_idx(FS,AFDC,EMP,0)
-                    j2 = j_idx(FS,AFDC,EMP,1)
-                    s1 = (k-1)*J + j1
-                    s2 = (k-1)*J + j2
-                    α[s1,1] = 0.5 / (Kη*Kτ)
-                    α[s2,1] = 0.5 / (Kη*Kτ)
+                    if md.source!="SIPP" && !isnothing(t_care)
+                        FC = data.FC[t_care]
+                        j = j_idx(FS,AFDC,EMP,FC)
+                        s = (k-1)*J+j
+                        α[s,1] = 1.
+                    else
+                        j1 = j_idx(FS,AFDC,EMP,0)
+                        j2 = j_idx(FS,AFDC,EMP,1)
+                        s1 = (k-1)*J + j1
+                        s2 = (k-1)*J + j2
+                        α[s1,1] = 0.5 / (Kη*Kτ)
+                        α[s2,1] = 0.5 / (Kη*Kτ)
+                    end
                 end
             else
                 for j in 1:J
@@ -254,6 +262,12 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
                             else
                                 if data.pay_care_valid[t+1]
                                     FC = data.FC[t+1]
+                                    jn = j_idx(FS,AFDC,EMP,FC)
+                                    sn = (kn_idx-1)*J+jn
+                                    P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                elseif md.source!="SIPP" && !isnothing(t_care)
+                                    FC = data.FC[t_care]
                                     jn = j_idx(FS,AFDC,EMP,FC)
                                     sn = (kn_idx-1)*J+jn
                                     P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
