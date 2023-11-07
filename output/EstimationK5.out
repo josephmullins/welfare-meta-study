@@ -33011,3 +33011,7 @@ Iter     Function value   Gradient norm
 Iter     Function value   Gradient norm 
      0     2.161221e+01     1.421219e-02
  * time: 1.0967254638671875e-5
+     1     2.161213e+01     1.207266e-02
+ * time: 0.9199419021606445
+     2     2.161211e+01     4.821394e-03
+ * time: 1.7818610668182373
