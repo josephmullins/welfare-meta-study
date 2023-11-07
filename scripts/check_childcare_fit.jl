@@ -2,8 +2,8 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 5 #
-Kη = 4
+Kτ = 4 #
+Kη = 5
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
