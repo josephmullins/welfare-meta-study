@@ -85,8 +85,7 @@ end
 function FTP(E,N,year,numchild,j)
     ii = (year-1975)*51*4 + (10-1)*4 + numchild
     #ii2 = (year-1979)*5 + numchild+1
-    #BS = Transfers.BS[ii]
-    BS = Transfers.BS[1]
+    BS = Transfers.BS[ii]
     if j==0
         tanf,dtanf = Transfers.TANF(E,N,0.,0.,0.,0.,0.,120,0.33,BS,BS)
         snap,dsnap,dsnap_dt = Transfers.SNAP(E,N,year,numchild,tanf)
