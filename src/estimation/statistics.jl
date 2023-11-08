@@ -124,7 +124,7 @@ end
 function unpaid_care(s_idx,s_inv)
     j,_ = Tuple(s_inv[s_idx])
     S,A,P,H,F = j_inv(j)
-    return H*(1-F)
+    return H #*(1-F) <- a small edit.
 end
 function paid_care(s_idx,s_inv)
     j,_ = Tuple(s_inv[s_idx])
@@ -253,7 +253,8 @@ function exante_model_fit(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vec
         Threads.@spawn exante_model_fit_chunk(p,EM,chunk,data,n_idx)
     end
     D = vcat(fetch.(tasks)...)
-    d = combine(groupby(D,[:source,:arm,:app_status,:est_sample,:year,:Q]),:EMP => Statistics.mean => :EMP,:AFDC => Statistics.mean => :AFDC, :EARN => Statistics.mean => :EARN, :LOGFULL => Statistics.mean => :LOGFULL)
+    #d = combine(groupby(D,[:source,:arm,:app_status,:est_sample,:year,:Q]),:EMP => Statistics.mean => :EMP,:AFDC => Statistics.mean => :AFDC, :EARN => Statistics.mean => :EARN, :LOGFULL => Statistics.mean => :LOGFULL)
+    d = combine(groupby(D,[:source,:arm,:est_sample,:year,:Q]),:EMP => Statistics.mean => :EMP,:AFDC => Statistics.mean => :AFDC, :EARN => Statistics.mean => :EARN, :LOGFULL => Statistics.mean => :LOGFULL)
     if write
         CSV.write(string("output/",fname),d)
     end
@@ -277,7 +278,8 @@ function exante_model_fit_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood
         #println(md.case_idx)
         for n in n_idx[md.case_idx]
             #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
-            initialize_expost!(π0,EM[n],s_inv) #<- get initial dist from posterior
+            #initialize_expost!(π0,EM[n],s_inv) #<- get initial dist from posterior
+            initialize_exante!(logπτ,EM[n],π0,p,md,data[n],(;s_inv,k_inv)) #<- get initial dist from posterior
             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p) #<- nice.
             d = model_stats_exante(p,EM[n],md,data[n])
             d[!,:n_idx] .= n

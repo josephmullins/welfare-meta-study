@@ -12,6 +12,17 @@ function get_β(;δI,g,δθ,β)
     return [β_;β]
 end
 
+function get_β_single(;δI,g₁,g₂,δθ,β)
+    β_ = zeros(eltype(δI),3*16)
+    for t in 1:16
+        d = δθ ^ (t-1)
+        β_[(t-1)*3+1] = d*δI
+        β_[(t-1)*3+2] = d*g₁
+        β_[(t-1)*3+3] = d*g₂
+    end
+    return [β_;β]
+end
+
 # this function returns the matrix X such that: 𝔼[θ|X] = X * get_β()
 function get_X(est_data)
     N = length(est_data)
@@ -25,6 +36,7 @@ function get_X(est_data)
     Xc = hcat((d.X for d in est_data)...)'
     return [X Xc]
 end
+
 
 # this function returns the variance of the moments given parameters and given the data arranged appropriately
 # - Y is assumed to be N x 2
@@ -120,14 +132,27 @@ function production_data(p,em::EM_data,md::model_data,data::likelihood_data)
     K = prod(sz)
     s_inv = CartesianIndices((9,K))
 
+    t_care = findfirst(data.pay_care_valid)
+
     # adding some alternative instruments to see what happens
     # d = 0.95
     # Z = zeros(4)
     for t in 1:T
 
         logY[t] = em_mean(em.q_s,t,s->log_full(s,t,s_inv,k_inv,p,md))
-        H[t] = em_mean(em.q_s,t,s->unpaid_care(s,s_inv))
-        F[t] = em_mean(em.q_s,t,s->paid_care(s,s_inv))
+        if !isnothing(t_care)
+            F[t] = data.pay_care[t_care]
+        else
+            F[t] = em_mean(em.q_s,t,s->paid_care(s,s_inv))
+        end
+        if !data.choice_missing[t]
+            H[t] = data.EMP[t]
+        else
+            H[t] = em_mean(em.q_s,t,s->unpaid_care(s,s_inv))
+        end
+            
+        #H[t] = em_mean(em.q_s,t,s->unpaid_care(s,s_inv))
+        #F[t] = em_mean(em.q_s,t,s->paid_care(s,s_inv))
         # decay = d^(T-t)
         # Z[1] += decay * logY[t]
         # Z[2] += decay * H[t]
