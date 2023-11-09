@@ -324,24 +324,22 @@ function model_stats_exante(p,em::EM_data,md::model_data,data::likelihood_data)
         EARN = E[keep],est_sample = data.use,app_status = app_status,LOGFULL = l_full[keep])
 end
 
-function initialize_exante!(logπτ,EM::EM_data,π0,p,md::model_data,data::likelihood_data,idx)
+function initialize_exante!(logπτ,EM::EM_data,π0,p,md::model_data,data::likelihood_data,k_idx)
     J = 9
-    (;k_inv,s_inv) = idx
+    #(;k_inv,s_inv) = idx
     fill!(π0,0.)
     log_type_prob!(logπτ,p,md,data)
 
     # start with the initial conditions:
-    for s in nzrange(EM.α,1)
-        s_idx = EM.α.rowval[s]
-        _,k = Tuple(s_inv[s_idx])
-        kA,kη,_,kτ = Tuple(k_inv[k])
-        if π0[k]==0
-            π0[k] = initial_prob(kA,kη,kτ,logπτ,p,md)
-        end
+    kA = 1 + data.kA
+    kω = 1
+    for kη in 1:p.Kη, kτ in 1:p.Kτ
+        k = k_idx[kA,kη,kω,kτ]
+        π0[k] = initial_prob(kA,kη,kτ,logπτ,p,md)
     end
-    π0 ./= sum(π0)
     return nothing
 end
+
 # fill π0 states with the posterior distribution instead
 function initialize_expost!(π0,EM::EM_data,s_inv)
     fill!(π0,0.)
