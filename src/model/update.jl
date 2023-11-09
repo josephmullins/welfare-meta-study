@@ -19,8 +19,8 @@ function pars(x,p)
     αP = x[pos+2]
     pos += 3
     # wq
-    wq = exp(x[pos])
-    pos += 1
+    wq = exp.(x[pos:pos+Kτ-1])
+    pos += Kτ    
     # βΓ 
     βΓ = x[pos:pos+1]
     pos += 2
@@ -64,7 +64,7 @@ function pars(x,p)
 end
 
 function pars_full(x,p)
-    np = 10p.Kτ + 25
+    np = 11p.Kτ + 24
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)
@@ -129,7 +129,7 @@ function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
 end
 
 function pars_inv(p)
-    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
+    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
     F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)

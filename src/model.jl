@@ -16,7 +16,7 @@ end
 
 function pars(Kτ::Int64,Kη::Int64)
     β = 0.98
-    wq = 1.
+    wq = fill(50.,Kτ)
     αC = 1.
     αθ = 0.1 * ones(Kτ)
     αH = zeros(Kτ)

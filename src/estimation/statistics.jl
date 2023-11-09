@@ -116,7 +116,7 @@ function log_full(s_idx,t,s_inv,k_inv,p,md::model_data)
     prF = kid_developing * exp(logpriceF(p,md,kτ,t))
     year = min(2010,md.y0 + fld(md.q0 + t-1,4)) #<- assume expected policy environment is fixed beyond 2010
     Y,_ = budget(W*H,0.,md.SOI,md.source,md.arm,year,md.numkids,md.cpi[min(end,t)],S + A)
-    full_income = p.wq + max(Y - prF*F,0.)
+    full_income = p.wq[kτ] + max(Y - prF*F,0.)
     return log(full_income)
 end
 
