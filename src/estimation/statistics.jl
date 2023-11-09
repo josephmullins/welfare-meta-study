@@ -337,16 +337,6 @@ function initialize_exante!(logπτ,EM::EM_data,π0,p,md::model_data,data::likel
         k = k_idx[kA,kη,kω,kτ]
         π0[k] = initial_prob(kA,kη,kτ,logπτ,p,md)
     end
-
-    # for s in nzrange(EM.α,1)
-    #     s_idx = EM.α.rowval[s]
-    #     _,k = Tuple(s_inv[s_idx])
-    #     kA,kη,_,kτ = Tuple(k_inv[k])
-    #     if π0[k]==0
-    #         π0[k] = initial_prob(kA,kη,kτ,logπτ,p,md)
-    #     end
-    # end
-    # π0 ./= sum(π0)
     return nothing
 end
 # fill π0 states with the posterior distribution instead
