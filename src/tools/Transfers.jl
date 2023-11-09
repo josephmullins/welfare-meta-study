@@ -13,28 +13,22 @@ function budget(E,N,state,year,num_kids,cpi,p)
     N *= cpi
 
     tax = 0.
-    dtax = 0.
     if E>0
-        tax,dtax = TAX(E*12,state,year,num_kids)
+        tax = TAX(E*12,state,year,num_kids)
         tax /= 12
         # in case you see this later and think there should be a dtax /= 12...
         # remember: d[f(α*x)/α]/dx = f'(α*x)
     end
     snap = 0.
     tanf = 0.
-    dsnap = 0.
-    dsnap_dt = 0.
-    dtanf = 0.
     if p>0
         if p>1 && num_kids>0
-            tanf,dtanf = TANF(E,0.,state,year,num_kids)
+            tanf = TANF(E,0.,state,year,num_kids)
         end
-        snap,dsnap,dsnap_dt = SNAP(E,0.,year,num_kids,tanf)
+        snap = SNAP(E,0.,year,num_kids,tanf)
     end
     y = (E + N + snap + tanf - tax)/cpi
-    # once again, when reading below remember that d[f(cpi * x)/cpi] / dx = f'(cpi * x)
-    dy = (1. + dsnap + dtanf + dtanf*dsnap_dt - dtax)
-    return y,dy
+    return y
 end
 
 # - alternative version assumes everything is in nominal terms
@@ -47,19 +41,16 @@ end
 function budget_inel(E,N,state,year,num_kids,p)
     tax = 0
     if E>0
-        tax,dtax = TAX(E*12,state,year,num_kids)[1]
+        tax = TAX(E*12,state,year,num_kids)[1]
         tax /= 12
     end
     snap = 0
     tanf = 0
-    dsnap = 0.
-    dsnap_dt = 0.
     if p>0
-        snap,dsnap,dsnap_dt = SNAP(E,0.,year,num_kids,0.)
+        snap = SNAP(E,0.,year,num_kids,0.)
     end
     y = E + N + snap + tanf - tax
-    dy = 1 + dsnap - dtax
-    return y,dy
+    return y
 end
 
 
@@ -87,10 +78,8 @@ function SNAP(E,N,PG,WB,SD,M)
     NE = max(0.8*E + N + WB - SD - 134,0.)
     EN = NE<PG
     # - 2. payment
-    snap = max(M-0.3*NE,0)
-    dsnap = -0.3*0.8*EG*EN*(snap>0)*(NE>0)
-    dsnap_dt = -0.3*EG*EN*(snap>0)*(NE>0)
-    return EG*EN*snap,dsnap,dsnap_dt
+    snap = M-0.3*NE
+    return snap
 end
 
 
@@ -142,12 +131,9 @@ function TANF(E,N,NS,rg,rn,dd0,rd0,dd1,rd1,PS,M)
 
     # - 2. payment
     net_income = max(E-dd1,0.)*(1-rd1) + N #<- also an error here? if dd1>0, there is a flat region
-    dnet = (1-rd1)
     #println(1-rd1)
-    tanf = max(min(M,PS-net_income),0)
-    dtanf = -(tanf>0) * (tanf<M) * (E>dd1) * dnet
-    #dtanf = -((PS-net_income)>M)*((PS - net_income) > 0)*dnet
-    return EG*EN*tanf,EG*EN*dtanf
+    tanf = min(M,PS-net_income)
+    return tanf
 end
 
 
@@ -185,7 +171,6 @@ function TAX(E,state,year,num_kids)
     T1 = TDAT[ii+1]
     E0 = ie*1000
     tax = T0 + (T1-T0)/1000*(E-E0)
-    dtax = (T1 - T0)/1000
-    return tax,dtax
+    return tax
 end
 end
