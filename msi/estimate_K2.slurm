@@ -8,4 +8,4 @@
 #SBATCH --output=output/EstimationK2.out
 
 cd ~/welfare-meta-study
-~/julia-1.9.3/bin/julia -t 50 scripts/estimate_model_FTP_K2.jl
+~/julia-1.9.3/bin/julia -t 50 scripts/estimate_model_K2.jl
