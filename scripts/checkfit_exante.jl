@@ -2,14 +2,14 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 5 #
-Kη = 4
+Kτ = 2 #
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"current_est")
-#p = loadpars_vec(p,"est_childsample_K5")
+#p = loadpars_vec(p,"current_est")
+p = loadpars_vec(p,"est_FTP_K2")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
