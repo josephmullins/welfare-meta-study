@@ -132,7 +132,7 @@ function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
 end
 
 function pars_inv(p)
-    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
+    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR₁;p.αR₂;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
     F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)

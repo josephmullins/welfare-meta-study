@@ -14,14 +14,19 @@ function utility(S,A,H,F,p,md::model_data,kA::Int64,kη::Int64,kτ::Int64,t::Int
     full_income = p.wq[kτ] + max(Y - prF*F,0.)
     αC = 1. + p.αθ[kτ] * Γt
     #make work more or less expensive while participating:
-    αH = p.αH[kτ] + md.R*A*p.αR[2] 
+    αH = p.αH[kτ] #+ md.R*A*p.αR[2] 
     #make participation more/less expensive while working *and* if newly applying:
-    αA = p.αA[kτ] + md.R*(1-H)*p.αR[1]  + p.αP * (2-kA)
+    αA = p.αA[kτ] + p.αP * (2-kA) #+ md.R*(1-H)*p.αR[1]  + p.αP * (2-kA)
     if md.R==1
         if md.source=="FTP"
-            αH += A * p.αR[]
+            αH += A * p.αR₂[1]
+            αA += (1-H) * p.αR₁[1]
         elseif md.source=="CTJF"
+            αH += A * p.αR₂[2]
+            αA += (1-H) * p.αR₁[2]
         elseif md.source=="MFIP"
+            αH += A * p.αR₂[3]
+            αA += (1-H) * p.αR₁[3]
         end
     end
     return αC * log(full_income) - αA*A - p.αF[kτ]*F - αH * H - p.αS[kτ] * S
