@@ -22,7 +22,7 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:wq,:σ]
-    ft = [2,3,2]
+    ft = [2,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:αF,:βf]
