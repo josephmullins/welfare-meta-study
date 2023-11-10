@@ -19,8 +19,8 @@ function pars(x,p)
     pos += 3
     αR₂ = x[pos:pos+2]
     pos += 3
-    αP = x[pos+2]
-    pos += 3
+    αP = x[pos]
+    pos += 1
     # wq
     wq = exp.(x[pos:pos+Kτ-1])
     pos += Kτ    
