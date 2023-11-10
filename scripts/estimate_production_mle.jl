@@ -5,13 +5,14 @@ include("../src/estimation/production.jl")
 include("../src/estimation/FactorAnalysis.jl")
 
 
-Kτ = 5 #
-Kη = 4
+Kτ = 4 #
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"est_childsample_K5")
+#p = loadpars_vec(p,"est_childsample_K5")
+p = loadpars_vec(p,"current_est")
 
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
