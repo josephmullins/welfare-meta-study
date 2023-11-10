@@ -17,5 +17,12 @@ function utility(S,A,H,F,p,md::model_data,kA::Int64,kη::Int64,kτ::Int64,t::Int
     αH = p.αH[kτ] + md.R*A*p.αR[2] 
     #make participation more/less expensive while working *and* if newly applying:
     αA = p.αA[kτ] + md.R*(1-H)*p.αR[1]  + p.αP * (2-kA)
+    if md.R==1
+        if md.source=="FTP"
+            αH += A * p.αR[]
+        elseif md.source=="CTJF"
+        elseif md.source=="MFIP"
+        end
+    end
     return αC * log(full_income) - αA*A - p.αF[kτ]*F - αH * H - p.αS[kτ] * S
 end

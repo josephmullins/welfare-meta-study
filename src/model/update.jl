@@ -15,7 +15,10 @@ function pars(x,p)
     pos += Kτ
     αF = x[pos:pos+Kτ-1]
     pos += Kτ
-    αR = x[pos:pos+1]
+    αR₁ = x[pos:pos+2]
+    pos += 3
+    αR₂ = x[pos:pos+2]
+    pos += 3
     αP = x[pos+2]
     pos += 3
     # wq
@@ -58,13 +61,13 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR₁,αR₂,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
     p = update_transitions(p)
     return p
 end
 
 function pars_full(x,p)
-    np = 11p.Kτ + 24
+    np = 11p.Kτ + 28
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)
