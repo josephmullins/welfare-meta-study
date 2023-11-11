@@ -1,155 +1,50 @@
 ERROR: LoadError: UndefVarError: `pF` not defined
 Stacktrace:
  [1] top-level scope
-   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:34
-in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:34
+   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:35
+in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:35
  ===== EM-algorithm: iteration 0 =====
-current likelihood: -138291.90607142608
-current error: 3.530350314821939
+current likelihood: -139878.94857983012
+current error: 3.6730358224454522
  ===== EM-algorithm: iteration 1 =====
-current likelihood: -75276.95901473735
-current error: 1.0179314370770063
+current likelihood: -75584.03642692872
+current error: 0.9966240630054035
  ===== EM-algorithm: iteration 2 =====
-current likelihood: -67973.46443420944
-current error: 0.408309975456841
+current likelihood: -68279.43416049464
+current error: 0.6263191639154321
  ===== EM-algorithm: iteration 3 =====
-current likelihood: -64416.68040212991
-current error: 0.5334329761332932
+current likelihood: -65275.72486668074
+current error: 0.3815128045063658
  ===== EM-algorithm: iteration 4 =====
-current likelihood: -63720.81011679414
-current error: 0.31185527018222947
+current likelihood: -64599.13630203319
+current error: 0.25031887693057264
  ===== EM-algorithm: iteration 5 =====
-current likelihood: -63436.19247750601
-current error: 0.2060218564555043
+current likelihood: -64318.6340530282
+current error: 0.18086016756250878
  ===== EM-algorithm: iteration 6 =====
-current likelihood: -63244.57048976691
-current error: 0.1544150790833987
+current likelihood: -64148.67562208493
+current error: 0.13808230012146705
  ===== EM-algorithm: iteration 7 =====
-current likelihood: -63128.203762170684
-current error: 0.1296883298759841
+current likelihood: -64047.66380486605
+current error: 0.11808543276925487
  ===== EM-algorithm: iteration 8 =====
-current likelihood: -63060.75504373131
-current error: 0.11268941074657945
+current likelihood: -63968.19141413167
+current error: 0.10228012663321184
  ===== EM-algorithm: iteration 9 =====
-current likelihood: -63009.79363184126
-current error: 0.10215978516016622
+current likelihood: -63901.7217612307
+current error: 0.0881268825361099
  ===== EM-algorithm: iteration 10 =====
-current likelihood: -62978.49625527245
-current error: 0.08393279060522074
+current likelihood: -63851.01325019071
+current error: 0.0790440911146284
  ===== EM-algorithm: iteration 11 =====
-current likelihood: -62948.231228398545
-current error: 0.07674707147064819
+current likelihood: -63811.87131484737
+current error: 0.07082640905082371
  ===== EM-algorithm: iteration 12 =====
-current likelihood: -62923.846168063516
-current error: 0.07260697216097522
+current likelihood: -63779.01118943381
+current error: 0.0642409643931412
  ===== EM-algorithm: iteration 13 =====
-current likelihood: -62903.92122098689
-current error: 0.061241369740872464
+current likelihood: -63752.85369689821
+current error: 0.05808756738763865
  ===== EM-algorithm: iteration 14 =====
-current likelihood: -62886.696539977864
-current error: 0.05294638754278447
- ===== EM-algorithm: iteration 15 =====
-current likelihood: -62872.6201865248
-current error: 0.05134653905832831
- ===== EM-algorithm: iteration 16 =====
-current likelihood: -62860.277821413954
-current error: 0.03940918502102564
- ===== EM-algorithm: iteration 17 =====
-current likelihood: -62849.96062170854
-current error: 0.03318031627672724
- ===== EM-algorithm: iteration 18 =====
-current likelihood: -62840.7962244224
-current error: 0.030439841361891595
- ===== EM-algorithm: iteration 19 =====
-current likelihood: -62833.26456810793
-current error: 0.02812024682747083
- ===== EM-algorithm: iteration 20 =====
-current likelihood: -62826.354657616925
-current error: 0.02582514630140853
- ===== EM-algorithm: iteration 21 =====
-current likelihood: -62818.64929482863
-current error: 0.02403475136782074
- ===== EM-algorithm: iteration 22 =====
-current likelihood: -62812.42692063115
-current error: 0.022602856498443735
- ===== EM-algorithm: iteration 23 =====
-current likelihood: -62807.91297944042
-current error: 0.021031968905790954
- ===== EM-algorithm: iteration 24 =====
-current likelihood: -62801.818026579975
-current error: 0.020044098670551236
- ===== EM-algorithm: iteration 25 =====
-current likelihood: -62798.150334657825
-current error: 0.019729860555773193
- ===== EM-algorithm: iteration 26 =====
-current likelihood: -62794.879843513685
-current error: 0.017915839089343244
- ===== EM-algorithm: iteration 27 =====
-current likelihood: -62791.75372721243
-current error: 0.01702016834614195
- ===== EM-algorithm: iteration 28 =====
-current likelihood: -62789.31021188188
-current error: 0.01686827749645925
- ===== EM-algorithm: iteration 29 =====
-current likelihood: -62787.13454178686
-current error: 0.015841660958507475
- ===== EM-algorithm: iteration 30 =====
-current likelihood: -62785.1934472207
-current error: 0.01458697976377099
- ===== EM-algorithm: iteration 31 =====
-current likelihood: -62783.09295542615
-current error: 0.013727867189615495
- ===== EM-algorithm: iteration 32 =====
-current likelihood: -62781.100961484786
-current error: 0.013177523353415488
- ===== EM-algorithm: iteration 33 =====
-current likelihood: -62779.26638578571
-current error: 0.01225263858817982
- ===== EM-algorithm: iteration 34 =====
-current likelihood: -62777.49283846435
-current error: 0.0120377989164977
- ===== EM-algorithm: iteration 35 =====
-current likelihood: -62775.87378477188
-current error: 0.011442372894914676
- ===== EM-algorithm: iteration 36 =====
-current likelihood: -62774.28827976914
-current error: 0.011038617317259636
- ===== EM-algorithm: iteration 37 =====
-current likelihood: -62772.92330284534
-current error: 0.010844885544988081
- ===== EM-algorithm: iteration 38 =====
-current likelihood: -62771.578399007354
-current error: 0.010663469399907477
- ===== EM-algorithm: iteration 39 =====
-current likelihood: -62770.29870155758
-current error: 0.010297758173246407
- ===== EM-algorithm: iteration 40 =====
-current likelihood: -62768.36314500137
-current error: 0.010292901738051752
- ===== EM-algorithm: iteration 41 =====
-current likelihood: -62767.184453711976
-current error: 0.010133118755339732
- ===== EM-algorithm: iteration 42 =====
-current likelihood: -62766.08339448978
-current error: 0.009981232128929207
- ===== EM-algorithm: iteration 43 =====
-current likelihood: -62765.017216311375
-current error: 0.009745090605694395
- ===== EM-algorithm: iteration 44 =====
-current likelihood: -62764.00912077899
-current error: 0.009946976376330907
- ===== EM-algorithm: iteration 45 =====
-current likelihood: -62763.04250501666
-current error: 0.009545169989708668
- ===== EM-algorithm: iteration 46 =====
-current likelihood: -62762.13806799399
-current error: 0.009490367495482932
- ===== EM-algorithm: iteration 47 =====
-current likelihood: -62761.249130886616
-current error: 0.009579591783177133
- ===== EM-algorithm: iteration 48 =====
-current likelihood: -62760.39537358252
-current error: 0.009119821596553335
- ===== EM-algorithm: iteration 49 =====
-current likelihood: -62759.57083959091
-current error: 0.008988993444833726
+current likelihood: -63724.54182290235
+current error: 0.05500455185126263
