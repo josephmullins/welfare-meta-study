@@ -29,8 +29,8 @@ Random.seed!(2020)
 shuffle!(MD)
 
 # get the initial conditions this way
-forward_back_threaded!(p,EM,MD,data,n_idx)
-
+#forward_back_threaded!(p,EM,MD,data,n_idx)
+MD = MD[[md.source!="SIPP" for md in MD]]
 d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
 
 #write everything to file here.

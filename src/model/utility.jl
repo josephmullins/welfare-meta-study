@@ -10,7 +10,11 @@ function utility(S,A,H,F,p,md::model_data,kA::Int64,kη::Int64,kτ::Int64,t::Int
     Γt = kid_developing * exp(p.βΓ[1]*age_qtrs + p.βΓ[2]*age_qtrs^2)
     prF = kid_developing * exp(logpriceF(p,md,kτ,t))
     year = min(2010,md.y0 + fld(md.q0 + t-1,4)) #<- assume expected policy environment is fixed beyond 2010
-    Y,dY = budget(W*H,0.,md.SOI,md.source,md.arm,year,md.numkids,md.cpi[min(end,t)],S + eligible * A)
+    if A==1
+        Y,dY = budget(W*H,0.,md.SOI,md.source,md.arm,year,md.numkids,md.cpi[min(end,t)],eligible * (S + A))
+    else
+        Y,dY = budget(W*H,0.,md.SOI,md.source,md.arm,year,md.numkids,md.cpi[min(end,t)],S)
+    end
     full_income = p.wq[kτ] + max(Y - prF*F,0.)
     αC = 1. + p.αθ[kτ] * Γt
     #make work more or less expensive while participating:
