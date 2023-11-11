@@ -31,5 +31,5 @@ shuffle!(MD)
 MD = MD[[md.source!="SIPP" for md in MD]]
 p = expectation_maximization(p,EM,MD,n_idx;max_iter = 50,mstep_iter = 120,save = true)
 #basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample_K2.csv")
-savepars_vec(pF,"est_noSIPP_K4")
+savepars_vec(p,"est_noSIPP_K4")
 d = exante_model_fit(pF,EM,mdFTP,data,n_idx,"modelfit_exante_noSIPP.csv")
