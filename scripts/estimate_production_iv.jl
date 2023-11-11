@@ -74,5 +74,5 @@ num_X = size(est_data[1].X,1)
     th ~ MvNormal(m, I*σ)
 end
 
-chain_iv = sample(model_likelihood(th[:,1],Xhat),NUTS(),2000)
+chain_iv = sample(model_likelihood(th[:,1],Xhat),NUTS(),3000)
 
