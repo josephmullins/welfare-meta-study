@@ -17,9 +17,7 @@ function utility(S,A,H,F,p,md::model_data,kA::Int64,kη::Int64,kτ::Int64,t::Int
     end
     full_income = p.wq[kτ] + max(Y - prF*F,0.)
     αC = 1. + p.αθ[kτ] * Γt
-    #make work more or less expensive while participating:
-    αH = p.αH[kτ] + md.R*A*p.αR[2] 
-    #make participation more/less expensive while working *and* if newly applying:
+    #make participation more/less expensive while working *and/or* if newly applying:
     αA = p.αA[kτ] + md.R*(1-H)*p.αR[1]  + p.αP * (2-kA)
-    return αC * log(full_income) - αA*A - p.αF[kτ]*F - αH * H - p.αS[kτ] * S
+    return αC * log(full_income) - αA*A - p.αF[kτ]*F - p.αH[kτ] * H - p.αS[kτ] * S
 end

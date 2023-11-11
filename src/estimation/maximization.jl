@@ -12,7 +12,7 @@ function mstep_major_block(p,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
     x0 = pars_inv(p,fnames,ft)
     objective(x) = -log_likelihood_threaded(x,p,fnames,ft,EM,MD,data,n_idx) / N_
-    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = false,iterations=iterations))
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
     return pars(res.minimizer,p,fnames,ft)
 end
 
@@ -29,8 +29,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:λ₀,:λ₁,:δ,:μₒ,:σₒ]
-    ft = [3,3,3,1,2]
+    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ]
+    ft = [3,3,3,1,1,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:αA,:αS,:αH,:σ]
@@ -41,8 +41,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     # ft = [1,1,2]
     # p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:αA,:αH,:αR,:αP,:σ]
-    ft = [1,1,1,1,2]
+    block = [:αA,:αH,:αR,:αP,:λR,:σ]
+    ft = [1,1,1,1,1,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:wq,:β,:σ]

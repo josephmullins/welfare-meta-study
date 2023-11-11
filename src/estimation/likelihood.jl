@@ -71,7 +71,7 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
 
     ll = 0.
     ll += log_likelihood_choices(em,data.t0,logP,s_inv)
-    ll += log_likelihood_transitions(em,p,k_inv,s_inv)
+    ll += log_likelihood_transitions(em,p,md.R,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
     if md.source=="SIPP"
         ll += log_likelihood_η0(p,em,s_inv,k_inv)
@@ -177,19 +177,21 @@ function log_likelihood_choices(em::EM_data,t0,logP,s_inv)
     return ll
 end
 
-function log_likelihood_transitions(em::EM_data,p,k_inv,s_inv)
+function log_likelihood_transitions(em::EM_data,p,R::Int64,k_inv,s_inv)
     ll = 0.
     Kη = size(k_inv,2)
     for t in eachindex(em.q_ss)
         for s in nzrange(em.q_s,t)
             s_idx = em.q_s.rowval[s]
             j,k = Tuple(s_inv[s_idx])
+            _,A,_,_,_ = j_inv(j)
+            jF = 1 + R*A
             _,kη,_,kτ = Tuple(k_inv[k])
             for sn in nzrange(em.q_ss[t],s_idx)
                 sn_idx = em.q_ss[t].rowval[sn]
                 _,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
-                f_ss = p.Fη[kη_next,kη,kτ]
+                f_ss = p.Fη[kη_next,kη,jF,kτ]
                 wght = em.q_ss[t].nzval[sn]
                 #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)

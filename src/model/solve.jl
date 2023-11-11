@@ -42,7 +42,8 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     kA_next,kω_next = next(A,kA,kω;md.Kω)
     for kη_next in 1:pars.Kη
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
-        v += pars.β * pars.Fη[kη_next,kη,kτ] * V[k_next]
+        j = 1 + md.R * A #<- indicates if the work requirement gives a bump to λ₀
+        v += pars.β * pars.Fη[kη_next,kη,j,kτ] * V[k_next]
     end
     return v
 end

@@ -15,7 +15,8 @@ function pars(x,p)
     pos += Kτ
     αF = x[pos:pos+Kτ-1]
     pos += Kτ
-    αR = x[pos:pos+1]
+    αR = x[pos]
+    λR = x[pos+1]
     αP = x[pos+2]
     pos += 3
     # wq
@@ -58,7 +59,7 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
     p = update_transitions(p)
     return p
 end
@@ -129,7 +130,7 @@ function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
 end
 
 function pars_inv(p)
-    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
+    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.λR;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
     F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)

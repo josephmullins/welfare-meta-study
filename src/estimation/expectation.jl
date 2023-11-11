@@ -54,6 +54,8 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
         for s in nzrange(EM.α,t)
             s_idx = EM.α.rowval[s]
             j,k = Tuple(s_inv[s_idx])
+            _,A,_,_,_ = j_inv(j)
+            jF = 1 + md.R*A
             _,kη,_,kτ = Tuple(k_inv[k])
             for sn in nzrange(EM.P[t],s_idx)                    
                 sn_idx = EM.P[t].rowval[sn]
@@ -70,7 +72,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 if md.source=="SIPP" && data.chcare_valid[t+1] && data.pay_care[t+1]
                     ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t+t0+1)
                 end
-                fkk = p.Fη[kη_next, kη, kτ]
+                fkk = p.Fη[kη_next, kη, jF, kτ]
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
                 EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end
