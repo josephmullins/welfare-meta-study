@@ -1,50 +1,50 @@
-ERROR: LoadError: UndefVarError: `pF` not defined
+ERROR: LoadError: UndefVarError: `mdFTP` not defined
 Stacktrace:
  [1] top-level scope
    @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:35
 in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/estimate_model_noSIPP.jl:35
  ===== EM-algorithm: iteration 0 =====
-current likelihood: -139878.94857983012
-current error: 3.6730358224454522
+current likelihood: -139834.65622672602
+current error: 3.267541251580255
  ===== EM-algorithm: iteration 1 =====
-current likelihood: -75584.03642692872
-current error: 0.9966240630054035
+current likelihood: -76074.14637853358
+current error: 1.291778453031747
  ===== EM-algorithm: iteration 2 =====
-current likelihood: -68279.43416049464
-current error: 0.6263191639154321
+current likelihood: -69181.82766266832
+current error: 0.8375935264691381
  ===== EM-algorithm: iteration 3 =====
-current likelihood: -65275.72486668074
-current error: 0.3815128045063658
+current likelihood: -65662.94950727059
+current error: 0.3637028468157544
  ===== EM-algorithm: iteration 4 =====
-current likelihood: -64599.13630203319
-current error: 0.25031887693057264
+current likelihood: -64920.38177856138
+current error: 0.24623508464543908
  ===== EM-algorithm: iteration 5 =====
-current likelihood: -64318.6340530282
-current error: 0.18086016756250878
+current likelihood: -64637.59130814294
+current error: 0.17958223145366636
  ===== EM-algorithm: iteration 6 =====
-current likelihood: -64148.67562208493
-current error: 0.13808230012146705
+current likelihood: -64466.43479568447
+current error: 0.14181115539247724
  ===== EM-algorithm: iteration 7 =====
-current likelihood: -64047.66380486605
-current error: 0.11808543276925487
+current likelihood: -64348.5557863987
+current error: 0.11395225384295671
  ===== EM-algorithm: iteration 8 =====
-current likelihood: -63968.19141413167
-current error: 0.10228012663321184
+current likelihood: -64259.98243728627
+current error: 0.09593321698205948
  ===== EM-algorithm: iteration 9 =====
-current likelihood: -63901.7217612307
-current error: 0.0881268825361099
+current likelihood: -64191.471945715035
+current error: 0.12856647832298895
  ===== EM-algorithm: iteration 10 =====
-current likelihood: -63851.01325019071
-current error: 0.0790440911146284
+current likelihood: -64132.389434490455
+current error: 0.10264519789445403
  ===== EM-algorithm: iteration 11 =====
-current likelihood: -63811.87131484737
-current error: 0.07082640905082371
+current likelihood: -64080.12853264719
+current error: 0.09401842737904631
  ===== EM-algorithm: iteration 12 =====
-current likelihood: -63779.01118943381
-current error: 0.0642409643931412
+current likelihood: -64032.3413423951
+current error: 0.09412561177869194
  ===== EM-algorithm: iteration 13 =====
-current likelihood: -63752.85369689821
-current error: 0.05808756738763865
+current likelihood: -63988.41246598491
+current error: 0.0904789603652647
  ===== EM-algorithm: iteration 14 =====
-current likelihood: -63724.54182290235
-current error: 0.05500455185126263
+current likelihood: -63949.174699941
+current error: 0.08707500753357844
