@@ -71,12 +71,11 @@ num_X = size(est_data[1].X,1)
     th ~ MvNormal(m, I*σ)
 end
 
-chain_1 = sample(model_likelihood(th[:,1],X),NUTS(),1000)
+chain_1 = sample(model_likelihood(th[:,1],X),NUTS(),2000)
 
-X2 = X[:,1:(3*16+15)]
+#X2 = X[:,1:(3*16+15)]
 
-# TYPO HERE!! so the results are just different
-chain_2 = sample(model_likelihood(th[:,1],X2),NUTS(),1000)
+#chain_2 = sample(model_likelihood(th[:,1],X2),NUTS(),2000)
 
 # now work on the case with types:
 function get_β_hetero(;δI,g₁,g₂,δθ,β)
@@ -97,7 +96,7 @@ function get_X_spec2(est_data)
         # extract a dummy for xk
         xk = [sum(est_data[n].X[k:5:15]) for k in 1:5]
         # then simplify the dummy because this is too slow.
-        xk = [sum(xk[1:3]),sum(xk[4:5])]
+        xk = [sum(xk[1:2]),sum(xk[3:4])] #
 
         T = est_data[n].T
         for t in 1:T
@@ -124,4 +123,4 @@ X = get_X_spec2(est_data) #<- get the X variables
     th ~ MvNormal(m, I*σ)
 end
 
-chain_3 = sample(model_hetero(th[:,1],X),NUTS(),2000)
+chain_2 = sample(model_hetero(th[:,1],X),NUTS(),2000)
