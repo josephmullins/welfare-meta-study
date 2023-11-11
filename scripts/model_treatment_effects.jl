@@ -9,8 +9,8 @@ p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"current_est")
-#p = loadpars_vec(p,"est_childsample_K5")
+#p = loadpars_vec(p,"current_est")
+p = loadpars_vec(p,"est_childsample_K4")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -21,10 +21,12 @@ sipp = @subset panel :source.=="SIPP"
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
-    vcat(sipp)
+    #vcat(sipp)
 end
 
 MD,EM,data,n_idx = estimation_setup(panel);
+MD1 = copy(MD)
+
 
 d = calculate_treatment_effects(p,EM,MD,data,n_idx)
 
