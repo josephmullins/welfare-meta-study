@@ -2,7 +2,7 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 4 #
+Kτ = 3 #
 Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
