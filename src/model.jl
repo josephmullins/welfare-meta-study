@@ -23,7 +23,7 @@ function pars(Kτ::Int64,Kη::Int64)
     αA = zeros(Kτ)
     αS = zeros(Kτ)
     αF = zeros(Kτ)
-    αR = zeros(2)
+    αR = [0.2,-0.2]
     αP = 0.
     σ = fill(2.,3)
 
