@@ -1,14 +1,14 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 4 #
+Kτ = 3 #
 Kη = 5
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
 p = (;p...,nests)
 
-p = loadpars_vec(p,"est_childsample_K4")
+p = loadpars_vec(p,"est_noSIPP_K3")
 
 x_est = pars_inv_full(p)
 
@@ -21,7 +21,7 @@ sipp = @subset panel :source.=="SIPP"
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
-    vcat(sipp)
+    #vcat(sipp) #<- add this back in eventually
 end
 
 MD,EM,data,n_idx = estimation_setup(panel);

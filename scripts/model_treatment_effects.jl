@@ -3,14 +3,15 @@ include("../src/model.jl")
 include("../src/estimation.jl")
 include("../src/counterfactuals.jl")
 
-Kτ = 4 #
+Kτ = 3 #
 Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
 #p = loadpars_vec(p,"current_est")
-p = loadpars_vec(p,"est_childsample_K4")
+#p = loadpars_vec(p,"est_childsample_K4")
+p = loadpars_vec(p,"est_noSIPP_K3")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -26,8 +27,13 @@ end
 
 MD,EM,data,n_idx = estimation_setup(panel);
 MD1 = copy(MD)
+for m in eachindex(MD)
+    MD1[m] = full_treatment(MD[m])
+    MD[m] = control(MD[m])
+end
 
+d = counterfactual(p,MD,MD1,data,n_idx)
 
-d = calculate_treatment_effects(p,EM,MD,data,n_idx)
+#d = calculate_treatment_effects(p,EM,MD,data,n_idx)
 
 #write everything to file here.
