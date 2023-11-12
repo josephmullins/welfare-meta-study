@@ -5,7 +5,7 @@
 #SBATCH --tmp=150g
 #SBATCH --mail-type=ALL  
 #SBATCH --mail-user=mullinsj@umn.edu 
-#SBATCH --output=output/Estimation.out
+#SBATCH --output=output/Estimation2.out
 
 cd ~/welfare-meta-study
-~/julia-1.9.3/bin/julia -t 50 scripts/estimate_model_noSIPP.jl
+~/julia-1.9.3/bin/julia -t 50 scripts/estimate_model_noSIPPv2.jl
