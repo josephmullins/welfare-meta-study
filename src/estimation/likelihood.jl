@@ -92,12 +92,6 @@ function chcare_log_like(chcare,p,md::model_data,kτ::Int64,t::Int64)
     resid = chcare - logPF
     ll = -0.5 * (resid / p.σ_PF)^2 - log(p.σ_PF)
     return ll
-    # pF_seen = Φ(logPF,p.μ_PF,p.σ_PF2)
-    # if chcare==0
-    #     return log(1-pF_seen)
-    # else
-    #     return ll + log(pF_seen)
-    # end
 end
 
 # function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
