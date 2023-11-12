@@ -280,7 +280,7 @@ function exante_model_fit_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood
         for n in n_idx[md.case_idx]
             #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
             #initialize_expost!(π0,EM[n],s_inv) #<- get initial dist from posterior
-            initialize_exante!(logπτ,EM[n],π0,p,md,data[n],k_idx) #<- get initial dist from posterior
+            initialize_exante!(logπτ,π0,p,md,data[n],k_idx) #<- get initial dist from posterior
             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md.R) #<- nice.
             d = model_stats_exante(p,EM[n],md,data[n])
             d[!,:n_idx] .= n
@@ -325,7 +325,7 @@ function model_stats_exante(p,em::EM_data,md::model_data,data::likelihood_data)
         EARN = E[keep],est_sample = data.use,app_status = app_status,LOGFULL = l_full[keep])
 end
 
-function initialize_exante!(logπτ,EM::EM_data,π0,p,md::model_data,data::likelihood_data,k_idx)
+function initialize_exante!(logπτ,π0,p,md::model_data,data::likelihood_data,k_idx)
     J = 9
     #(;k_inv,s_inv) = idx
     fill!(π0,0.)

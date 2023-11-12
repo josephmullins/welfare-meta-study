@@ -1,43 +1,99 @@
 using Setfield
 
-
-function counterfactual(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
-    chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
+function counterfactual(p,MD0::Vector{model_data},MD1::Vector{model_data},data::Vector{likelihood_data},n_idx)
+    chunks = Iterators.partition(eachindex(MD0),length(MD0) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn counterfactual_chunk(p,EM,chunk,data,n_idx)
+        Threads.@spawn counterfactual_chunk(p,MD0[chunk],MD1[chunk],data,n_idx)
     end
     D = vcat(fetch.(tasks)...)
-    return D
+    d = combine(groupby(D,[:source,:variable,:year,:Q]),:value => Statistics.mean => :value)
+    return d
 end
 
-function counterfactual_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
-    D = DataFrame(source = [],arm = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
-    logπτ = zeros(p.Kτ)
-    (;V,vj,logP) = get_model(p)
+function model_size(p,md::model_data)
+    k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+    k_idx = LinearIndices((2,p.Kη,md.Kω,p.Kτ))
+    K = prod(size(k_inv))
+    Kω = md.Kω
+    s_inv = CartesianIndices((9,K))
+    return (;k_inv,k_idx,K,Kω,s_inv)
+end
 
-    for md in MD
-        solve!(logP,V,vj,p,md)
-        k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-        k_idx = LinearIndices((2,p.Kη,md.Kω,p.Kτ))
-        K = prod(size(k_inv))
-        Kω = md.Kω
-        s_inv = CartesianIndices((9,K))
-        π0 = zeros(K)
-        for n in n_idx[md.case_idx]
-            #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
-            initialize_exante!(logπτ,EM[n],π0,p,md,data[n],k_idx) 
-            get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p) #<- nice.
-            d = counterfactual_stats(p,EM[n],md,data[n])
-            d[!,:n_idx] .= n
-            D = [D;d]
-        end
+function counterfactual(p,logπτ,md0::model_data,md1::model_data,data::Vector{likelihood_data},n_idx)
+    m0 = get_model(p)
+    idx0 = model_size(p,md0)
+    solve!(m0.logP,m0.V,m0.vj,p,md0)
+    m1 = get_model(p)
+    idx1 = model_size(p,md1)
+    solve!(m1.logP,m1.V,m1.vj,p,md1)
+    π0 = zeros(idx0.K) 
+    π1 = zeros(idx1.K)
+
+    D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
+    for n in n_idx[md0.case_idx]
+        #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
+        initialize_exante!(logπτ,π0,p,md0,data[n],idx0.k_idx)
+        T = data[n].T
+        Π = spzeros(9 * idx0.K,T)
+        get_choice_state_distribution!(Π,m0.logP,(;idx0...,π0),p,md0.R)
+        d0 = counterfactual_stats(p,Π,md0,data[n])
+
+        initialize_exante!(logπτ,π1,p,md1,data[n],idx1.k_idx)
+        Π = spzeros(9 * idx1.K,T)
+        get_choice_state_distribution!(Π,m1.logP,(;idx1...,π0 = π1),p,md1.R)
+        d1 = counterfactual_stats(p,Π,md1,data[n])
+        
+        d1.value .-= d0.value
+        @views cev = calc_cev(m1.V[:,1],m0.V[:,1],π0,idx0.k_idx,idx1.k_idx,p.β)
+        d1 = [d1 ; DataFrame(source = md0.source,Q = 0,year = md0.y0,app_status = d1.app_status[1],case_idx = md0.case_idx,variable = "cev",value = cev)]
+        d1[!,:n_idx] .= n
+        D = [D;d1]
     end
     return D
 end
 
+function counterfactual_chunk(p,MD0,MD1,data::Vector{likelihood_data},n_idx)
+    D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
+    logπτ = zeros(p.Kτ)
+    #T = 18*4
+    #K = 2*p.Kη*9*p.Kτ
+    #Π = spzeros(9 * K,T)
+
+    for i in eachindex(MD0)
+        d = counterfactual(p,logπτ,MD0[i],MD1[i],data,n_idx)
+        D = [D;d]
+    end
+    return D
+end
+
+# function counterfactual_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
+#     D = DataFrame(source = [],arm = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
+#     logπτ = zeros(p.Kτ)
+#     (;V,vj,logP) = get_model(p)
+
+#     for md in MD
+#         solve!(logP,V,vj,p,md)
+#         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+#         k_idx = LinearIndices((2,p.Kη,md.Kω,p.Kτ))
+#         K = prod(size(k_inv))
+#         Kω = md.Kω
+#         s_inv = CartesianIndices((9,K))
+#         π0 = zeros(K)
+#         for n in n_idx[md.case_idx]
+#             #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
+#             initialize_exante!(logπτ,π0,p,md,data[n],k_idx) 
+#             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md.R) #<- nice.
+#             d = counterfactual_stats(p,EM[n],md,data[n])
+#             d[!,:n_idx] .= n
+#             D = [D;d]
+#         end
+#     end
+#     return D
+# end
+
 # calculates individual level moments using the function em_mean to take averages
-function counterfactual_stats(p,em::EM_data,md::model_data,data::likelihood_data)
-    T = size(em.q_s,2)
+function counterfactual_stats(p,Π,md::model_data,data::likelihood_data)
+    T = data.T
     Q = 0:T-1
     H = zeros(T)
     A = zeros(T)
@@ -52,9 +108,9 @@ function counterfactual_stats(p,em::EM_data,md::model_data,data::likelihood_data
     year = md.y0 .+ fld.(md.q0 .+ (0:T-1),4) #<- start with one quarter delay in this model.
     Q = mod.(md.q0 .+ (0:T-1),4) #<- as above
     for t in 1:T
-        H[t] = em_mean(em.q_s,t,s->f_work(s,s_inv))
-        A[t] = em_mean(em.q_s,t,s->f_afdc(s,s_inv))
-        E[t] = em_mean(em.q_s,t,s->f_earn(s,t,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
+        H[t] = em_mean(Π,t,s->f_work(s,s_inv))
+        A[t] = em_mean(Π,t,s->f_afdc(s,s_inv))
+        E[t] = em_mean(Π,t,s->f_earn(s,t,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
     end
     d = DataFrame(variable = "Emp",value = H,year = year,Q = Q)
     d = [d;DataFrame(variable = "AFDC",value = A,year = year,Q = Q)]
@@ -67,19 +123,20 @@ function counterfactual_stats(p,em::EM_data,md::model_data,data::likelihood_data
     else
         app_status = 0
     end
-    d[!,:arm] .= md.arm
     d[!,:app_status] .= app_status
     d[!,:case_idx] .= md.case_idx
     d[!,:source] .= md.source
     return d
 end
 
-function cev(em::EM_data,V1,V0,s_inv,β)
+# problem: indexation is different depending on what we're doing.
+function calc_cev(V1,V0,π0,k_idx0,k_idx1,β)
     cev = 0.
-    for s in nzrange(em.q_s,1)
-        s_idx = em.q_s.rowvals[s]
-        _,k = Tuple(s_inv[s_idx])
-        cev += em.q_s.nzval[s] * (exp((1-β) * (V1[k] - V0[k])) - 1)
+    kω = 1
+    for kA in axes(k_idx0,1), kη in axes(k_idx0,2), kτ in axes(k_idx0,4)
+        k0 = k_idx0[kA,kη,kω,kτ]
+        k1 = k_idx1[kA,kη,kω,kτ]
+        cev += π0[k0] * (exp((1-β) * (V1[k1] - V0[k0])) - 1)
     end
     return cev
 end
@@ -117,10 +174,27 @@ function calculate_treatment_effects(p,EM::Vector{EM_data},MD::Vector{model_data
 end
 
 function full_treatment(md::model_data)
+    md = @set md.arm = 1
     if md.source=="FTP"
         md = @set md.R = 1
         md = @set md.Kω = 8
+        md = @set md.TL = true
+        md = @set md.arm = 1
+    elseif md.source=="CTJF"
+        md = @set md.R = 1
+        md  = @set md.Kω = 9
+        md = @set md.TL = true
+        md = @set md.arm = 1
+    elseif md.source=="MFIP"
+        md = @set md.R = 1
+    end
+end
 
+function control(md::model_data)
+    md = @set md.R = 0
+    md = @set md.Kω = 1
+    md = @set md.TL = false
+    md = @set md.arm = 0
 end
 
 # these gets rid of all the other things.
