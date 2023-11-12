@@ -12201,3 +12201,9 @@ Iter     Function value   Gradient norm
  * time: 16.91906189918518
     13     2.501597e+01     1.233490e-11
  * time: 17.4267098903656
+current likelihood: -63271.03956680537
+current error: 0.01259491843795546
+ ===== EM-algorithm: iteration 47 =====
+Iter     Function value   Gradient norm 
+     0     2.501123e+01     2.394875e+00
+ * time: 8.821487426757812e-6
