@@ -9,7 +9,7 @@ using Distributions
 
 function update_transitions(p)
     R = eltype(p.λ₀)
-    πₛ = zeros(R,p.Kη,2,p.Kτ)
+    πₛ = zeros(R,p.Kη,p.Kτ)
     Fη = zeros(R,p.Kη,p.Kη,2,p.Kτ)
     for kτ in 1:p.Kτ
         λR = logit(logit_inv(p.λ₀[kτ]) + p.λR)
