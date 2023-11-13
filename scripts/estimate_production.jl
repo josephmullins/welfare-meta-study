@@ -147,11 +147,11 @@ vnames = [["g₁[" * string(k) * "]" for k in 1:Kτ];["g₂[" * string(k) * "]" 
 vnames = [["δI","δθ"];vnames]
 
 chain_B_hetero = sample(model_hetero(th[:,1],X,Kτ),NUTS(),MCMCThreads(),length_chain,Threads.nthreads())
-data_B_hetero = DataFrame(chain_B_hetero)[:,names]
+data_B_hetero = DataFrame(chain_B_hetero)[:,vnames]
 data_B_hetero[!,:skill] .= "Behavioral"
 
 chain_C_hetero = sample(model_hetero(th[:,2],X,Kτ),NUTS(),MCMCThreads(),length_chain,Threads.nthreads())
-data_C_hetero = DataFrame(chain_C_hetero)[:,names]
+data_C_hetero = DataFrame(chain_C_hetero)[:,vnames]
 data_C_hetero[!,:skill] .= "Cognitive"
 
 CSV.write("output/production_ests_hetero.csv",[data_B_hetero;data_C_hetero])
