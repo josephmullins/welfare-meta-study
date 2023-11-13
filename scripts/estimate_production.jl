@@ -69,7 +69,7 @@ num_X = size(est_data[1].X,1)
     th ~ MvNormal(m, I*σ)
 end
 # set the length of each chain
-length_chain = 500
+length_chain = 1000
 
 chain_B_mle = sample(model_likelihood(th[:,1],X),NUTS(),MCMCThreads(),length_chain,Threads.nthreads())
 data_B_mle = DataFrame(chain_B_mle)[:,[:δI,:δθ,:g₁,:g₂]]
