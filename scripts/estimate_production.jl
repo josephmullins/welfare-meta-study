@@ -69,11 +69,14 @@ num_X = size(est_data[1].X,1)
 end
 # sample(model, NUTS(), MCMCThreads(), 1000, 4)
 
+chain_B_mle = sample(model_likelihood(th[:,1],X),NUTS(),MCMCThreads(),200,Threads.nthreads())
+chain_C_mle = sample(model_likelihood(th[:,2],X),NUTS(),MCMCThreads(),200,Threads.nthreads())
+
+break
+
 chain_B_iv = sample(model_likelihood(th[:,1],Xhat),NUTS(),MCMCThreads(),1000,Threads.nthreads())
 chain_C_iv = sample(model_likelihood(th[:,2],Xhat),NUTS(),MCMCThreads(),1000,Threads.nthreads())
 
-chain_B_mle = sample(model_likelihood(th[:,1],X),NUTS(),MCMCThreads(),1000,Threads.nthreads())
-chain_C_mle = sample(model_likelihood(th[:,2],X),NUTS(),MCMCThreads(),1000,Threads.nthreads())
 
 function get_β_hetero(;δI,g₁,g₂,δθ,β)
     β_ = zeros(eltype(δI),9*16)
