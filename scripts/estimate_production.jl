@@ -93,7 +93,7 @@ data_C_iv[!,:version] .= "iv"
 data_C_iv[!,:skill] .= "Cognitive"
 
 # save these results:
-CSV.write("output/production_ests.csv",[data_B_mle;data_C_mle]) #;data_B_iv;data_C_iv])
+CSV.write("output/production_ests.csv",[data_B_mle;data_C_mle;data_B_iv;data_C_iv])
 
 function get_β_hetero(;δI,g₁,g₂,δθ,β,Kτ)
     num_inputs = 1 + 2Kτ
