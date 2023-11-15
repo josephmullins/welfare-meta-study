@@ -1,12 +1,12 @@
 using Setfield
 
-function counterfactual(p,MD0::Vector{model_data},MD1::Vector{model_data},data::Vector{likelihood_data},n_idx)
+function counterfactual(p,pB,pC,MD0::Vector{model_data},MD1::Vector{model_data},data::Vector{likelihood_data},n_idx)
     chunks = Iterators.partition(eachindex(MD0),length(MD0) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn counterfactual_chunk(p,MD0[chunk],MD1[chunk],data,n_idx)
+        Threads.@spawn counterfactual_chunk(p,pB,pC,MD0[chunk],MD1[chunk],data,n_idx)
     end
     D = vcat(fetch.(tasks)...)
-    d = combine(groupby(D,[:source,:variable,:year,:Q]),:value => Statistics.mean => :value)
+    d = combine(groupby(D,[:source,:variable,:year,:Q]),:value => Statistics.mean => :value) #here is the reduction
     return d
 end
 
@@ -19,7 +19,7 @@ function model_size(p,md::model_data)
     return (;k_inv,k_idx,K,Kω,s_inv)
 end
 
-function counterfactual(p,logπτ,md0::model_data,md1::model_data,data::Vector{likelihood_data},n_idx)
+function counterfactual(p,pB,pC,logπτ,md0::model_data,md1::model_data,data::Vector{likelihood_data},n_idx)
     m0 = get_model(p)
     idx0 = model_size(p,md0)
     solve!(m0.logP,m0.V,m0.vj,p,md0)
@@ -36,12 +36,12 @@ function counterfactual(p,logπτ,md0::model_data,md1::model_data,data::Vector{l
         T = data[n].T
         Π = spzeros(9 * idx0.K,T)
         get_choice_state_distribution!(Π,m0.logP,(;idx0...,π0),p,md0.R)
-        d0 = counterfactual_stats(p,Π,md0,data[n])
+        d0 = counterfactual_stats(p,pB,pC,Π,md0,data[n])
 
         initialize_exante!(logπτ,π1,p,md1,data[n],idx1.k_idx)
         Π = spzeros(9 * idx1.K,T)
         get_choice_state_distribution!(Π,m1.logP,(;idx1...,π0 = π1),p,md1.R)
-        d1 = counterfactual_stats(p,Π,md1,data[n])
+        d1 = counterfactual_stats(p,pB,pC,Π,md1,data[n])
         
         d1.value .-= d0.value
         @views cev = calc_cev(m1.V[:,1],m0.V[:,1],π0,idx0.k_idx,idx1.k_idx,p.β)
@@ -52,7 +52,7 @@ function counterfactual(p,logπτ,md0::model_data,md1::model_data,data::Vector{l
     return D
 end
 
-function counterfactual_chunk(p,MD0,MD1,data::Vector{likelihood_data},n_idx)
+function counterfactual_chunk(p,pB,pC,MD0,MD1,data::Vector{likelihood_data},n_idx)
     D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
     logπτ = zeros(p.Kτ)
     #T = 18*4
@@ -60,7 +60,7 @@ function counterfactual_chunk(p,MD0,MD1,data::Vector{likelihood_data},n_idx)
     #Π = spzeros(9 * K,T)
 
     for i in eachindex(MD0)
-        d = counterfactual(p,logπτ,MD0[i],MD1[i],data,n_idx)
+        d = counterfactual(p,pB,pC,logπτ,MD0[i],MD1[i],data,n_idx)
         D = [D;d]
     end
     return D
@@ -91,8 +91,16 @@ end
 #     return D
 # end
 
+# a function to calcualte the expected value of formal and informal care inputs:
+function f_gk(s,s_inv,k_inv,p)
+    j,k = Tuple(s_inv[s])
+    _,_,_,kτ = Tuple(k_inv[k])
+    _,_,_,H,F = j_inv(j)
+    return H * p.g₁[kτ] + F * p.g₂[kτ]
+end
+
 # calculates individual level moments using the function em_mean to take averages
-function counterfactual_stats(p,Π,md::model_data,data::likelihood_data)
+function counterfactual_stats(p,pB,pC,Π,md::model_data,data::likelihood_data)
     T = data.T
     Q = 0:T-1
     H = zeros(T)
@@ -107,14 +115,24 @@ function counterfactual_stats(p,Π,md::model_data,data::likelihood_data)
     # Q = mod.(md.q0-1 .+ (0:T-1),4) .+ 1
     year = md.y0 .+ fld.(md.q0 .+ (0:T-1),4) #<- start with one quarter delay in this model.
     Q = mod.(md.q0 .+ (0:T-1),4) #<- as above
+    thC = 0.
+    thB = 0.
     for t in 1:T
         H[t] = em_mean(Π,t,s->f_work(s,s_inv))
         A[t] = em_mean(Π,t,s->f_afdc(s,s_inv))
         E[t] = em_mean(Π,t,s->f_earn(s,t,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
+        log_full_t = em_mean(Π,t,s->log_full(s,t,s_inv,k_inv,p,md))
+        gC = em_mean(Π,t,s->f_gk(s,s_inv,k_inv,pC)) #<- write functions to take the EV.
+        gB = em_mean(Π,t,s->f_gk(s,s_inv,k_inv,pB))
+
+        thB += pB.δI * log_full_t + gB + pB.δθ * thB
+        thC += pC.δI * log_full_t + gC + pC.δθ * thC
     end
     d = DataFrame(variable = "Emp",value = H,year = year,Q = Q)
     d = [d;DataFrame(variable = "AFDC",value = A,year = year,Q = Q)]
     d = [d;DataFrame(variable = "Earn",value = E,year = year,Q = Q)]
+    d = [d;DataFrame(variable = "Behavioral Skill",value = 100 *thB,year = md.y0,Q = 0)] #<- report in % of sd
+    d = [d;DataFrame(variable = "Cognitive Skill",value = 100 * thC,year = md.y0,Q = 0)]
 
     if md.source=="MFIP"
         app_status = 3 - 2*data.X_type[5] - data.X_type[6]
@@ -141,38 +159,6 @@ function calc_cev(V1,V0,π0,k_idx0,k_idx1,β)
     return cev
 end
 
-# do we really need a function for this?
-function calculate_treatment_effects(p,EM::Vector{EM_data},MD0::Vector{model_data},MD1::Vector{model_data},data::Vector{likelihood_data},n_idx)
-    d0 = counterfactual(p,EM,MD0,data,n_idx)
-    d0 = combine(groupby(d0,[:source,:arm,:variable,:year,:Q]),:value => Statistics.mean => :value)
-    d1 = counterfactual(p,EM,MD1,data,n_idx)
-    d1 = combine(groupby(d1,[:source,:arm,:variable,:year,:Q]),:value => Statistics.mean => :value)
-    d1.value = d1.value .- d0.value
-    return d1
-end
-
-function calculate_treatment_effects(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
-    d = DataFrame(source = [],arm = [], variable = [], value = [], year = [],Q = [])
-    for s in ("FTP","CTJF","MFIP")
-        MDₛ = MD[[md.source==s for md in MD]]
-        MDₛ = [@set md.arm=0 for md in MDₛ]
-        d0 = counterfactual(p,EM,MDₛ,data,n_idx)
-        MDₛ = [@set md.arm=1 for md in MDₛ]
-        d1 = counterfactual(p,EM,MDₛ,data,n_idx)
-        d1 = combine(groupby(d1,[:source,:arm,:variable,:year,:Q]),:value => Statistics.mean => :value)
-        d1.value = d1.value .- d0.value
-        d = [d;d1]
-        if s=="MFIP"
-            MDₛ = [@set md.arm=2 for md in MDₛ]
-            d2 = counterfactual(p,EM,MDₛ,data,n_idx)
-            d2 = combine(groupby(d2,[:source,:arm,:variable,:year,:Q]),:value => Statistics.mean => :value)
-            d2.value = d2.value .- d0.value
-            d = [d;d2]
-        end
-    end
-    return d
-end
-
 function full_treatment(md::model_data)
     md = @set md.arm = 1
     if md.source=="FTP"
@@ -188,6 +174,36 @@ function full_treatment(md::model_data)
     elseif md.source=="MFIP"
         md = @set md.R = 1
     end
+    return md
+end
+
+function incentives_only(md::model_data)
+    md = @set md.arm = 1
+    md = @set md.R = 0
+    md = @set md.TL = false
+    md = @set md.Kω = 1
+    return md
+end
+
+function work_requirements_only(md::model_data)
+    md = @set md.arm = 0
+    md = @set md.R = 1
+    md = @set md.TL = false
+    md = @set md.Kω = 1
+    return md
+end
+
+function time_limits_only(md::model_data)
+    md = @set md.arm = 0
+    md = @set md.R = 0
+    if md.source=="FTP"
+        md = @set md.Kω = 8
+        md = @set md.TL = true
+    elseif md.source=="CTJF"
+        md  = @set md.Kω = 9
+        md = @set md.TL = true
+    end
+    return md
 end
 
 function control(md::model_data)
@@ -195,6 +211,25 @@ function control(md::model_data)
     md = @set md.Kω = 1
     md = @set md.TL = false
     md = @set md.arm = 0
+    return md
+end
+
+function convert_sipp(md::model_data,site::String)
+    md = @set md.R = 1
+    md = @set md.arm = 1
+    md = @set md.budget = site
+    if site=="CTJF"
+        md = @set md.TL = true
+        md = @set md.Kω = 9
+    elseif site=="FTP"
+        md = @set md.TL = true
+        md = @set md.Kω = 8
+    end
+    return md
+end
+
+
+function non_selected_counterfactual()
 end
 
 # these gets rid of all the other things.
@@ -209,9 +244,6 @@ end
 # (1) just financial incentives
 # (2) just work requirement
 # (3) just time limits (but only for FTP and CTJF case)
-
-# note: the way you model work requirements guarantees fade-out. shouldn't we improve this? but there is fade out?
-
 
 #note: calculating welfare:
 
