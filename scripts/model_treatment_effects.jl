@@ -9,7 +9,6 @@ p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
-#p = loadpars_vec(p,"current_est")
 p = loadpars_vec(p,"est_childsample_K5")
 #p = loadpars_vec(p,"est_noSIPP_K3")
 
@@ -68,30 +67,73 @@ end
 
 d = decomposition_counterfactual(p,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
 
-break
-
-
 # TODO: add calculation of child skills here. do we account for heterogeneity or do we not?
 n_boot = 3
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
-#V = readdlm("output/var_est_K5")
-V = 0.001 * I(length(x_est)) # we shuld also be polishing estimates maybe
+V = readdlm("output/var_est_K5")
+V = Hermitian(V)
+#V = 0.001 * I(length(x_est)) # we shuld also be polishing estimates maybe
 p_bootstrap = rand(MvNormal(x_est,V),n_boot)
 cols = names(d)
 
+Random.seed!(2233)
+pd_boot = rand(1:10000,n_boot)
+
 # put this in a function?
+
 Db = d[1:0,:]
-for b in axes(p_bootstrap,2)
+Db[!,:boot] .= []
+for b in 1:n_boot
+    @show "working on trial $b"
     pb = pars_full(p_bootstrap[:,b],p)
-    db = decomposition_counterfactual(p,MD,MD1,MD2,MD3,MD4,data,n_idx)
+    pB = prod_pars(chain_B[pd_boot[b],1:12],Kτ)
+    pC = prod_pars(chain_C[pd_boot[b],1:12],Kτ)
+    db = decomposition_counterfactual(pb,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
     db[!,:boot] .= b
     Db = [Db; db]
 end
-Db = combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:value => Statistics.std => :sd, :value => x->quantile(x,0.025) => :q25, :value => x->quantile(x,0.975), :q75)
 
+Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.025),:q75 = quantile(:value,0.975))
 
-#d = calculate_treatment_effects(p,EM,MD,data,n_idx)
+# write results to file for creating figures
+@chain d begin
+    @subset(:variable.=="Emp" .|| :variable.=="AFDC")
+    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+    CSV.write("output/decomp_counterfactual.csv",_)
+end
 
-# QUESTION: DO WE WANT TO MAKE OUTCOMES A FUNCTION OF TYPE. IT WILL EFFECT WHAT WE DO.
+# write a table with the other stuff that matters:
+d2 = @chain d begin
+    @subset :variable.!="Emp" :variable.!="AFDC" :variable.!="Earn"
+    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+end
 
-#write everything to file here.
+using Printf
+form(x) = @sprintf("%0.2f",x)
+formse(x) = string("(",@sprintf("%0.2f",x),")")
+# a helper function to write a collection of strings into separate columns
+function tex_delimit(x)
+    str = x[1]
+    num_col = length(x)
+    for i in 2:num_col
+        str *=  "&" * x[i]
+    end
+    return str
+end
+
+file = open("output/tables/decomp_counterfactual.tex", "w")
+cases = unique(d2.case)
+vars = unique(d2.variable)
+for s in ("FTP","CTJF","MFIP")
+    write(file,"& \\multicolumn{4}{c}{",s,"}\\\\ \n")
+    write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-5} \n")
+    for v in vars
+        d3 = @subset d2 :source.==s :variable.==v
+        write(file,v," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
+        write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
+    end
+end
+close(file)
+CSV.write("output/decomp_counterfactual2.csv",d2)
+
+# this is ready to go to the cluster :-)
