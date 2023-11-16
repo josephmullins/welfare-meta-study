@@ -1,17 +1,16 @@
-# a script to check the model's unconditional fit of the data
 include("../src/model.jl")
 include("../src/estimation.jl")
-include("../src/counterfactuals.jl")
 
-Kτ = 3 #
-Kη = 5
+Kτ = 5 #
+Kη = 4
 p = pars(Kτ,Kη)
+p = update_transitions(p)
 nests = get_nests()
 p = (;p...,nests)
 
-#p = loadpars_vec(p,"current_est")
-#p = loadpars_vec(p,"est_childsample_K4")
-p = loadpars_vec(p,"est_noSIPP_K3")
+p = loadpars_vec(p,"est_childsample_K5")
+
+x_est = pars_inv_full(p)
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -22,18 +21,24 @@ sipp = @subset panel :source.=="SIPP"
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
-    #vcat(sipp)
+    vcat(sipp) #<- add this back in eventually
 end
 
 MD,EM,data,n_idx = estimation_setup(panel);
-MD1 = copy(MD)
-for m in eachindex(MD)
-    MD1[m] = full_treatment(MD[m])
-    MD[m] = control(MD[m])
-end
 
-d = counterfactual(p,MD,MD1,data,n_idx)
+Random.seed!(2020)
+shuffle!(MD)
 
-#d = calculate_treatment_effects(p,EM,MD,data,n_idx)
+forward_back_threaded!(p,EM,MD,data,n_idx)
+LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
+using ForwardDiff
+scores = ForwardDiff.jacobian(ll,x_est)
 
-#write everything to file here.
+N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
+
+V = inv(cov(scores)) / N
+se = sqrt.(diag(V))
+
+# write estimates to a table.
+

@@ -95,16 +95,17 @@ end
 #Λ,Σ,D = measurement_system(res.minimizer)
 
 # -- Now should we do the bootstrap
-function factor_analysis(data::DataFrame,columns,bootseed = 1823,bootsamples = 50)
+function factor_analysis(data::DataFrame,columns;bootseed = 1823,bootsamples = 50)
     # get the estimates:
     v_data = get_covariances(data,columns)
-    wght = get_weighting_matrix(data,bootseed,bootsamples)
+    wght = get_weighting_matrix(data,columns,bootseed,bootsamples)
 
     x0 = ones(26)
     #x0[1:3] .= -1. 
     res = Optim.optimize(x->FA_objective(x,v_data,wght),x0,LBFGS(),autodiff=:forward)
     est = res.minimizer
     Xb = zeros(26,bootsamples)
+    Vb = boot_moments(data,columns,bootseed,bootsamples)
     for b in 1:bootsamples
         println(b)
         res = Optim.optimize(x->FA_objective(x,Vb[:,b],wght),est,LBFGS(),autodiff=:forward)

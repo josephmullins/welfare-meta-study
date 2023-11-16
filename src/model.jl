@@ -10,7 +10,7 @@ function get_model(p)
     R = eltype(p.αA)
     logP = zeros(R,9,K,T)
     V = zeros(R,K,T)
-    vj = zeros(R,J)
+    vj = zeros(R,9)
     return (;logP,vj,V)
 end
 

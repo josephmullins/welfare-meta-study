@@ -27,8 +27,6 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
-# temporarily add this utility function, I think it goes better than the other
-
 
 p = expectation_maximization(p,EM,MD,n_idx;max_iter = 250,mstep_iter = 120,save = true)
 

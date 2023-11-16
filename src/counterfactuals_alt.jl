@@ -28,8 +28,14 @@ function counterfactual(p,pB,pC,logπτ,md0::model_data,md1::model_data,data::Ve
     solve!(m1.logP,m1.V,m1.vj,p,md1)
     π0 = zeros(idx0.K) 
     π1 = zeros(idx1.K)
+    source = String[]
+    year = Int64[]
+    Q = Int64[]
+    variable = String[]
+    value = Float64[]
+    app_status = Int[]
 
-    D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
+    #D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
     for n in n_idx[md0.case_idx]
         #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
         initialize_exante!(logπτ,π0,p,md0,data[n],idx0.k_idx)
@@ -41,19 +47,34 @@ function counterfactual(p,pB,pC,logπτ,md0::model_data,md1::model_data,data::Ve
         initialize_exante!(logπτ,π1,p,md1,data[n],idx1.k_idx)
         Π = spzeros(9 * idx1.K,T)
         get_choice_state_distribution!(Π,m1.logP,(;idx1...,π0 = π1),p,md1.R)
-        d1 = counterfactual_stats(p,pB,pC,Π,md1,data[n])
+        d1= counterfactual_stats(p,pB,pC,Π,md1,data[n])
         
         d1.value .-= d0.value
         @views cev = calc_cev(m1.V[:,1],m0.V[:,1],π0,idx0.k_idx,idx1.k_idx,p.β)
-        d1 = [d1 ; DataFrame(source = md0.source,Q = 0,year = md0.y0,app_status = d1.app_status[1],case_idx = md0.case_idx,variable = "CEV",value = cev)]
-        d1[!,:n_idx] .= n
-        D = [D;d1]
+        push!(d1.source,md0.source)
+        push!(d1.Q,0)
+        push!(d1.year,md0.y0)
+        push!(d1.app_status,d1.app_status[1])
+        push!(d1.variable,"cev")
+        push!(d1.value,cev)
+
+        push!(source,d1.source...)
+        push!(year,d1.year...)
+        push!(Q,d1.Q...)
+        push!(app_status,d1.app_status...)
+        push!(variable,d1.variable...)
+        push!(value,d1.value...)
     end
-    return D
+    return (;source,year,Q,app_status,variable,value)
 end
 
 function counterfactual_chunk(p,pB,pC,MD0,MD1,data::Vector{likelihood_data},n_idx)
-    D = DataFrame(source = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
+    source = String[]
+    year = Int64[]
+    Q = Int64[]
+    variable = String[]
+    value = Float64[]
+    app_status = Int[]
     logπτ = zeros(p.Kτ)
     #T = 18*4
     #K = 2*p.Kη*9*p.Kτ
@@ -61,9 +82,16 @@ function counterfactual_chunk(p,pB,pC,MD0,MD1,data::Vector{likelihood_data},n_id
 
     for i in eachindex(MD0)
         d = counterfactual(p,pB,pC,logπτ,MD0[i],MD1[i],data,n_idx)
-        D = [D;d]
+
+        push!(source,d.source...)
+        push!(year,d.year...)
+        push!(Q,d.Q...)
+        push!(app_status,d.app_status...)
+        push!(variable,d.variable...)
+        push!(value,d.value...)
+
     end
-    return D
+    return (;source,year,Q,app_status,variable,value)
 end
 
 # function counterfactual_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
@@ -128,11 +156,23 @@ function counterfactual_stats(p,pB,pC,Π,md::model_data,data::likelihood_data)
         thB += pB.δI * log_full_t + gB + pB.δθ * thB
         thC += pC.δI * log_full_t + gC + pC.δθ * thC
     end
-    d = DataFrame(variable = "Emp",value = H,year = year,Q = Q)
-    d = [d;DataFrame(variable = "AFDC",value = A,year = year,Q = Q)]
-    d = [d;DataFrame(variable = "Earn",value = E,year = year,Q = Q)]
-    d = [d;DataFrame(variable = "Behavioral Skill",value = 100 *thB,year = md.y0,Q = 0)] #<- report in % of sd
-    d = [d;DataFrame(variable = "Cognitive Skill",value = 100 * thC,year = md.y0,Q = 0)]
+    variable = fill("Emp",T)
+    value = H
+    
+    push!(variable,fill("AFDC",T)...)
+    push!(Q,Q...)
+    push!(year,year...)
+    push!(value,A...)
+
+    push!(variable,fill("Earn",T)...)
+    push!(Q,Q...)
+    push!(year,year...)
+    push!(value,E...)
+
+    push!(variable,"Behavioral Skill","Cognitive Skill")
+    push!(value,100*thB,100*thC)
+    push!(year,md.y0,md.y0)
+    push!(Q,0,0)
 
     if md.source=="MFIP"
         app_status = 3 - 2*data.X_type[5] - data.X_type[6]
@@ -141,10 +181,9 @@ function counterfactual_stats(p,pB,pC,Π,md::model_data,data::likelihood_data)
     else
         app_status = 0
     end
-    d[!,:app_status] .= app_status
-    d[!,:case_idx] .= md.case_idx
-    d[!,:source] .= md.source
-    return d
+    app_status = fill(app_status,length(variable))
+    source = fill(md.source,length(variable))
+    return (;variable,source,year,Q,app_status,value)
 end
 
 # problem: indexation is different depending on what we're doing.
@@ -156,7 +195,7 @@ function calc_cev(V1,V0,π0,k_idx0,k_idx1,β)
         k1 = k_idx1[kA,kη,kω,kτ]
         cev += π0[k0] * (exp((1-β) * (V1[k1] - V0[k0])) - 1)
     end
-    return 100 * cev
+    return cev
 end
 
 function full_treatment(md::model_data)
