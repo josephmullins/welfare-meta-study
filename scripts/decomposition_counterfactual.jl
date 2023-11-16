@@ -68,7 +68,7 @@ end
 d = decomposition_counterfactual(p,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
 
 # TODO: add calculation of child skills here. do we account for heterogeneity or do we not?
-n_boot = 3
+n_boot = 50
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
 V = readdlm("output/var_est_K5")
 V = Hermitian(V)
@@ -92,6 +92,7 @@ function boot_cf(d)
         db[!,:boot] .= b
         Db = [Db; db]
     end
+    return Db
 end
 
 Db = boot_cf(d)
