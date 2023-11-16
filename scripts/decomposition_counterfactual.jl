@@ -80,18 +80,21 @@ Random.seed!(2233)
 pd_boot = rand(1:10000,n_boot)
 
 # put this in a function?
-
-Db = d[1:0,:]
-Db[!,:boot] .= []
-for b in 1:n_boot
-    @show "working on trial $b"
-    pb = pars_full(p_bootstrap[:,b],p)
-    pB = prod_pars(chain_B[pd_boot[b],1:12],Kτ)
-    pC = prod_pars(chain_C[pd_boot[b],1:12],Kτ)
-    db = decomposition_counterfactual(pb,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
-    db[!,:boot] .= b
-    Db = [Db; db]
+function boot_cf(d)
+    Db = d[1:0,:]
+    Db[!,:boot] .= []
+    for b in 1:n_boot
+        @show "working on trial $b"
+        pb = pars_full(p_bootstrap[:,b],p)
+        pB = prod_pars(chain_B[pd_boot[b],1:12],Kτ)
+        pC = prod_pars(chain_C[pd_boot[b],1:12],Kτ)
+        db = decomposition_counterfactual(pb,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
+        db[!,:boot] .= b
+        Db = [Db; db]
+    end
 end
+
+Db = boot_cf(d)
 
 Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.025),:q75 = quantile(:value,0.975))
 
