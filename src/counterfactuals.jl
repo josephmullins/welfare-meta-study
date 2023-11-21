@@ -200,12 +200,15 @@ function convert_sipp(md::model_data,site::String)
         md = @set md.TL = true
         md = @set md.Kω = 9
         md = @set md.SOI = 7
+        md = @set md.y0 = 1996
     elseif site=="FTP"
         md = @set md.TL = true
         md = @set md.Kω = 8
         md = @set md.SOI = 10
+        md = @set md.y0 = 1994
     else
         md = @set md.SOI = 24
+        md = @set md.y0 = 1994
     end
     return md
 end
