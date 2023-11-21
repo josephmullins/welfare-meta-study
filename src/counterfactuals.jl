@@ -1,6 +1,6 @@
 using Setfield
 
-function counterfactual(p,pB,pC,MD0::Vector{model_data},MD1::Vector{model_data},data::Vector{likelihood_data},n_idx)
+function counterfactual(p,pB,pC,MD0,MD1,data::Vector{likelihood_data},n_idx)
     chunks = Iterators.partition(eachindex(MD0),length(MD0) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
         Threads.@spawn counterfactual_chunk(p,pB,pC,MD0[chunk],MD1[chunk],data,n_idx)
@@ -66,30 +66,6 @@ function counterfactual_chunk(p,pB,pC,MD0,MD1,data::Vector{likelihood_data},n_id
     return D
 end
 
-# function counterfactual_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
-#     D = DataFrame(source = [],arm = [],year=[],Q=[],variable = [],value = [],case_idx = [],n_idx = [],app_status = [])
-#     logπτ = zeros(p.Kτ)
-#     (;V,vj,logP) = get_model(p)
-
-#     for md in MD
-#         solve!(logP,V,vj,p,md)
-#         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-#         k_idx = LinearIndices((2,p.Kη,md.Kω,p.Kτ))
-#         K = prod(size(k_inv))
-#         Kω = md.Kω
-#         s_inv = CartesianIndices((9,K))
-#         π0 = zeros(K)
-#         for n in n_idx[md.case_idx]
-#             #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
-#             initialize_exante!(logπτ,π0,p,md,data[n],k_idx) 
-#             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md.R) #<- nice.
-#             d = counterfactual_stats(p,EM[n],md,data[n])
-#             d[!,:n_idx] .= n
-#             D = [D;d]
-#         end
-#     end
-#     return D
-# end
 
 # a function to calcualte the expected value of formal and informal care inputs:
 function f_gk(s,s_inv,k_inv,p)
@@ -214,6 +190,8 @@ function control(md::model_data)
     return md
 end
 
+# OK: note: we have to convert the state regardless!!
+
 function convert_sipp(md::model_data,site::String)
     md = @set md.R = 1
     md = @set md.arm = 1
@@ -221,16 +199,17 @@ function convert_sipp(md::model_data,site::String)
     if site=="CTJF"
         md = @set md.TL = true
         md = @set md.Kω = 9
+        md = @set md.SOI = 7
     elseif site=="FTP"
         md = @set md.TL = true
         md = @set md.Kω = 8
+        md = @set md.SOI = 10
+    else
+        md = @set md.SOI = 24
     end
     return md
 end
 
-
-function non_selected_counterfactual()
-end
 
 # these gets rid of all the other things.
 # BUT: how do I switch the budget off??
