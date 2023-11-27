@@ -54,7 +54,7 @@ function get_state_distribution!(Π::Array{Float64,2},P,model::ddc_model) #<- ne
     end
 end
 
-function em_mean(Π,t::Int64,model::ddc_model,pars,data,f::Function,condition::Function = (x->true))
+function em_mean(Π,t::Int64,f::Function,condition::Function = (x->true))
     m = 0.
     d = 0.
     if issparse(Π)
@@ -62,7 +62,7 @@ function em_mean(Π,t::Int64,model::ddc_model,pars,data,f::Function,condition::F
             s_idx = Π.rowval[s]
             if condition(s_idx)
                 wght = Π[s_idx,t]
-                m += wght * f(s_idx,t,model,pars,data)
+                m += wght * f(s_idx)
                 d += wght
             end
         end
@@ -70,7 +70,7 @@ function em_mean(Π,t::Int64,model::ddc_model,pars,data,f::Function,condition::F
         for s in axes(Π,1)
             if condition(s)
                 wght = Π[s,t]
-                m += wght * f(s,t,model,pars,data)
+                m += wght * f(s)
                 d += wght
             end
         end

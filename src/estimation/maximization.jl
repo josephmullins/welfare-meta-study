@@ -1,67 +1,80 @@
 using Optim
 
-function mstep_major!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
+function mstep_major(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
-    function fg!(F,G,x)
-        if G !== nothing
-            # code to compute gradient here
-            # writing the result to the vector G
-            ll = log_likelihood_threaded(x,Gstore,LL,M,∂M,EM,MD,p,data,n_idx) / N_
-            @views G[:] .= -sum(Gstore,dims=2) / N_
-            return -ll
-        else
-            return -log_likelihood_threaded(x,LL,M,EM,MD,p,data,n_idx) / N_
-        end
-    end
-    x0 = update_inv(p)
-    res = Optim.optimize(Optim.only_fg!(fg!),x0,LBFGS(),Optim.Options(show_trace = true,iterations=iterations))
-    update!(res.minimizer,p)
+    x0 = pars_inv(p)
+    objective(x) = -log_likelihood_threaded(x,p,EM,MD,data,n_idx) / N_
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
+    return pars(res.minimizer,p)
 end
 
-function mstep_major_block!(p::pars,Gstore::Matrix{Float64},LL::Vector{Float64},block,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
+function mstep_major_block(p,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
-    x0 = update_inv(p)
-    function fg!(F,G,x)
-        x0[block] .= x
-        if G !== nothing
-            # code to compute gradient here
-            # writing the result to the vector G
-            ll = log_likelihood_threaded(x0,Gstore,LL,M,∂M,EM,MD,p,data,n_idx) / N_
-            @views G[:] .= -sum(Gstore[block,:],dims=2) / N_
-            return -ll
-        else
-            return -log_likelihood_threaded(x0,LL,M,EM,MD,p,data,n_idx) / N_
-        end
-    end
-    xstart = x0[block]
-    res = Optim.optimize(Optim.only_fg!(fg!),xstart,LBFGS(),Optim.Options(show_trace = true,iterations=iterations))
-    x0[block] .= res.minimizer
-    update!(x0,p)
+    x0 = pars_inv(p,fnames,ft)
+    objective(x) = -log_likelihood_threaded(x,p,fnames,ft,EM,MD,data,n_idx) / N_
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
+    return pars(res.minimizer,p,fnames,ft)
 end
 
+function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_iter = 40)
+    block = [:αH,:βw,:ση]
+    ft = [1,1,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-function mstep_types!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
-    Kx = (5,6,7,9) #
+    block = [:wq,:σ]
+    ft = [2,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:αF,:βf]
+    ft = [1,1]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ]
+    ft = [3,3,3,1,1,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:αA,:αS,:αH,:σ]
+    ft = [1,1,1,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    # block = [:αA,:αH,:σ]
+    # ft = [1,1,2]
+    # p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:αA,:αH,:αR,:αP,:σ]
+    ft = [1,1,1,1,1,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:wq,:β,:σ]
+    ft = [2,3,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    block = [:αθ,:βΓ]
+    ft = [2,1]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
+    return p
+end
+
+function mstep_types!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
+    Kx = (4,5,6,8) #
     sources = ("SIPP","FTP","CTJF","MFIP")
-    blocks = (1:5,6:11,12:18,19:27)
+    blocks = (1:4,5:9,10:15,16:23)
     pos = 1
     for s in eachindex(sources)
         source = sources[s]
         block = blocks[s]
         kx = Kx[s]
         nβ = kx * (p.Kτ-1)
-        G = zeros(nβ)
         x0 = reshape(p.βτ[block,:],nβ)
-        β = view(p.βτ,block,:)
-        type_obj(F,G,x) = log_likelihood_type(G,x,β,source,EM,MD,p,data,n_idx,J)
-        res = Optim.optimize(Optim.only_fg!(type_obj),x0,LBFGS(),Optim.Options(show_trace=false,iterations=100))
-
-        β[:] .= res.minimizer
+        type_obj(x) = -log_likelihood_type(x,kx,source,EM,MD,p,data,n_idx,J)
+        res = Optim.optimize(type_obj,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
+        @views p.βτ[block,:][:] .= res.minimizer
         pos += nβ
     end
 end
 
-function mstep_πη!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
+function mstep_πη!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
     denom = zeros(2,1,p.Kτ,3)
     fill!(p.πη,0.)
     for md in MD
@@ -84,10 +97,10 @@ function mstep_πη!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Ve
             end
         end
     end
-    p.πη ./= denom
+    p.πη ./= denom 
 end
 
-function mstep_σ!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
+function mstep_σ(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
     denom_w = 0.
     denom_pf = 0.
     numer_w = 0.
@@ -112,7 +125,7 @@ function mstep_σ!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vect
                             end
                         end
                     end
-                    if data[n].log_chcare[t]>0
+                    if data[n].pay_care[t] && data[n].chcare[t]>0
                         for s in nzrange(EM[n].q_s,t)
                             s_idx = EM[n].q_s.rowval[s]
                             _,k = Tuple(s_inv[s_idx])
@@ -126,23 +139,17 @@ function mstep_σ!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vect
             end
         end
     end
-    p.σ_W = sqrt( numer_w / denom_w )
-    p.σ_PF = sqrt( numer_pf / denom_pf )
+    σ_W = sqrt( numer_w / denom_w )
+    σ_PF = sqrt( numer_pf / denom_pf )
+    return (;p...,σ_W,σ_PF)
 end
 
-function mstep_prices!(p::pars,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx::Vector{Vector{Int64}},J::Int64)
-    x0 = update_inv(p)
-    Gstore = zeros(length(x0))
-    price_block = (5p.Kτ+6):(7p.Kτ+18)
-    function fg!(F,G,x)
-        x0[price_block] .= x
-        ll = prices_log_likelihood(x0,Gstore,EM,MD,p,data,n_idx,J)
-        G[:] .= -Gstore[price_block]
-        return -ll
-    end
-    xstart = x0[price_block]
-    res = Optim.optimize(Optim.only_fg!(fg!),xstart,LBFGS(),Optim.Options(show_trace=true,iterations=20))
-    x0[price_block] .= res.minimizer
-    update!(x0,p)
-    return nothing
-end
+# function mstep_chcare(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+#     fname = [:μ_PF,:σ_PF2]
+#     ft = [1,2]
+#     objective(x) = - chcare_log_like(pars(x,p,fname,ft),MD,EM,data,n_idx)
+#     x0 = pars_inv(p,fname,ft)
+#     res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace=false,iterations=100))
+#     p = pars(res.minimizer,p,fname,ft)
+#     return p
+# end

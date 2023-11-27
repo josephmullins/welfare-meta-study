@@ -21,29 +21,25 @@ function j_inv(j)
     return S,A,p,H,F
 end
 
-
-# the nesting is:
-# program participation choice -> work choice -> care choice (if working)
-layers = 1:3 #<- three layers,  program choice, work choice, then care choice
-parents = [10:15,16:18,19:19]
-children = [fill(nothing,J);[1:1];[2:3];[4:4];[5:6];[7:7];[8:9];[10:11];[12:13];[14:15];[16:18]]
-n_nodes = 19
-
-NL = NestedLogitTree(J,n_nodes,layers,parents,children)
-
-# we remove working from the choice set when there is no wage offer (kη==1)
-function choice_set!(m::ddc_model,Kη::Int64,Kω::Int64,Kτ::Int64)
-    k_inv = CartesianIndices((2,Kη,Kω,Kτ))
-    for t in axes(m.choice_set,3), j in 1:m.G.nchoices
-        S,A,P,H,F = j_inv(j)
-        for k in 1:m.K
-            _,kη,_,_ = Tuple(k_inv[k])
-            if (kη==1) && (H==1)
-                m.choice_set[j,k,t] = false
-            end
-        end
+# don't need this!
+function choice_set(job_offer::Bool)
+    if job_offer
+        return (1,2,3,4,5,6,7,8,9)
+    else
+        return (1,4,7)
     end
-    for t in axes(m.choice_set,3), k in 1:m.K
-        @views extend_choice_set!(m.choice_set[:,k,t],m.G)
-    end
+end
+
+# --- this is the nested logit structure when having a job offer:
+function get_nests()
+    B₁ = [[1,],[2,3],[4,],[5,6],[7,],[8,9]]
+    C₁ = [[1,],[2,],[3,],[4,],[5,],[6,],[7,],[8,],[9,]]
+    B₂ = [[1,2],[3,4],[5,6]]
+    C₂ = [[1,],[2,3],[4,],[5,6],[7,],[8,9]] #<- same as B₁
+    B₃ = [[1,2,3]]
+    C₃ = [[1,2,3],[4,5,6],[7,8,9]]
+
+    B = (B₁,B₂,B₃)
+    C = (C₁,C₂,C₃)
+    return (;B,C)
 end

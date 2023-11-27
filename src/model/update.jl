@@ -1,133 +1,148 @@
 
 # a version here that calculates derivatives also
-function update!(x,p::pars)
+function pars(x,p)
+    (;Kτ) = p
     # -- u_idx -- #
     # α parameters
     pos = 1
-    p.αθ = exp.(x[pos:pos+p.Kτ-1])
-    pos += p.Kτ
-    p.αH = x[pos:pos+p.Kτ-1]
-    pos += p.Kτ
-    p.αA = x[pos:pos+p.Kτ-1]
-    pos += p.Kτ
-    p.αS = x[pos:pos+p.Kτ-1]
-    pos += p.Kτ
-    p.αF = x[pos:pos+p.Kτ-1]
-    pos += p.Kτ
-    p.αR = x[pos:pos+1]
-    p.αP = x[pos+2]
+    αθ = exp.(x[pos:pos+Kτ-1])
+    pos += Kτ
+    αH = x[pos:pos+Kτ-1]
+    pos += Kτ
+    αA = x[pos:pos+Kτ-1]
+    pos += Kτ
+    αS = x[pos:pos+Kτ-1]
+    pos += Kτ
+    αF = x[pos:pos+Kτ-1]
+    pos += Kτ
+    αR = x[pos]
+    λR = x[pos+1]
+    αP = x[pos+2]
     pos += 3
     # wq
-    p.wq = exp(x[pos])
-    pos += 1
+    wq = exp.(x[pos:pos+Kτ-1])
+    pos += Kτ    
     # βΓ 
-    p.βΓ = x[pos:pos+1]
+    βΓ = x[pos:pos+1]
     pos += 2
     # βw
-    p.βw = x[pos:pos+p.Kτ+1]
-    pos += p.Kτ + 2
+    βw = x[pos:pos+Kτ+1]
+    pos += Kτ + 2
     # βf
-    p.βf = x[pos:pos+p.Kτ+9]
-    pos += p.Kτ + 10
+    βf = x[pos:pos+Kτ+9]
+    pos += Kτ + 10
     # ση
-    p.ση = x[pos]
+    ση = x[pos]
     pos += 1
 
     # ----- F_idx ------ #
-    p.λ[:] = logit.(x[pos:pos+p.Kτ-1])
-    pos += p.Kτ
-    p.δ[:] = logit.(x[pos:pos+p.Kτ-1])
-    pos += p.Kτ
-    p.πW = logit(x[pos])
-    pos += 1
+    λ₀ = logit.(x[pos:pos+Kτ-1])
+    pos += Kτ
+    δ = logit.(x[pos:pos+Kτ-1])
+    pos += Kτ
+    λ₁ = logit.(x[pos:pos+Kτ-1])
+    pos += Kτ
+    μₒ = x[pos] #?
+    σₒ = exp(x[pos+1])
+    pos += 2
 
     # ----- σ_idx (nested logit dispersion) ---- #
     # σ (shock dispersion)
-    p.σ[:] = exp.(x[pos:pos+2])
+    σ = exp.(x[pos:pos+2])
     pos += 3
 
     # ---- β_idx (discounting) ----- #
-    p.β = logit(x[pos])
+    β = logit(x[pos])
     #pos += 1
     # -- others not in this step -- #
     #σ_W <- dispersion of measurement error for wages
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    return nothing
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = update_transitions(p)
+    return p
 end
 
-function update_full!(x,p::pars)
-    np = 9p.Kτ + 24
-    update!(x[1:np],p)
+function pars_full(x,p)
+    np = 11p.Kτ + 24
+    p = pars(x[1:np],p)
     K = prod(size(p.βτ))
-    p.βτ[:] = x[(np+1):(np+K)]
+    βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)
     np += K
     K = prod(size(p.πη))
-    p.πη[:] = x[(np+1):(np+K)]
+    πη = reshape(x[(np+1):(np+K)],2,p.Kη,p.Kτ,3)
     np += K
-    p.σ_W = x[np+1]
-    p.σ_PF = x[np+2]
+    σ_W = x[np+1]
+    σ_PF = x[np+2]
+    #μ_PF = x[np+3]
+    #σ_PF2 = exp(x[np+4])
+    return (;p...,βτ,πη,σ_W,σ_PF)
 end
 
-function update_inv(p::pars)
-    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.αP;log(p.wq);p.βΓ;p.βw;p.βf;p.ση]
-    F = [logit_inv.(p.λ);logit_inv.(p.δ);logit_inv(p.πW)]
+function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
+    pos = 1
+    R = eltype(x)
+    Xnew = Union{R,Vector{R}}[]
+    for kf in eachindex(f)
+        v = getfield(p,f[kf])
+        K = length(v)
+        if tf[kf]==1
+            if K==1
+                vnew = x[pos]
+            else
+                vnew = x[pos:(pos+K-1)]
+            end
+        elseif tf[kf]==2
+            if K==1
+                vnew = exp(x[pos])
+            else
+                vnew = exp.(x[pos:(pos+K-1)])
+            end  
+        elseif tf[kf]==3
+            if K==1
+                vnew = logit(x[pos])
+            else
+                vnew = logit.(x[pos:(pos+K-1)])
+            end
+        end
+        pos += K
+        push!(Xnew,vnew)
+    end
+    pnew = NamedTuple(zip(f,Xnew))
+    p = (;p...,pnew...)
+    p = update_transitions(p)
+    return p
+end
+
+function pars_inv(p,f::Vector{Symbol},ft::Vector{Int64})
+    x = Float64[]
+    for kf in eachindex(f)
+        if ft[kf]==1
+            push!(x,getfield(p,f[kf])...)
+        elseif ft[kf]==2
+            push!(x,log.(getfield(p,f[kf]))...)
+        elseif ft[kf]==3
+            push!(x,logit_inv.(getfield(p,f[kf]))...)
+        end
+    end
+    return x
+end
+
+function pars_inv(p)
+    u = [log.(p.αθ);p.αH;p.αA;p.αS;p.αF;p.αR;p.λR;p.αP;log.(p.wq);p.βΓ;p.βw;p.βf;p.ση]
+    F = [logit_inv.(p.λ₀);logit_inv.(p.δ);logit_inv.(p.λ₁);p.μₒ;log(p.σₒ)]
     σ = log.(p.σ)
     β = logit_inv(p.β)
     return [u;F;σ;β]
 end
 
-function update_inv_full(p::pars)
-    x = update_inv(p)
+function pars_inv_full(p)
+    x = pars_inv(p)
     push!(x,p.βτ...)
     push!(x,p.πη...)
     push!(x,p.σ_W)
     push!(x,p.σ_PF)
-end
-
-# update the derivative g to account for the fact that many parameters are transformed.
-function apply_chain_rule!(g,p::pars,σ_idx::UnitRange{Int64},β_idx::UnitRange{Int64})
-    # note: transformation of parameters of utility are accounted for already in utility()
-    # note: transformation of F_j parameterd (λ and δ) is dealt with already in F_j!
-    # σ:
-    @views g[σ_idx] .*= p.σ #<- exp transformation
-    # β:
-    @views g[β_idx] *= p.β*(1-p.β) #<- logit transformation
-end
-
-
-# this function updates the model with all parameters that don't depend on individual data
-# -- i.e. transition matrices, dispersion parameters, and discounting
-function update!(p::pars,M::Vector{ddc_model},Kω)
-    for mi in eachindex(M)
-        F_j!(p,M[mi],Kω[mi])
-    end
-    return nothing
-end
-function update!(p::pars,M::Vector{ddc_model})
-    for mi in eachindex(M)
-        F_j!(p,M[mi],1)
-    end
-    return nothing
-end
-
-function update!(p::pars,M::Matrix{ddc_model},Kω)
-    for i in axes(M,1), j in axes(M,2)
-        F_j!(p,M[i,j],Kω[i])
-    end
-    return nothing
-end
-
-function update!(p::pars,M::Matrix{ddc_model},∂M::Matrix{ddc_derivative},Kω)
-    for i in axes(M,1), j in axes(M,2)
-        F_j!(p,M[i,j],∂M[i,j],Kω[i])
-    end
-    return nothing
-end
-
-function update(p::pars,Kω)
-    M = [ddc_model(p,NL,kω) for kω in Kω]
-    update!(p,M,Kω)
-    return M
+    #push!(x,p.μ_PF)
+    #push!(x,log(p.σ_PF2))
 end

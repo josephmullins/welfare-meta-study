@@ -44,11 +44,6 @@ function estimation_setup(panel::DataFrame)
         @orderby(:case_idx,:n)
     end
 
-    # initialize the versions of the model we want:
-    Kω = [1,8,9] #<- in order: static case, FTP, CTJF
-    M = [ddc_model(p,NL,kω) for kω in Kω, t in 1:nthreads()]
-    ∂M = [ddc_derivative(p,M[j],Kω[j]) for j in 1:3, t in 1:nthreads()]
-
     # put the data together for evaluating the likelihood
     data = likelihood_data[]
     EM = EM_data[]
@@ -58,12 +53,12 @@ function estimation_setup(panel::DataFrame)
         case_idx = d.case_idx
         md = MD[case_idx]
         m_idx = 1 + (md.arm==1)*((md.source=="FTP") + 2*(md.source=="CTJF"))
-        em = get_EM_data(p,M[m_idx],md,d)
+        em = get_EM_data(p,md,d)
         push!(data,d)
         push!(EM,em)
     end
     
-    return M,∂M,MD,EM,data,n_idx
+    return MD,EM,data,n_idx
 end
 
 # function to get model data from the dataframe df, used in estimation_setup()
@@ -75,7 +70,9 @@ function model_data(df)
         T = size(df,1)
     end
     arm = df.arm[1]
-    loc_ind = (source=="CTJF")*2 + (source=="MFIP")*4 + arm + 1
+    # locations: FTP0,FTP1,CT0,CT1,MF0,MF1,MF2 (SIPP excluded)
+    # these are used to create dummy variables for the price of childcare
+    loc_ind = 1*(source=="FTP") + (source=="CTJF")*3 + (source=="MFIP")*5 + arm
     if source=="FTP" && arm==1
         Kω = 1 + 7 #<- 21 month time limit
         TL = true
@@ -103,16 +100,16 @@ function model_data(df)
     end
     # get the type block:
     if source=="SIPP"
-        type_block = 1:5
+        type_block = 1:4
     elseif source=="FTP"
-        type_block = 6:11
+        type_block = 5:9
     elseif source=="CTJF"
-        type_block = 12:18
+        type_block = 10:15
     elseif source=="MFIP"
-        type_block = 19:27
+        type_block = 16:23
     end
 
-    return model_data(df.case_idx[1],df.year[1],df.Q[1],T,df.age[1],df.ageyng[1],source,arm,loc_ind,df.SOI[1],df.numkids[1],
+    return model_data(df.case_idx[1],df.year[1],df.Q[1],T,df.age[1],df.ageyng[1],source,source,arm,loc_ind,df.SOI[1],df.numkids[1],
     df.unemp,df.cpi,R,Kω,TL,type_block)
 end
 
@@ -121,6 +118,8 @@ function likelihood_data(df)
     case_idx = df.case_idx[1]
     t0 = df.t0[1] 
     T = size(df,1)
+    pay_care_valid = .!ismissing.(df.pay_care)
+    pay_care = coalesce.(df.pay_care,false)
     chcare_valid = .!ismissing.(df.chcare)
     chcare = coalesce.(df.chcare,-1.)
     log_chcare = log.(coalesce.(max.(df.chcare,0.),0.))
@@ -130,27 +129,27 @@ function likelihood_data(df)
     AFDC = coalesce.(df.AFDC,-1)
     EMP = coalesce.(df.EMP,-1)
     FS = coalesce.(df.FS,-1)
-    FC = coalesce.(df.chcare.>0,-1)
+    FC = coalesce.(df.pay_care,-1)
     X_type = []
     source = df.source[1]
-    Kx = 5 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
+    Kx = 4 + (source=="FTP") + 2*(source=="CTJF") + 4*(source=="MFIP")
     X_type = zeros(Kx)
-    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 4*df.coll[1]
+    ed_dum = 2*df.hs[1] + 3*df.some_coll[1] + 3*df.coll[1] #<- grouping some_coll and coll
     X_type[1] = 1.
     if ed_dum>1
         X_type[ed_dum] = 1.
     end
-    X_type[5] = df.numkids[1]
+    X_type[4] = df.numkids[1]
     if source=="FTP"
-        X_type[6] = df.app_status[1] #<- new applicant (recipient excluded)
+        X_type[5] = df.app_status[1] #<- new applicant (recipient excluded)
     elseif source=="CTJF"
-        X_type[6] = df.app_status[1] #<- new applicant (recipient excluded)
-        X_type[7] = df.county[1]==2 #<- New Haven county (Manchester excluded)
+        X_type[5] = df.app_status[1] #<- new applicant (recipient excluded)
+        X_type[6] = df.county[1]==2 #<- New Haven county (Manchester excluded)
     elseif source=="MFIP"
-        X_type[6] = df.app_status[1]==1 #<- new applicant (recipient excluded)
-        X_type[7] = df.app_status[1]==2 #<- re-applicant
-        X_type[8] = df.county[1]==2 #<- Anoka county (Hennepin excluded)
-        X_type[9] = df.county[1]==3 #<- Dakota county (Hennepin excluded)
+        X_type[5] = df.app_status[1]==1 #<- new applicant (recipient excluded)
+        X_type[6] = df.app_status[1]==2 #<- re-applicant
+        X_type[7] = df.county[1]==2 #<- Anoka county (Hennepin excluded)
+        X_type[8] = df.county[1]==3 #<- Dakota county (Hennepin excluded)
     end
     # leave-out sample is non-control group new applicants in Anoka county, dakota county, and Manchester county
     leaveout = (source=="MFIP" && df.arm[1]>0 && df.county[1]>1 && df.app_status[1]==1) || (source=="CTJF" && df.arm[1]==1 && df.county[1]==1 && df.app_status[1]==1)
@@ -161,7 +160,7 @@ function likelihood_data(df)
         # - similarly subtract one from T
         kA = AFDC[1]
         return likelihood_data(
-        case_idx,t0+1,T-1,chcare_valid[2:end],chcare[2:end],log_chcare[2:end],wage_valid[2:end],logW[2:end],
+        case_idx,t0+1,T-1,pay_care_valid[2:end],pay_care[2:end],chcare_valid[2:end],chcare[2:end],log_chcare[2:end],wage_valid[2:end],logW[2:end],
         choice_missing[2:end],AFDC[2:end],EMP[2:end],FS[2:end],FC[2:end],
         df.less_hs[1],df.hs[1],df.some_coll[1],df.coll[1],X_type,kA,true
         )
@@ -172,7 +171,7 @@ function likelihood_data(df)
             kA = df.app_status[1]==2
         end
         return likelihood_data(
-        case_idx,t0,T,chcare_valid,chcare,log_chcare,wage_valid,logW,
+        case_idx,t0,T,pay_care_valid,pay_care,chcare_valid,chcare,log_chcare,wage_valid,logW,
         choice_missing,AFDC,EMP,FS,FC,
         df.less_hs[1],df.hs[1],df.some_coll[1],df.coll[1],X_type,AFDC[1],use
         )
@@ -181,8 +180,8 @@ end
 
 # function to initialize EM data given model and data
 # this function is important! It determines the sparsity structure of each EM_data object, which all calls to the likelihood function will use
-function get_EM_data(p::pars,model::ddc_model,md::model_data,data::likelihood_data)
-    J = model.G.nchoices
+function get_EM_data(p,md::model_data,data::likelihood_data)
+    J = 9
     T = data.T #
     t0 = data.t0
     Kτ = p.Kτ
@@ -234,42 +233,48 @@ function get_EM_data(p::pars,model::ddc_model,md::model_data,data::likelihood_da
         for s in nzrange(α,t)
             s_idx = α.rowval[s]
             j,k = Tuple(s_inv[s_idx])
-            for kn in nzrange(model.F[j,t+t0],k)
-                kn_idx = model.F[j,t+t0].rowval[kn]
-                kA,kη,kω,kτ = Tuple(k_inv[kn_idx])
-                if !data.wage_valid[t+1] || kη>1 #<- rule out states when kη=1 and EARN>0
-                    if !data.choice_missing[t+1] #y[t+1]!=-1
-                        AFDC = data.AFDC[t+1]
-                        FS = max(AFDC,data.FS[t+1]) #<- AFDC=1 implies FS=1 in the model
-                        EMP = data.EMP[t+1]
-                        if EMP==0
-                            jn = j_idx(FS,AFDC,EMP,0)
-                            sn = (kn_idx-1)*J+jn
-                            P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                            α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
-                        else
-                            if data.chcare_valid[t+1]
-                                FC = data.FC[t+1]
-                                jn = j_idx(FS,AFDC,EMP,FC)
+            _,A,_,_,_ = j_inv(j)
+            _,kη,kω,kτ = Tuple(k_inv[k])
+            kω_next = min(kω + A,md.Kω)
+            kA_next = 1 + A
+            for kη_next in 1:Kη
+                kn_idx = k_idx[kA_next,kη_next,kω_next,kτ]
+                fkk = p.Fη[kη_next,kη,1,kτ]
+                if fkk>0
+                    if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
+                        if !data.choice_missing[t+1] #y[t+1]!=-1
+                            AFDC = data.AFDC[t+1]
+                            FS = max(AFDC,data.FS[t+1]) #<- AFDC=1 implies FS=1 in the model
+                            EMP = data.EMP[t+1]
+                            if EMP==0
+                                jn = j_idx(FS,AFDC,EMP,0)
                                 sn = (kn_idx-1)*J+jn
                                 P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
                                 α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
                             else
-                                jn1 = j_idx(FS,AFDC,EMP,0)
-                                jn2 = j_idx(FS,AFDC,EMP,1)
-                                sn1 = (kn_idx-1)*J+jn1
-                                P[t][sn1,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                                α[sn1,t+1] = 1. #p_y[jn,k_idx,t+1]
-                                sn2 = (kn_idx-1)*J+jn2
-                                P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                                α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                if data.pay_care_valid[t+1]
+                                    FC = data.FC[t+1]
+                                    jn = j_idx(FS,AFDC,EMP,FC)
+                                    sn = (kn_idx-1)*J+jn
+                                    P[t][sn,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                else
+                                    jn1 = j_idx(FS,AFDC,EMP,0)
+                                    jn2 = j_idx(FS,AFDC,EMP,1)
+                                    sn1 = (kn_idx-1)*J+jn1
+                                    P[t][sn1,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn1,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                    sn2 = (kn_idx-1)*J+jn2
+                                    P[t][sn2,s_idx] = 1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                    α[sn2,t+1] = 1. #p_y[jn,k_idx,t+1]
+                                end
                             end
-                        end
-                    else
-                        for jn in 1:J
-                            sn = (kn_idx-1)*J+jn
-                            P[t][sn,s_idx] =  1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
-                            α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                        else
+                            for jn in 1:J
+                                sn = (kn_idx-1)*J+jn
+                                P[t][sn,s_idx] =  1. #F[j,t][k_idx,k]*p_y[jn,k_idx,t+1]
+                                α[sn,t+1] = 1. #p_y[jn,k_idx,t+1]
+                            end
                         end
                     end
                 end
