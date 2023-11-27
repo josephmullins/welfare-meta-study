@@ -173,14 +173,14 @@ function log_likelihood_transitions(em::EM_data,p,md::model_data,data::likelihoo
             s_idx = em.q_s.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             _,A,_,_,_ = j_inv(j)
-            jF = 1 + md.R*A
+            WR = md.R*A
             unemp = md.unemp[t+t0]
             _,kη,_,kτ = Tuple(k_inv[k])
             for sn in nzrange(em.q_ss[t],s_idx)
                 sn_idx = em.q_ss[t].rowval[sn]
                 _,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
-                f_ss = fη(kη_next,kη,kτ,jF,unemp,p)
+                f_ss = fη(kη_next,kη,kτ,WR,unemp,p)
                 wght = em.q_ss[t].nzval[sn]
                 #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)

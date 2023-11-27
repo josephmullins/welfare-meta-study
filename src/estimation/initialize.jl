@@ -237,9 +237,11 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
             _,kη,kω,kτ = Tuple(k_inv[k])
             kω_next = min(kω + A,md.Kω)
             kA_next = 1 + A
+            WR = md.R * A
+            unemp = md.unemp[t0+t]
             for kη_next in 1:Kη
                 kn_idx = k_idx[kA_next,kη_next,kω_next,kτ]
-                fkk = p.Fη[kη_next,kη,1,kτ]
+                fkk = fη(kη_next,kη,kτ,WR,unemp,p)
                 if fkk>0
                     if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
                         if !data.choice_missing[t+1] #y[t+1]!=-1
