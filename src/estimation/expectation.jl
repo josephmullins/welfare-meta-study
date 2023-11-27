@@ -56,6 +56,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
             j,k = Tuple(s_inv[s_idx])
             _,A,_,_,_ = j_inv(j)
             jF = 1 + md.R*A
+            unemp = md.unemp[t+t0]
             _,kη,_,kτ = Tuple(k_inv[k])
             for sn in nzrange(EM.P[t],s_idx)                    
                 sn_idx = EM.P[t].rowval[sn]
@@ -72,7 +73,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 if md.source=="SIPP" && data.chcare_valid[t+1] && data.pay_care[t+1]
                     ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t+t0+1)
                 end
-                fkk = p.Fη[kη_next, kη, jF, kτ]
+                fkk = fη(kη_next,kη,kτ,jF,unemp,p)
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
                 EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end
@@ -82,11 +83,7 @@ end
 
 # initial probability
 function initial_prob(kA,kη,kτ,logπτ,p,md::model_data)
-    if md.source=="SIPP"
-        πη = p.πₛ[kη,kτ]
-    else
-        loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
-        πη = p.πη[kA,kη,kτ,loc]
-    end
+    loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP") + 4(md.source=="SIPP")
+    πη = p.πη[kA,kη,kτ,loc]
     return exp(logπτ[kτ]) * πη
 end

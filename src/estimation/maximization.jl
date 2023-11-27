@@ -29,8 +29,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ]
-    ft = [3,3,3,1,1,2]
+    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ,:λᵤ]
+    ft = [1,1,3,1,1,2,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:αA,:αS,:αH,:σ]
@@ -81,18 +81,16 @@ function mstep_πη!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{l
         K = 2 * p.Kη * md.Kω * p.Kτ
         s_inv = CartesianIndices((J,K))
         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-        if md.source!="SIPP"
-            loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
-            for n in n_idx[md.case_idx]
-                if data[n].use
-                    for s in nzrange(EM[n].q_s,1)
-                        s_idx = EM[n].q_s.rowval[s]
-                        _,k = Tuple(s_inv[s_idx])
-                        kA,kη,_,kτ = Tuple(k_inv[k])
-                        wght = EM[n].q_s.nzval[s]
-                        p.πη[kA, kη, kτ, loc] += wght
-                        denom[kA, 1, kτ, loc] += wght
-                    end
+        loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP") + 4(md.source=="SIPP")
+        for n in n_idx[md.case_idx]
+            if data[n].use
+                for s in nzrange(EM[n].q_s,1)
+                    s_idx = EM[n].q_s.rowval[s]
+                    _,k = Tuple(s_inv[s_idx])
+                    kA,kη,_,kτ = Tuple(k_inv[k])
+                    wght = EM[n].q_s.nzval[s]
+                    p.πη[kA, kη, kτ, loc] += wght
+                    denom[kA, 1, kτ, loc] += wght
                 end
             end
         end

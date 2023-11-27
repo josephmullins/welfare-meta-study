@@ -71,11 +71,8 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
 
     ll = 0.
     ll += log_likelihood_choices(em,data.t0,logP,s_inv)
-    ll += log_likelihood_transitions(em,p,md.R,k_inv,s_inv)
+    ll += log_likelihood_transitions(em,p,md,data,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
-    if md.source=="SIPP"
-        ll += log_likelihood_η0(p,em,s_inv,k_inv)
-    end 
     return ll
 end
 
@@ -141,12 +138,8 @@ function log_likelihood_η0_full(p,md::model_data,em::EM_data,s_inv,k_inv)
         _,k = Tuple(s_inv[s_idx])
         kA,kη,_,kτ = Tuple(k_inv[k])
         wght = em.q_s.nzval[s]
-        if md.source=="SIPP"
-            llk = log(p.πₛ[kη,kτ])
-        else
-            loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
-            llk = log(p.πη[kA,kη,kτ,loc])
-        end
+        loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP") + 4(md.source=="SIPP")
+        llk = log(p.πη[kA,kη,kτ,loc])
         ll += llk*wght
     end
     return ll
@@ -171,21 +164,23 @@ function log_likelihood_choices(em::EM_data,t0,logP,s_inv)
     return ll
 end
 
-function log_likelihood_transitions(em::EM_data,p,R::Int64,k_inv,s_inv)
+function log_likelihood_transitions(em::EM_data,p,md::model_data,data::likelihood_data,k_inv,s_inv)
     ll = 0.
     Kη = size(k_inv,2)
+    t0 = data.t0
     for t in eachindex(em.q_ss)
         for s in nzrange(em.q_s,t)
             s_idx = em.q_s.rowval[s]
             j,k = Tuple(s_inv[s_idx])
             _,A,_,_,_ = j_inv(j)
-            jF = 1 + R*A
+            jF = 1 + md.R*A
+            unemp = md.unemp[t+t0]
             _,kη,_,kτ = Tuple(k_inv[k])
             for sn in nzrange(em.q_ss[t],s_idx)
                 sn_idx = em.q_ss[t].rowval[sn]
                 _,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
-                f_ss = p.Fη[kη_next,kη,jF,kτ]
+                f_ss = fη(kη_next,kη,kτ,jF,unemp,p)
                 wght = em.q_ss[t].nzval[sn]
                 #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)
