@@ -7,30 +7,52 @@
 using Distributions
 Φ(x,μ,σ) = cdf(Normal(μ,σ),x)
 
-function update_transitions(p)
-    R = eltype(p.λ₀)
-    πₛ = zeros(R,p.Kη,p.Kτ)
-    Fη = zeros(R,p.Kη,p.Kη,2,p.Kτ)
-    for kτ in 1:p.Kτ
-        λR = logit(logit_inv(p.λ₀[kτ]) + p.λR)
-        πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
-        Fη[:,:,1,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ], p.Kη-1)
-        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ])
-        Fη[:,:,2,kτ] .= Fη_mat(πₒ, λR, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+function fη(kη_next,kη,kτ,WR,unemp,p)
+    if kη==1
+        λ₀ = logit(p.λ₀[kτ] + p.λᵤ*unemp + p.λR*WR)
+        if kη_next==1
+            return 1-λ₀
+        else
+            return λ₀ * p.πₒ[kη_next-1,1]
+        end
+    else
+        if kη_next==1
+            return p.δ[kτ]
+        elseif kη_next==kη
+            λ₁ = logit(p.λ₁[kτ] + p.λᵤ*unemp)
+            return (1-p.δ[kτ]) * ( (1-λ₁) + λ₁ * p.πₒ[kη_next-1,kη] )
+        else
+            λ₁ = logit(p.λ₁[kτ] + p.λᵤ*unemp)
+            return (1-p.δ[kτ]) * λ₁ * p.πₒ[kη_next-1,kη]
+        end
     end
-    return (;p...,Fη,πₛ)
 end
 
-function get_offer_dist(ηgrid,μ,σ,R)
-    K = length(ηgrid)
-    π0 = zeros(R,length(ηgrid))
-    norm = Φ(ηgrid[end],μ,σ)
-    π0[1] = Φ(ηgrid[1], μ, σ) / norm
-    for k in 2:K
-        π0[k] = (Φ(ηgrid[k], μ, σ) - Φ(ηgrid[k-1],μ,σ)) / norm
+# double check whether this leads to allocations
+function p_offer(kη_next,kη,p)
+    norm = Φ(p.ηgrid[end],p.μₒ,p.σₒ)
+    if kη==1
+        if kη_next==2
+            return Φ(p.ηgrid[1],p.μₒ,p.σₒ) / norm
+        else
+            return (Φ(p.ηgrid[kη_next-1],p.μₒ,p.σₒ) - Φ(p.ηgrid[kη_next-2],p.μₒ,p.σₒ)) / norm
+        end
+    else
+        if kη_next==kη
+            return Φ(p.ηgrid[kη_next-1],p.μₒ,p.σₒ) / norm
+        elseif kη_next>kη
+            return (Φ(p.ηgrid[kη_next-1],p.μₒ,p.σₒ) - Φ(p.ηgrid[kη_next-2],p.μₒ,p.σₒ)) / norm
+        else
+            return 0.
+        end
     end
-    return π0
 end
+
+function update_transitions(p)
+    πₒ = [p_offer(k2,k,p) for k2 in 2:p.Kη, k in 1:p.Kη]
+    return (;p...,πₒ)
+end
+
 
 function stat_dist(πₒ,λ₀,λ₁,δ)
     R = eltype(πₒ)
@@ -46,22 +68,6 @@ function stat_dist(πₒ,λ₀,λ₁,δ)
         inₖ += (1-δ) * λ₁ * πₛ[k+1]
     end
     return πₛ
-end
-
-function Fη_mat(πₒ,λ₀,λ₁,δ,K)
-    F = zeros(eltype(πₒ),K+1,K+1)
-    F[1,1] = (1 - λ₀)
-    for k in 1:K
-        F[k+1,1] = λ₀ * πₒ[k]
-    end
-    for k in 1:K
-        F[1,k+1] = δ
-        F[k+1,k+1] = (1-δ) * (1-λ₁)
-        for kn in 1:K
-            F[max(k+1,kn+1),k+1] += (1-δ) * λ₁ * πₒ[kn]
-        end
-    end
-    return F     
 end
 
 function next(A,kA,kω;Kω)
