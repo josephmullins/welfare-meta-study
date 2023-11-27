@@ -75,7 +75,7 @@ function mstep_types!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{
 end
 
 function mstep_πη!(p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx,J::Int64)
-    denom = zeros(2,1,p.Kτ,3)
+    denom = zeros(2,1,p.Kτ,4)
     fill!(p.πη,0.)
     for md in MD
         K = 2 * p.Kη * md.Kω * p.Kτ
