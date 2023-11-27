@@ -8,6 +8,11 @@ function f_eta(s_idx,s_inv,k_inv)
     return kη
 end
 
+function f_eta(s_idx,s_inv,k_inv,k)
+    kη = f_eta(s_idx,s_inv,k_inv)
+    return kη==k
+end
+
 function f_ω(s_idx,s_inv,k_inv)
     _,k = Tuple(s_inv[s_idx])
     _,_,kω,_ = Tuple(k_inv[k])
@@ -19,6 +24,10 @@ function state_stats(p,em::EM_data,md::model_data,data::likelihood_data)
     T = size(em.q_s,2)
     Q = 0:T-1
     E = zeros(T)
+    E1 = zeros(T)
+    E2 = zeros(T)
+    E3 = zeros(T)
+    E4 = zeros(T)
     J = zeros(T)
     Kω = zeros(T)
     
@@ -31,8 +40,12 @@ function state_stats(p,em::EM_data,md::model_data,data::likelihood_data)
     year = md.y0 .+ fld.(md.q0 .+ (0:T-1),4) #<- start with one quarter delay in this model.
     Q = mod.(md.q0 .+ (0:T-1),4) #<- as above
     for t in 1:T
-        E[t] = em_mean(em.q_s,t,s->f_earn(s,t,s_inv,k_inv,p,md)) #,x->job_offer(x,s_inv,k_inv))
-        J[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv),s->job_offer(s,s_inv,k_inv))
+        E[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv),s->job_offer(s,s_inv,k_inv))
+        E1[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv,1))
+        E2[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv,2))
+        E3[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv,3))
+        E4[t] = em_mean(em.q_s,t,s->f_eta(s,s_inv,k_inv,4))
+        J[t] = em_mean(em.q_s,t,s->job_offer(s,s_inv,k_inv))
         Kω[t] = em_mean(em.q_s,t,s->f_ω(s,s_inv,k_inv))
     end
     keep = .!data.choice_missing
@@ -43,13 +56,13 @@ function state_stats(p,em::EM_data,md::model_data,data::likelihood_data)
     else
         app_status = 0
     end
-    return DataFrame(source = md.source, arm = md.arm, year = year[keep], Q = Q[keep],case_idx = md.case_idx,
-        E = E[keep],J = J[keep],W = Kω[keep], est_sample = data.use,app_status = app_status,LOGFULL = l_full[keep])
+    return DataFrame(source = md.source, arm = md.arm, year = year[keep], Q = Q[keep],case_idx = md.case_idx,E = E[keep],
+        E1 = E1[keep],E2 = E2[keep],E3 = E3[keep],E4 = E4[keep], J = J[keep],W = Kω[keep], est_sample = data.use,app_status = app_status)
 end
 
 function state_fit(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
-    D0 = DataFrame(source = [],arm = [],year=[],Q=[],E = [], J = [], W = [],case_idx = [], est_sample = [],app_status = [])
-    D1 = DataFrame(source = [],arm = [],year=[],Q=[],E = [], J = [], W = [],case_idx = [], est_sample = [],app_status = [])
+    D0 = DataFrame(source = [],arm = [],year=[],Q=[],E = [],E1 = [],E2 = [],E3 = [], E4 = [], J = [], W = [],case_idx = [], est_sample = [],app_status = [])
+    D1 = DataFrame(source = [],arm = [],year=[],Q=[],E = [],E1 = [],E2 = [],E3 = [], E4 = [], J = [], W = [],case_idx = [], est_sample = [],app_status = [])
     logπτ = zeros(p.Kτ)
     (;V,vj,logP) = get_model(p)
 
@@ -69,12 +82,12 @@ function state_fit(p,EM::Vector{EM_data},MD,data::Vector{likelihood_data},n_idx)
             D0 = [D0;d0]
             initialize_exante!(logπτ,π0,p,md,data[n],k_idx) #<- get initial dist from posterior
             get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md.R) #<- nice.
-            d1 = model_stats_exante(p,EM[n],md,data[n])
+            d1 = state_stats(p,EM[n],md,data[n])
             D1 = [D1;d1]
         end
     end
-    d0 = combine(groupby(D0,[:source,:arm,:est_sample,:year,:Q]),:J => Statistics.mean => :J,:E => Statistics.mean => :E, :W => Statistics.mean => :W)
-    d1 = combine(groupby(D1,[:source,:arm,:est_sample,:year,:Q]),:J => Statistics.mean => :J,:E => Statistics.mean => :E, :W => Statistics.mean => :W)
+    d0 = combine(groupby(D0,[:source,:arm,:est_sample,:year,:Q]),:J => Statistics.mean => :J,:E => Statistics.mean => :E, :E1 => Statistics.mean => :E1,:E2 => Statistics.mean => :E2,:E3 => Statistics.mean => :E3, :E4 => Statistics.mean => :E4, :W => Statistics.mean => :W)
+    d1 = combine(groupby(D1,[:source,:arm,:est_sample,:year,:Q]),:J => Statistics.mean => :J,:E => Statistics.mean => :E, :E1 => Statistics.mean => :E1,:E2 => Statistics.mean => :E2,:E3 => Statistics.mean => :E3, :E4 => Statistics.mean => :E4, :W => Statistics.mean => :W)
     d0[!,:case] .= "ex-post"
     d1[!,:case] .= "ex-ante"
     return [d0;d1]
@@ -87,7 +100,7 @@ nests = get_nests()
 p = (;p...,nests)
 
 #p = loadpars_vec(p,"current_est")
-p = loadpars_vec(p,"est_noSIPP_K5")
+p = loadpars_vec(p,"est_childsample_K5")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -110,5 +123,17 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,MD,data,n_idx)
 
 d = state_fit(p,EM,MD,data,n_idx)
-
+d[!,:yQ] = (d.year .- 1993)*4 .+ d.Q
 #write everything to file here.
+#using Gadfly
+
+CSV.write("output/statefit.csv",d)
+
+# @df d plot(
+#     :yQ,
+#     :E,
+#     marker_z = :site,
+#     group = :case,
+#     layout = 4,
+#     label = ""
+# )
