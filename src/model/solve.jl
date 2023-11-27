@@ -40,10 +40,10 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     S,A,_,H,F = j_inv(j)
     v = utility(S,A,H,F,pars,md,kA,kη,kτ,t,eligible)
     kA_next,kω_next = next(A,kA,kω;md.Kω)
+    WR = md.R * A #<- indicates whether a work requirement gives a bump to λ₀
     for kη_next in 1:pars.Kη
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
-        j = 1 + md.R * A #<- indicates if the work requirement gives a bump to λ₀
-        v += pars.β * pars.Fη[kη_next,kη,j,kτ] * V[k_next]
+        v += pars.β * fη(kη_next,kη,kτ,WR,md.unemp[min(end,t)],p) * V[k_next]
     end
     return v
 end
