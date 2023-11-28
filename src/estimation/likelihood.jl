@@ -1,23 +1,21 @@
 # define the data that we're going to use:
 using .Threads, Random
 
-function log_likelihood_threaded(p,R::DataType,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     tasks = map(chunks) do chunk
-        Threads.@spawn log_likelihood_chunk(p,R,chunk,EM,data,n_idx)
+        Threads.@spawn log_likelihood_chunk(x,p,chunk,EM,data,n_idx)
     end
     ll = fetch.(tasks)
     return sum(ll)
 end
-function log_likelihood_threaded(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+function log_likelihood_threaded_full(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p)
-    R = eltype(x)
-    return log_likelihood_threaded(p,R,EM,MD,data,n_idx)
+    return log_likelihood_threaded(x,p,EM,MD,data,n_idx)
 end
 function log_likelihood_threaded(x,p,fname::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
     p = pars(x,p,fname,ft)
-    R = eltype(x)
-    return log_likelihood_threaded(p,R,EM,MD,data,n_idx)
+    return log_likelihood_threaded(x,p,EM,MD,data,n_idx)
 end
 
 
@@ -44,13 +42,17 @@ function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::V
     return LL
 end
 
-function log_likelihood_chunk(p,R::DataType,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
+# for some reason passing the data type leads to lots of additional allocations
+# in test_allocations.jl, we see it comes from assigning to the arrays using other arguments
+# one option is to pass through to here and use eltype(x) and update inside this chunk.
+function log_likelihood_chunk(x,p,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
     # setup data:
     T = 18*4
     K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
+    R = eltype(x)
     logP = zeros(R,9,K,T)
     V = zeros(R,K,2)
-    vj = zeros(R,J)
+    vj = zeros(R,9)
     ll = 0.
     for md in MD
         solve!(logP,V,vj,p,md)
@@ -91,33 +93,6 @@ function chcare_log_like(chcare,p,md::model_data,kτ::Int64,t::Int64)
     return ll
 end
 
-# function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
-#     ll = 0.
-#     for md in MD
-#         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-#         K = prod(size(k_inv))
-#         s_inv = CartesianIndices((J,K))
-    
-#         for n in n_idx[md.case_idx]
-#             em = EM[n]
-#             t0 = data[n].t0
-#             for t in eachindex(data[n].logW)    
-#                 if data[n].chcare_valid[t] && data[n].pay_care[t]
-#                     for s in nzrange(em.q_s,t)
-#                         s_idx = em.q_s.rowval[s]
-#                         wght = em.q_s.nzval[s]
-#                         _,k = Tuple(s_inv[s_idx])
-#                         _,_,_,kτ = Tuple(k_inv[k]) 
-#                         llW = chcare_log_like(data[n].chcare[t],p,md,kτ,t+t0)
-#                         ll += wght * llW
-#                     end
-#                 end
-#             end
-#         end
-#     end
-#     return ll
-# end
-
 function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     ll = 0.
     for s in nzrange(em.q_s,1)
@@ -146,11 +121,6 @@ function log_likelihood_η0_full(p,md::model_data,em::EM_data,s_inv,k_inv)
 end
 
 
-
-# now do as above but for data coming from an EM algorithm:
-# - here the choices and the states are partially unobserved
-# UPDATE THESE.
-# have only parameters
 function log_likelihood_choices(em::EM_data,t0,logP,s_inv)
     ll = 0.
     for t in axes(em.q_s,2)

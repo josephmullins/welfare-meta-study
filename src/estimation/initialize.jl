@@ -1,11 +1,11 @@
 
 function estimation_setup(panel::DataFrame)
     case_idx = @chain panel begin
-        @select(:source,:panel,:SOI,:arm,:age,:ageyng,:numkids)
-        unique()
+        groupby([:source,:panel,:SOI,:arm,:age,:ageyng,:numkids])
+        @combine(:y0 = minimum(:year),:q0 = minimum(:Q))
         @transform(:case_idx = eachindex(:source))
         @orderby(:case_idx)
-    end
+    end    
 
     cases = @chain panel begin
         #@subset(:t0.==0) #<- collect these from the first available period for each dataset
@@ -39,9 +39,10 @@ function estimation_setup(panel::DataFrame)
 
     # finally, merge the case index to the full panel:
     panel = @chain id begin
-        @select(:id,:n,:source,:case_idx)
+        @select(:id,:n,:source,:case_idx,:q0,:y0)
         innerjoin(panel,on=[:id,:source])
         @orderby(:case_idx,:n)
+        @transform(:t0 = (:Y0 - :y0)*4 + :Q0 - :q0) #<- recalculate this
     end
 
     # put the data together for evaluating the likelihood
