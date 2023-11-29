@@ -63,6 +63,7 @@ end
 solve_threaded(x0,p,EM,MD,data,n_idx)
 @time solve_threaded(x0,p,EM,MD,data,n_idx)
 
+break
 using ForwardDiff
 function get_G(x,p,block,ft,EM,MD,data,n_idx)
     ForwardDiff.gradient(x->log_likelihood_threaded(x0,p,block,ft,EM,MD,data,n_idx),x)
