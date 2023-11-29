@@ -30,6 +30,6 @@ shuffle!(MD)
 
 p = expectation_maximization(p,EM,MD,n_idx;max_iter = 100,mstep_iter = 40,save = true)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K5.csv")
-d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K5.csv")
-savepars_vec(p,"est_childsample_K5")
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K5b.csv")
+d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K5b.csv")
+savepars_vec(p,"est_childsample_K5b")
