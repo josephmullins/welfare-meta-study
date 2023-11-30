@@ -49,10 +49,12 @@ function p_offer(kη_next,kη,p)
 end
 
 function update_transitions(p)
-    πₒ = [p_offer(k2,k,p) for k2 in 2:p.Kη, k in 1:p.Kη]
+    πₒ = zeros(eltype(p.μₒ),p.Kη-1,p.Kη)
+    for k in axes(πₒ,2), k2 in axes(πₒ,1)
+        πₒ[k2,k] = p_offer(k2+1,k,p)
+    end
     return (;p...,πₒ)
 end
-
 
 function stat_dist(πₒ,λ₀,λ₁,δ)
     R = eltype(πₒ)
