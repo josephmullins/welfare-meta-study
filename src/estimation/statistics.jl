@@ -207,11 +207,12 @@ end
 #   - to switch to fully exante predictions, replace this function call with initialize_exante!
 
 # iterate from some initial condition, given by π0 and calculate the distribution at each t
-function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,model,p,R::Int64) #<- need choice probs? T?
+function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,model,p,md::model_data,data::likelihood_data) #<- need choice probs? T?
     fill!(Π,0.)
     J = 9
     (;K,π0,s_inv,k_inv,Kω,k_idx) = model
     T = size(Π,2)
+    t0 = data.t0
     # initialize the first period:
     for k in 1:K
         if π0[k]>0
@@ -232,9 +233,10 @@ function get_choice_state_distribution!(Π::SparseMatrixCSC{Float64,Int64},logP,
             _,A,_,_,_ = j_inv(j)
             kω_next = min(kω+A,Kω)
             kA_next = 1 + A
-            jF = 1 + R*A
+            WR = md.R*A
+            unemp = md.unemp[t+t0]
             for kη_next in 1:p.Kη
-                fkk = p.Fη[kη_next,kη,jF,kτ]
+                fkk = fη(kη_next,kη,kτ,WR,unemp,p)
                 kn = k_idx[kA_next,kη_next,kω_next,kτ]
                 for jn in choice_set(kη_next>1)
                     sn = (kn - 1)*J + jn
@@ -281,7 +283,7 @@ function exante_model_fit_chunk(p,EM::Vector{EM_data},MD,data::Vector{likelihood
             #initialize!(logπτ,EM[n],π0,p,md,data[n],(;k_inv,s_inv)) #<- get initial dist from priors
             #initialize_expost!(π0,EM[n],s_inv) #<- get initial dist from posterior
             initialize_exante!(logπτ,π0,p,md,data[n],k_idx) #<- get initial dist from posterior
-            get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md.R) #<- nice.
+            get_choice_state_distribution!(EM[n].q_s,logP,(;K,π0,s_inv,k_inv,Kω,k_idx),p,md,data[n]) #<- nice.
             d = model_stats_exante(p,EM[n],md,data[n])
             d[!,:n_idx] .= n
             D = [D;d]
