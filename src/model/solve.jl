@@ -48,11 +48,31 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     S,A,_,H,F = j_inv(j)
     v = utility(S,A,H,F,pars,md,kA,kη,kτ,t,eligible)
     kA_next,kω_next = next(A,kA,kω;md.Kω)
-    WR = md.R * A #<- indicates whether a work requirement gives a bump to λ₀
-    for kη_next in 1:pars.Kη
+    unemp = md.unemp[min(end,t)]
+    if kη==1
+        WR = md.R * A #<- indicates whether a work requirement gives a bump to λ₀
+        λ₀ = logit(p.λ₀[kτ] + p.λᵤ*unemp + p.λR*WR)
+        kη_next = 1
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
-        fkk = fη(kη_next,kη,kτ,WR,md.unemp[min(end,t)],pars)
-        v += pars.β * fkk * V[k_next]
+        v += pars.β * (1-λ₀) * V[k_next]
+        for kη_next ∈ 2:p.Kη
+            k_next = k_idx[kA_next,kη_next,kω_next,kτ]
+            fkk = λ₀ * p.πₒ[kη_next-1,1]
+            v += pars.β * fkk * V[k_next]    
+        end
+    else
+        λ₁ = logit(p.λ₁[kτ] + p.λᵤ*unemp)
+        kη_next = 1
+        k_next = k_idx[kA_next,kη_next,kω_next,kτ]
+        v += pars.β * p.δ[kτ] * V[k_next]
+        for kη_next ∈ 2:p.Kη
+            k_next = k_idx[kA_next,kη_next,kω_next,kτ]
+            fkk = (1 - p.δ[kτ]) * λ₁ * p.πₒ[kη_next-1,kη]
+            if kη_next==kη
+                fkk += (1 - p.δ[kτ]) * (1-λ₁)
+            end
+            v += pars.β * fkk * V[k_next] 
+        end
     end
     return v
 end
