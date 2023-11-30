@@ -27,9 +27,26 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
-# re-run this with more iterations if it looks good.
-p = expectation_maximization(p,EM,MD,n_idx;max_iter = 20,mstep_iter = 40,save = true)
+forward_back_threaded!(p,EM,MD,data,n_idx)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K5.csv")
-d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K5.csv")
-savepars_vec(p,"est_childsample_K5")
+# block = [:λ₀,:λ₁,:δ,:λR] #,:μₒ,:σₒ] #<- this is still slow, so we know it's not just about lambda_u
+# ft = [1,1,3,1] #,1,2]
+# p = mstep_major_block(p,block,ft,EM,MD,n_idx,40)
+
+block = [:μₒ,:σₒ]
+ft = [1,2]
+p = mstep_major_block(p,block,ft,EM,MD,n_idx,3)
+
+function update_transitions(p)
+    πₒ = zeros(eltype(p.μₒ),p.Kη-1,p.Kη)
+    for k in axes(πₒ,2), k2 in axes(πₒ,1)
+        πₒ[k2,k] = p_offer(k2+1,k,p)
+    end
+    return (;p...,πₒ)
+end
+
+p = mstep_major_block(p,block,ft,EM,MD,n_idx,3)
+
+# block = [:λ₀,:λ₁,:λᵤ] 
+# ft = [1,1,1]
+# p = mstep_major_block(p,block,ft,EM,MD,n_idx,40)
