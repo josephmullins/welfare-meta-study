@@ -28,8 +28,8 @@ Random.seed!(2020)
 shuffle!(MD)
 
 #p = expectation_maximization(p,EM,MD,n_idx; max_iter = 4, mstep_iter = 20,save = true)
-p = expectation_maximization(p,EM,MD,n_idx;max_iter = 50,mstep_iter = 120,save = true)
+p = expectation_maximization(p,EM,MD,n_idx;max_iter = 10,mstep_iter = 40,save = true)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample_K2.csv")
-savepars_vec(p,"est_childsample_K2")
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_childsample_K5.csv")
+savepars_vec(p,"est_childsample_K5")
 d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
