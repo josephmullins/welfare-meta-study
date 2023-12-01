@@ -29,8 +29,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ]
-    ft = [3,3,3,1,1,2]
+    block = [:λ₀,:λ₁,:δ,:λR,:μₒ,:σₒ,:λₗ]
+    ft = [1,3,3,1,1,2,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:αA,:αS,:αH,:σ]

@@ -8,6 +8,7 @@ function solve!(logP,V,vj,p,md::model_data)
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
     k_idx = LinearIndices((2,p.Kη,md.Kω,p.Kτ))
     tnow = 1
+    loc = loc_ind(md)
     for t in reverse(1:T)
         tnext = 3-tnow #<- tnow = 1 => tnext =2, tnow=2 => tnext =1
         for k in 1:K
@@ -18,13 +19,13 @@ function solve!(logP,V,vj,p,md::model_data)
             state = (;kA,kη,kω,kτ,k_idx)
             if job_offer
                 for j in 1:9
-                    @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible)
+                    @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible,loc)
                 end
                 # choice probs:
                 @views V[k,tnow] = nested_logit(logP[:,k,t],vj;B,C,σ = p.σ) #<- or something like it.
             else
                 for j in (1,4,7)
-                    @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible)
+                    @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible,loc)
                 end
                 @views V[k,tnow] = plain_logit(logP[:,k,t],vj;B = (1,4,7),σ = p.σ[3])
             end
@@ -34,7 +35,7 @@ function solve!(logP,V,vj,p,md::model_data)
     return nothing
 end
 
-function calc_vj(j,V,md::model_data,state,pars,t,eligible)
+function calc_vj(j,V,md::model_data,state,pars,t,eligible,loc)
     (;kA,kη,kω,kτ,k_idx) = state
     #(;β,λ,δ,πW,Kη) = pars
     S,A,_,H,F = j_inv(j)
@@ -43,7 +44,7 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     for kη_next in 1:pars.Kη
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
         j = 1 + md.R * A #<- indicates if the work requirement gives a bump to λ₀
-        v += pars.β * pars.Fη[kη_next,kη,j,kτ] * V[k_next]
+        v += pars.β * pars.Fη[kη_next,kη,j,kτ,loc] * V[k_next]
     end
     return v
 end

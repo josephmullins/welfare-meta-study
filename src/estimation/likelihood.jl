@@ -68,10 +68,10 @@ function log_likelihood(em::EM_data,md::model_data,p,logP,data::likelihood_data)
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
     K = prod(size(k_inv))
     s_inv = CartesianIndices((J,K))
-
+    loc = loc_ind(md)
     ll = 0.
     ll += log_likelihood_choices(em,data.t0,logP,s_inv)
-    ll += log_likelihood_transitions(em,p,md.R,k_inv,s_inv)
+    ll += log_likelihood_transitions(em,p,md.R,loc,k_inv,s_inv)
     ll += prices_log_like(em,p,md,data,J,s_inv,k_inv)
     if md.source=="SIPP"
         ll += log_likelihood_η0(p,em,s_inv,k_inv)
@@ -93,33 +93,6 @@ function chcare_log_like(chcare,p,md::model_data,kτ::Int64,t::Int64)
     ll = -0.5 * (resid / p.σ_PF)^2 - log(p.σ_PF)
     return ll
 end
-
-# function chcare_log_like(p,MD::Vector{model_data},EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
-#     ll = 0.
-#     for md in MD
-#         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
-#         K = prod(size(k_inv))
-#         s_inv = CartesianIndices((J,K))
-    
-#         for n in n_idx[md.case_idx]
-#             em = EM[n]
-#             t0 = data[n].t0
-#             for t in eachindex(data[n].logW)    
-#                 if data[n].chcare_valid[t] && data[n].pay_care[t]
-#                     for s in nzrange(em.q_s,t)
-#                         s_idx = em.q_s.rowval[s]
-#                         wght = em.q_s.nzval[s]
-#                         _,k = Tuple(s_inv[s_idx])
-#                         _,_,_,kτ = Tuple(k_inv[k]) 
-#                         llW = chcare_log_like(data[n].chcare[t],p,md,kτ,t+t0)
-#                         ll += wght * llW
-#                     end
-#                 end
-#             end
-#         end
-#     end
-#     return ll
-# end
 
 function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     ll = 0.
@@ -171,7 +144,7 @@ function log_likelihood_choices(em::EM_data,t0,logP,s_inv)
     return ll
 end
 
-function log_likelihood_transitions(em::EM_data,p,R::Int64,k_inv,s_inv)
+function log_likelihood_transitions(em::EM_data,p,R::Int64,loc::Int64,k_inv,s_inv)
     ll = 0.
     Kη = size(k_inv,2)
     for t in eachindex(em.q_ss)
@@ -185,7 +158,7 @@ function log_likelihood_transitions(em::EM_data,p,R::Int64,k_inv,s_inv)
                 sn_idx = em.q_ss[t].rowval[sn]
                 _,kn = Tuple(s_inv[sn_idx])
                 _,kη_next,_,_ = Tuple(k_inv[kn])
-                f_ss = p.Fη[kη_next,kη,jF,kτ]
+                f_ss = p.Fη[kη_next,kη,jF,kτ,loc]
                 wght = em.q_ss[t].nzval[sn]
                 #@show t, k, kη, kη_next, wght, f_ss
                 ll += wght * log(f_ss)

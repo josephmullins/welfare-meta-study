@@ -37,6 +37,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
     K = prod(size(k_inv))
     s_inv = CartesianIndices((J,K))
+    loc = loc_ind(md)
 
     # start with the initial conditions:
     for s in nzrange(EM.α,1)
@@ -72,7 +73,7 @@ function update!(logπτ,EM::EM_data,logP,p,md::model_data,data::likelihood_data
                 if md.source=="SIPP" && data.chcare_valid[t+1] && data.pay_care[t+1]
                     ll += chcare_log_like(data.log_chcare[t+1],p,md,kτ,t+t0+1)
                 end
-                fkk = p.Fη[kη_next, kη, jF, kτ]
+                fkk = p.Fη[kη_next, kη, jF, kτ, loc]
                 #@show t, sn_idx, s_idx, kη_next, kη, fkk
                 EM.P[t][sn_idx,s_idx] = fkk*exp(ll) #?
             end

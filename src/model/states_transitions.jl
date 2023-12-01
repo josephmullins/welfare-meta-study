@@ -7,17 +7,32 @@
 using Distributions
 Φ(x,μ,σ) = cdf(Normal(μ,σ),x)
 
+loc_ind(md::model_data) = (md.source=="FTP") + 2*(md.source=="CTJF") + 3*(md.source=="MFIP") + 4*(md.source=="SIPP")
+
 function update_transitions(p)
     R = eltype(p.λ₀)
     πₛ = zeros(R,p.Kη,p.Kτ)
-    Fη = zeros(R,p.Kη,p.Kη,2,p.Kτ)
-    for kτ in 1:p.Kτ
-        λR = logit(logit_inv(p.λ₀[kτ]) + p.λR)
-        πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
-        Fη[:,:,1,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ], p.Kη-1)
-        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ])
-        Fη[:,:,2,kτ] .= Fη_mat(πₒ, λR, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+    Fη = zeros(R,p.Kη,p.Kη,2,p.Kτ,4)
+    πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
+    for l in 1:3
+        for kτ in 1:p.Kτ
+            λ₀ = logit(p.λ₀[kτ] + p.λₗ[l])
+            Fη[:,:,1,kτ,l] .= Fη_mat(πₒ, λ₀, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+
+            λ₀ = logit(p.λ₀[kτ] + p.λR + p.λₗ[l])
+            Fη[:,:,2,kτ,l] .= Fη_mat(πₒ, λ₀, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+        end
     end
+    # now do for SIPP also (l=4):
+    for kτ in 1:p.Kτ
+        λ₀ = logit(p.λ₀[kτ])
+        Fη[:,:,1,kτ,4] .= Fη_mat(πₒ, λ₀, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+        πₛ[:,kτ] .= stat_dist(πₒ, λ₀, p.λ₁[kτ], p.δ[kτ])
+
+        λ₀ = logit(p.λ₀[kτ] + p.λR)
+        Fη[:,:,2,kτ,4] .= Fη_mat(πₒ, λ₀, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+    end
+
     return (;p...,Fη,πₛ)
 end
 

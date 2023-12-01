@@ -36,12 +36,14 @@ function pars(x,p)
     pos += 1
 
     # ----- F_idx ------ #
-    λ₀ = logit.(x[pos:pos+Kτ-1])
+    λ₀ = x[pos:pos+Kτ-1]
     pos += Kτ
     δ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
     λ₁ = logit.(x[pos:pos+Kτ-1])
     pos += Kτ
+    λₗ = x[pos:pos+2]
+    pos += 3
     μₒ = x[pos] #?
     σₒ = exp(x[pos+1])
     pos += 2
@@ -59,13 +61,13 @@ function pars(x,p)
     #σ_PF #<- dispersion of measurement error for childcare prices
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
-    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
+    p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,λₗ,μₒ,σₒ,σ,β)
     p = update_transitions(p)
     return p
 end
 
 function pars_full(x,p)
-    np = 11p.Kτ + 24
+    np = 11p.Kτ + 27
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)

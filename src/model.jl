@@ -36,6 +36,7 @@ function pars(Kτ::Int64,Kη::Int64)
     δ = 0.1*ones(Kτ)
     λ₀ = 0.5*ones(Kτ)
     λ₁ = 0.5*ones(Kτ)
+    λₗ = zeros(3)
     μₒ = 0.
     σₒ = 1.
 
@@ -48,7 +49,7 @@ function pars(Kτ::Int64,Kη::Int64)
     πη = ones(2,Kη,Kτ,3) / Kη
     
     ηgrid = LinRange(-1,1,Kη-1)
-    return (;Kτ,Kη,β,wq,αC,αθ,αH,αA,αS,αF,αR,λR,αP,σ,σ_W,σ_PF,δ,λ₀,λ₁,μₒ,σₒ,ση,βΓ,βw,βf,βτ,πη,ηgrid)
+    return (;Kτ,Kη,β,wq,αC,αθ,αH,αA,αS,αF,αR,λR,αP,σ,σ_W,σ_PF,δ,λ₀,λ₁,λₗ,μₒ,σₒ,ση,βΓ,βw,βf,βτ,πη,ηgrid)
 end
 
 # NEXT: write out which are needed to solve model and which are needed to evaluate the likelihood/create EM data
