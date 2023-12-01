@@ -61,7 +61,7 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
             v += pars.β * fkk * V[k_next]    
         end
     else
-        λ₁ = logit(pars.λ₁[kτ] + pars.λᵤ*unemp)
+        λ₁ = logit(pars.λ₁[kτ]) # + pars.λᵤ*unemp)
         kη_next = 1
         k_next = k_idx[kA_next,kη_next,kω_next,kτ]
         v += pars.β * pars.δ[kτ] * V[k_next]

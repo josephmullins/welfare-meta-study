@@ -22,7 +22,7 @@ function fη(kη_next,kη,kτ,WR,unemp,p)
             λ₁ = logit(p.λ₁[kτ] + p.λᵤ*unemp)
             return (1-p.δ[kτ]) * ( (1-λ₁) + λ₁ * p.πₒ[kη_next-1,kη] )
         else
-            λ₁ = logit(p.λ₁[kτ] + p.λᵤ*unemp)
+            λ₁ = logit(p.λ₁[kτ]) # + p.λᵤ*unemp)
             return (1-p.δ[kτ]) * λ₁ * p.πₒ[kη_next-1,kη]
         end
     end

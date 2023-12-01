@@ -72,7 +72,7 @@ function pars_full(x,p)
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)
     np += K
     K = prod(size(p.πη))
-    πη = reshape(x[(np+1):(np+K)],2,p.Kη,p.Kτ,3)
+    πη = reshape(x[(np+1):(np+K)],2,p.Kη,p.Kτ,4)
     np += K
     σ_W = x[np+1]
     σ_PF = x[np+2]
