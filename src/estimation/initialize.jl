@@ -198,6 +198,7 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
     q_s = spzeros(S,T)
     q_ss = [spzeros(S,S) for t in 1:T-1]
     P = [spzeros(S,S) for t in 1:T-1]
+    loc = loc_ind(md)
     # initialize α: (which provides an index for which states have positive probability)
     # start with period 1:
     for kτ in 1:Kτ, kη in 1:Kη
@@ -239,7 +240,7 @@ function get_EM_data(p,md::model_data,data::likelihood_data)
             kA_next = 1 + A
             for kη_next in 1:Kη
                 kn_idx = k_idx[kA_next,kη_next,kω_next,kτ]
-                fkk = p.Fη[kη_next,kη,1,kτ]
+                fkk = p.Fη[kη_next,kη,1,kτ,loc]
                 if fkk>0
                     if !data.wage_valid[t+1] || kη_next>1 #<- rule out states when kη=1 and EARN>0
                         if !data.choice_missing[t+1] #y[t+1]!=-1
