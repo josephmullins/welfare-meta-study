@@ -48,8 +48,8 @@ function pars(x,p)
 
     # ----- σ_idx (nested logit dispersion) ---- #
     # σ (shock dispersion)
-    σ = exp.(x[pos:pos+2])
-    pos += 3
+    σ = exp.(x[pos:pos+3Kτ-1])
+    pos += 3Kτ
 
     # ---- β_idx (discounting) ----- #
     β = logit(x[pos])
@@ -65,7 +65,7 @@ function pars(x,p)
 end
 
 function pars_full(x,p)
-    np = 11p.Kτ + 24
+    np = 12p.Kτ + 21
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)

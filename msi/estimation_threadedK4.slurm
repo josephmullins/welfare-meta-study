@@ -1,8 +1,8 @@
 #!/bin/bash -l        
-#SBATCH --time=24:00:00
+#SBATCH --time=3:00:00
 #SBATCH --ntasks=50
-#SBATCH --mem=150g
-#SBATCH --tmp=150g
+#SBATCH --mem=90g
+#SBATCH --tmp=90g
 #SBATCH --mail-type=ALL  
 #SBATCH --mail-user=mullinsj@umn.edu 
 #SBATCH --output=output/EstimationK4.out

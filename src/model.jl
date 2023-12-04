@@ -26,7 +26,7 @@ function pars(Kτ::Int64,Kη::Int64)
     αR = 0.
     λR = 0.05
     αP = 0.
-    σ = fill(2.,3)
+    σ = fill(2.,3Kτ)
 
     σ_W = 2.
     σ_PF = 2.
