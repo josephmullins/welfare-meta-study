@@ -65,7 +65,7 @@ function pars(x,p)
 end
 
 function pars_full(x,p)
-    np = 12p.Kτ + 21
+    np = 14p.Kτ + 21
     p = pars(x[1:np],p)
     K = prod(size(p.βτ))
     βτ = reshape(x[(np+1):(np+K)],23,p.Kτ-1)
