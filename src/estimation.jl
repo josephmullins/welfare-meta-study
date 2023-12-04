@@ -41,6 +41,7 @@ end
 include("tools/BaumWelch.jl")
 include("estimation/initialize.jl")
 include("estimation/likelihood.jl")
+include("estimation/likelihood_lowmem.jl")
 include("estimation/type_probabilities.jl")
 include("estimation/expectation.jl")
 include("estimation/maximization.jl")
