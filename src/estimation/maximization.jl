@@ -40,6 +40,10 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
+    block = [:μₒ,:σₒ]
+    ft = [1,2]
+    p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
+
     block = [:αR,:αP,:λR,:σ,:β,:βΓ]
     ft = [1,1,1,2,3,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
