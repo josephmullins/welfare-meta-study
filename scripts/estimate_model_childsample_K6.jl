@@ -1,15 +1,14 @@
-# a script to check the model's unconditional fit of the data
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 5 #
-Kη = 5
+Kτ = 6 #
+Kη = 5 #?
 p = pars(Kτ,Kη)
+p = update_transitions(p)
 nests = get_nests()
 p = (;p...,nests)
 
-#p = loadpars_vec(p,"current_est")
-p = loadpars_vec(p,"est_childsample_K5")
+x0 = pars_inv(p)
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -28,9 +27,8 @@ MD,EM,data,n_idx = estimation_setup(panel);
 Random.seed!(2020)
 shuffle!(MD)
 
-# get the initial conditions this way
-#forward_back_threaded!(p,EM,MD,data,n_idx)
-MD = MD[[md.source!="SIPP" for md in MD]]
-d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante.csv")
+p = expectation_maximization(p,EM,MD,n_idx;max_iter = 100,mstep_iter = 5,save = true)
 
-#write everything to file here.
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K6.csv")
+d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K6.csv")
+savepars_vec(p,"est_childsample_K6")
