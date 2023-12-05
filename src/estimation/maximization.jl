@@ -18,10 +18,10 @@ end
 
 function mstep_k_block(p,kτ::Int64,fnames::Vector{Symbol},ft::Vector{Int64},EM::Vector{EM_data},MD::Vector{model_data},n_idx,iterations = 40)
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
-    x0 = pars_inv(p,fnames,ft)
+    x0 = pars_inv(p,kτ,fnames,ft)
     objective(x) = -log_likelihood_threaded(x,p,kτ,fnames,ft,EM,MD,data,n_idx) / N_
     res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
-    return pars(res.minimizer,p,fnames,ft)
+    return pars(res.minimizer,p,kτ,fnames,ft)
 end
 
 function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_iter = 40)
@@ -30,7 +30,7 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     block = [:wq,:αA,:αH,:αS,:αF,:αθ,:λ₀,:λ₁,:δ]
-    ft = [2,1,1,1,2,3,3]
+    ft = [2,1,1,1,1,2,3,3,3]
     for kτ in 1:p.Kτ
         p = mstep_k_block(p,kτ,block,ft,EM,MD,n_idx,mstep_iter)
         println("finished type $kτ....")

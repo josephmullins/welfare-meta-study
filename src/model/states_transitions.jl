@@ -21,6 +21,20 @@ function update_transitions(p)
     return (;p...,Fη,πₛ)
 end
 
+function update_transitions(x,p)
+    R = eltype(x)
+    πₛ = zeros(R,p.Kη,p.Kτ)
+    Fη = zeros(R,p.Kη,p.Kη,2,p.Kτ)
+    for kτ in 1:p.Kτ
+        λR = logit(logit_inv(p.λ₀[kτ]) + p.λR)
+        πₒ = get_offer_dist(p.ηgrid,p.μₒ,p.σₒ,R)
+        Fη[:,:,1,kτ] .= Fη_mat(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+        πₛ[:,kτ] .= stat_dist(πₒ, p.λ₀[kτ], p.λ₁[kτ], p.δ[kτ])
+        Fη[:,:,2,kτ] .= Fη_mat(πₒ, λR, p.λ₁[kτ], p.δ[kτ], p.Kη-1)
+    end
+    return (;p...,Fη,πₛ)
+end
+
 function get_offer_dist(ηgrid,μ,σ,R)
     K = length(ηgrid)
     π0 = zeros(R,length(ηgrid))

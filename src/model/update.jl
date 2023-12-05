@@ -111,7 +111,7 @@ function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
     end
     pnew = NamedTuple(zip(f,Xnew))
     p = (;p...,pnew...)
-    p = update_transitions(p)
+    p = update_transitions(x,p)
     return p
 end
 
@@ -170,7 +170,7 @@ function pars(x,p,kτ::Int64,f::Vector{Symbol},tf::Vector{Int64}) #<-?
     end
     pnew = NamedTuple(zip(f,Xnew))
     p = (;p...,pnew...)
-    p = update_transitions(p)
+    p = update_transitions(x,p)
     return p
 end
 
@@ -180,9 +180,9 @@ function pars_inv(p,kτ::Int64,f::Vector{Symbol},ft::Vector{Int64})
         if ft[kf]==1
             push!(x,getfield(p,f[kf])[kτ])
         elseif ft[kf]==2
-            push!(x,log(getfield(p,f[kf]))[kτ])
+            push!(x,log(getfield(p,f[kf])[kτ]))
         elseif ft[kf]==3
-            push!(x,logit_inv(getfield(p,f[kf]))[kτ])
+            push!(x,logit_inv(getfield(p,f[kf])[kτ]))
         end
     end
     return x
