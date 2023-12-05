@@ -29,8 +29,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:wq,:αA,:αH,:αS,:αF,:αθ,:λ₀,:λ₁,:δ]
-    ft = [2,1,1,1,1,2,3,3,3]
+    block = [:wq,:αA,:αH,:αS,:αF,:αθ,:λ₀,:λ₁,:δ,:σ₁,:σ₂,:σ₃]
+    ft = [2,1,1,1,1,2,3,3,3,2,2,2]
     for kτ in 1:p.Kτ
         p = mstep_k_block(p,kτ,block,ft,EM,MD,n_idx,mstep_iter)
         println("finished type $kτ....")
@@ -44,8 +44,8 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     ft = [1,2]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
-    block = [:αR,:αP,:λR,:σ,:β,:βΓ]
-    ft = [1,1,1,2,3,1]
+    block = [:αR,:αP,:λR,:β,:βΓ]
+    ft = [1,1,1,3,1]
     p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
     return p

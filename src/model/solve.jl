@@ -30,12 +30,12 @@ function iterate!(logP,V,vj,p,md,t,tnow,state_idx)
                 @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible)
             end
             # choice probs:
-            @views V[k,tnow] = nested_logit(logP[:,k],vj;B,C,σ = p.σ[(3(kτ-1)+1):3kτ]) 
+            @views V[k,tnow] = nested_logit(logP[:,k],vj;B,C,σ = (p.σ₁[kτ],p.σ₂[kτ],p.σ₃[kτ])) 
         else
             for j in (1,4,7)
                 @views vj[j] = calc_vj(j,V[:,tnext],md,state,p,t,eligible)
             end
-            @views V[k,tnow] = plain_logit(logP[:,k],vj;B = (1,4,7),σ = p.σ[3(kτ-1) + 3])
+            @views V[k,tnow] = plain_logit(logP[:,k],vj;B = (1,4,7),σ = p.σ₃[kτ])
         end
     end
 end
@@ -72,12 +72,12 @@ function iterate_k!(logP,V,vj,p,md,t,tnow,state_idx)
                 @views vj[j] = calc_vj_k(j,V[:,tnext],md,state,p,t,eligible)
             end
             # choice probs:
-            @views V[k,tnow] = nested_logit(logP[:,k],vj;B,C,σ = p.σ) #<- or something like it.
+            @views V[k,tnow] = nested_logit(logP[:,k],vj;B,C,σ = (p.σ₁[kτ],p.σ₂[kτ],p.σ₃[kτ])) #<- or something like it.
         else
             for j in (1,4,7)
                 @views vj[j] = calc_vj_k(j,V[:,tnext],md,state,p,t,eligible)
             end
-            @views V[k,tnow] = plain_logit(logP[:,k],vj;B = (1,4,7),σ = p.σ[3])
+            @views V[k,tnow] = plain_logit(logP[:,k],vj;B = (1,4,7),σ = p.σ₃[kτ])
         end
     end
 end
