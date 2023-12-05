@@ -20,7 +20,7 @@ function mstep_k_block(p,kτ::Int64,fnames::Vector{Symbol},ft::Vector{Int64},EM:
     N_ = sum(length(n_idx[md.case_idx]) for md in MD)
     x0 = pars_inv(p,kτ,fnames,ft)
     objective(x) = -log_likelihood_threaded(x,p,kτ,fnames,ft,EM,MD,data,n_idx) / N_
-    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = true,iterations=iterations))
+    res = Optim.optimize(objective,x0,LBFGS(),autodiff = :forward,Optim.Options(show_trace = false,iterations=iterations))
     return pars(res.minimizer,p,kτ,fnames,ft)
 end
 
