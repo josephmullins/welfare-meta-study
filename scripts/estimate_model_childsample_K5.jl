@@ -28,7 +28,7 @@ Random.seed!(2020)
 shuffle!(MD)
 
 
-p = expectation_maximization(p,EM,MD,n_idx;max_iter = 100,mstep_iter = 40,save = true)
+p = expectation_maximization(p,EM,MD,n_idx;max_iter = 1,mstep_iter = 2,save = true)
 
 basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K5.csv")
 d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K5.csv")

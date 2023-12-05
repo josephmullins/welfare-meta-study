@@ -1,7 +1,7 @@
 include("../src/model.jl")
 include("../src/estimation.jl")
 
-Kτ = 8 #
+Kτ = 10 #
 Kη = 4 #?
 p = pars(Kτ,Kη)
 p = update_transitions(p)
@@ -29,6 +29,6 @@ shuffle!(MD)
 
 p = expectation_maximization(p,EM,MD,n_idx;max_iter = 150,mstep_iter = 5,save = true)
 
-basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K8.csv")
-d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K8.csv")
-savepars_vec(p,"est_childsample_K8")
+basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K10.csv")
+d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K10.csv")
+savepars_vec(p,"est_childsample_K10")
