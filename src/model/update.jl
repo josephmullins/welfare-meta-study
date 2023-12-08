@@ -60,7 +60,7 @@ function pars(x,p)
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
     p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
-    p = update_transitions(p)
+    p = update_transitions(x,p)
     return p
 end
 

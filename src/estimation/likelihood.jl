@@ -22,13 +22,44 @@ end
 
 # writes each answer to a vector LL, for calculating the score
 function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
+    chunks = Iterators.partition(MD,length(MD) ÷ Threads.nthreads())
     N = sum(length(n_idx[md.case_idx]) for md in MD) #<-?
     p = pars_full(x,p)
     LL = zeros(eltype(x),N)
-    @threads for md in MD
-        (;vj,V,logP) = get_model(p)
+    tasks = map(chunks) do chunk
+        Threads.@spawn log_likelihood_n_chunk!(LL,p,EM,chunk,data,n_idx)
+    end
+    f = fetch.(tasks)
+
+    # @threads for md in MD
+    #     (;vj,V,logP) = get_model(p)
+    #     solve!(logP,V,vj,p,md)
+    #     logπτ = zeros(eltype(x),p.Kτ)
+    #     k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+    #     K = prod(size(k_inv))
+    #     s_inv = CartesianIndices((9,K))
+    #     for n ∈ n_idx[md.case_idx]
+    #         if data[n].use
+    #             LL[n] = log_likelihood(EM[n],md,p,logP,data[n])
+    #             @views LL[n] += log_likelihood_type(logπτ,p.βτ[md.type_block,:],EM[n],data[n],s_inv,k_inv)
+    #             LL[n] += log_likelihood_η0_full(p,md,EM[n],s_inv,k_inv) #<- probably still a rank issue here
+    #         end
+    #     end
+    # end
+    return LL
+end
+
+function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
+    T = 18*4
+    K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
+    R = eltype(LL)
+    logP = zeros(R,9,K,T)
+    V = zeros(R,K,2)
+    vj = zeros(R,9)
+    logπτ = zeros(R,p.Kτ)
+
+    for md in MD
         solve!(logP,V,vj,p,md)
-        logπτ = zeros(eltype(x),p.Kτ)
         k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
         K = prod(size(k_inv))
         s_inv = CartesianIndices((9,K))
@@ -40,7 +71,21 @@ function log_likelihood_n(x,p,EM::Vector{EM_data},MD::Vector{model_data},data::V
             end
         end
     end
-    return LL
+end
+
+function log_likelihood_n(x,p,em::EM_data,md::model_data,data::likelihood_data)
+    p = pars_full(x,p)
+    (;vj,logP,V) = get_model(p)
+    logπτ = zeros(eltype(x),p.Kτ)
+    solve!(logP,V,vj,p,md)
+    k_inv = CartesianIndices((2,p.Kη,md.Kω,p.Kτ))
+    K = prod(size(k_inv))
+    s_inv = CartesianIndices((9,K))
+
+    ll = log_likelihood(em,md,p,logP,data)
+    @views ll += log_likelihood_type(logπτ,p.βτ[md.type_block,:],em,data,s_inv,k_inv)
+    ll += log_likelihood_η0_full(p,md,em,s_inv,k_inv) #<- probably still a rank issue here
+
 end
 
 function log_likelihood_chunk(x,p,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx)
@@ -141,13 +186,15 @@ function log_likelihood_η0_full(p,md::model_data,em::EM_data,s_inv,k_inv)
         _,k = Tuple(s_inv[s_idx])
         kA,kη,_,kτ = Tuple(k_inv[k])
         wght = em.q_s.nzval[s]
-        if md.source=="SIPP"
-            llk = log(p.πₛ[kη,kτ])
-        else
-            loc = (md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
-            llk = log(p.πη[kA,kη,kτ,loc])
+        if wght>eps(Float64)
+            if md.source=="SIPP"
+                llk = log(p.πₛ[kη,kτ])
+            else
+                loc = 1(md.source=="FTP") + 2(md.source=="CTJF") + 3(md.source=="MFIP")
+                llk = log(p.πη[kA,kη,kτ,loc])
+            end
+            ll += llk*wght
         end
-        ll += llk*wght
     end
     return ll
 end

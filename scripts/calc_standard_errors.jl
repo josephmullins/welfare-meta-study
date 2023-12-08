@@ -2,7 +2,7 @@ include("../src/model.jl")
 include("../src/estimation.jl")
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
@@ -31,22 +31,31 @@ shuffle!(MD)
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+
 ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
 using ForwardDiff: jacobian, Chunk, JacobianConfig
-break
+
 cfg = JacobianConfig(ll, x_est, Chunk{4}());
 
 scores = jacobian(ll,x_est,cfg)
+ss = sum(scores,dims=1)[:]
+i_drop = abs.(ss).<1e-10
+i_keep = .~i_drop
 
-N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
+N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this ~slightly~ overstates the sample size?
 
-V = inv(cov(scores)) / N
+V = inv(cov(scores[:,i_keep])) / N
 se = sqrt.(diag(V))
 
-writedlm("output/var_est_K5",V)
+se_full = zeros(length(x_est))
+se_full[i_keep] .= se
+V_full = diagm(fill(1e-8,length(x_est))) 
+V_full[i_keep,i_keep] .= V
+
+writedlm("output/var_est_K5",V_full)
 
 # -- now let's make some tables?
-p2 = pars_full(se,p)
+p2 = pars_full(se_full,p)
 
 # -- functions for writing output:
 using Printf
@@ -108,20 +117,22 @@ for k in 1:Kτ
     write(file,"& ",formse(p2.βw[k]),"&",formse(p2.βf[k]),"\\\\ \n")
 end
 # next two covariates are wages only
-write(file,"Unemployment Rate &",form(p.βw[Kτ+1]),"& - \\\\ \n ")
-write(file," & ",formse(p2.βw[Kτ+1]),"& \\\\ \n")
+write(file,"Unemployment Rate &",form(p.βw[Kτ+1]),"&",form(p.βf[Kτ+1]),  "\\\\ \n ")
+write(file," & ",formse(p2.βw[Kτ+1]),formse(p2.βf[Kτ+1])," \\\\ \n")
 write(file,"Age &",form(p.βw[Kτ+2]),"& - \\\\ \n ")
 write(file," & ",formse(p2.βw[Kτ+2]),"& \\\\ \n")
 # the remaining covariates are for childcare only:
 vnames = ["Num. Kids","Youngest \$\\leq 5\$","FTP Control","FTP Treat","CTJF Control","CTJF Treat","MFIP Control","MFIP Treat","MFIP Incentives"]
 for k in eachindex(vnames)
-    write(file,vnames[k],"& - &",form(p.βf[Kτ+k]),"\\\\ \n")
-    write(file,"& - &",formse(p2.βf[Kτ+k]),"\\\\ \n")
+    write(file,vnames[k],"& - &",form(p.βf[Kτ+1+k]),"\\\\ \n")
+    write(file,"& - &",formse(p2.βf[Kτ+1+k]),"\\\\ \n")
 end
 # finally, standard errors
 write(file," Measurement error (std. dev) & ",form(p.σ_W)," &",form(p.σ_PF),"\\\\ \n")
 write(file, " & ",formse(p.σ_W*p2.σ_W)," & ",formse(p.σ_PF * p2.σ_PF),"\\\\ \n")
 close(file)
+
+# 
 
 
 # ------ make a some data to illustrate type selection ------- #
