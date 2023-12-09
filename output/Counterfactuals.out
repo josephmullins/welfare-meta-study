@@ -48,21 +48,6 @@
 "working on trial $(b)" = "working on trial 48"
 "working on trial $(b)" = "working on trial 49"
 "working on trial $(b)" = "working on trial 50"
-ERROR: LoadError: ArgumentError: 'String' iterates 'Char' values, which doesn't satisfy the Tables.jl `AbstractRow` interface
-Stacktrace:
- [1] invalidtable(#unused#::String, #unused#::Char)
-   @ Tables ~/.julia/packages/Tables/u1X7W/src/tofromdatavalues.jl:41
- [2] iterate
-   @ ~/.julia/packages/Tables/u1X7W/src/tofromdatavalues.jl:47 [inlined]
- [3] write(::Nothing, rows::Tables.IteratorWrapper{String}, file::DataFrame, opts::CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}; append::Bool, compress::Bool, header::Bool, bufsize::Int64, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
-   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:243
- [4] write(file::DataFrame, itr::String; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
-   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:199
- [5] write(file::DataFrame, itr::String)
-   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:162
- [6] top-level scope
-   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:102
-in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:99
 "working on trial $(b)" = "working on trial 1"
 "working on trial $(b)" = "working on trial 2"
 "working on trial $(b)" = "working on trial 3"
