@@ -64,7 +64,7 @@ end
 
 d = non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
 
-n_boot = 2
+n_boot = 50
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
 V = readdlm("output/var_est_K5")
 V = Hermitian(V)
