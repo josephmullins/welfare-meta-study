@@ -8,5 +8,5 @@
 #SBATCH --output=output/Counterfactuals.out
 
 cd ~/welfare-meta-study
-~/julia-1.9.3/bin/julia -t 50 scripts/decomposition_counterfactual.jl
+#~/julia-1.9.3/bin/julia -t 50 scripts/decomposition_counterfactual.jl
 ~/julia-1.9.3/bin/julia -t 50 scripts/nonselected_counterfactual.jl
