@@ -48,3 +48,68 @@
 "working on trial $(b)" = "working on trial 48"
 "working on trial $(b)" = "working on trial 49"
 "working on trial $(b)" = "working on trial 50"
+ERROR: LoadError: ArgumentError: 'String' iterates 'Char' values, which doesn't satisfy the Tables.jl `AbstractRow` interface
+Stacktrace:
+ [1] invalidtable(#unused#::String, #unused#::Char)
+   @ Tables ~/.julia/packages/Tables/u1X7W/src/tofromdatavalues.jl:41
+ [2] iterate
+   @ ~/.julia/packages/Tables/u1X7W/src/tofromdatavalues.jl:47 [inlined]
+ [3] write(::Nothing, rows::Tables.IteratorWrapper{String}, file::DataFrame, opts::CSV.Options{UInt8, UInt8, Nothing, Tuple{}, typeof(CSV._identity)}; append::Bool, compress::Bool, header::Bool, bufsize::Int64, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:243
+ [4] write(file::DataFrame, itr::String; append::Bool, compress::Bool, writeheader::Nothing, partition::Bool, kw::Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}})
+   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:199
+ [5] write(file::DataFrame, itr::String)
+   @ CSV ~/.julia/packages/CSV/OnldF/src/write.jl:162
+ [6] top-level scope
+   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:102
+in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:99
+"working on trial $(b)" = "working on trial 1"
+"working on trial $(b)" = "working on trial 2"
+"working on trial $(b)" = "working on trial 3"
+"working on trial $(b)" = "working on trial 4"
+"working on trial $(b)" = "working on trial 5"
+"working on trial $(b)" = "working on trial 6"
+"working on trial $(b)" = "working on trial 7"
+"working on trial $(b)" = "working on trial 8"
+"working on trial $(b)" = "working on trial 9"
+"working on trial $(b)" = "working on trial 10"
+"working on trial $(b)" = "working on trial 11"
+"working on trial $(b)" = "working on trial 12"
+"working on trial $(b)" = "working on trial 13"
+"working on trial $(b)" = "working on trial 14"
+"working on trial $(b)" = "working on trial 15"
+"working on trial $(b)" = "working on trial 16"
+"working on trial $(b)" = "working on trial 17"
+"working on trial $(b)" = "working on trial 18"
+"working on trial $(b)" = "working on trial 19"
+"working on trial $(b)" = "working on trial 20"
+"working on trial $(b)" = "working on trial 21"
+"working on trial $(b)" = "working on trial 22"
+"working on trial $(b)" = "working on trial 23"
+"working on trial $(b)" = "working on trial 24"
+"working on trial $(b)" = "working on trial 25"
+"working on trial $(b)" = "working on trial 26"
+"working on trial $(b)" = "working on trial 27"
+"working on trial $(b)" = "working on trial 28"
+"working on trial $(b)" = "working on trial 29"
+"working on trial $(b)" = "working on trial 30"
+"working on trial $(b)" = "working on trial 31"
+"working on trial $(b)" = "working on trial 32"
+"working on trial $(b)" = "working on trial 33"
+"working on trial $(b)" = "working on trial 34"
+"working on trial $(b)" = "working on trial 35"
+"working on trial $(b)" = "working on trial 36"
+"working on trial $(b)" = "working on trial 37"
+"working on trial $(b)" = "working on trial 38"
+"working on trial $(b)" = "working on trial 39"
+"working on trial $(b)" = "working on trial 40"
+"working on trial $(b)" = "working on trial 41"
+"working on trial $(b)" = "working on trial 42"
+"working on trial $(b)" = "working on trial 43"
+"working on trial $(b)" = "working on trial 44"
+"working on trial $(b)" = "working on trial 45"
+"working on trial $(b)" = "working on trial 46"
+"working on trial $(b)" = "working on trial 47"
+"working on trial $(b)" = "working on trial 48"
+"working on trial $(b)" = "working on trial 49"
+"working on trial $(b)" = "working on trial 50"
