@@ -4,13 +4,12 @@ include("../src/estimation.jl")
 include("../src/counterfactuals.jl")
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
 p = loadpars_vec(p,"est_childsample_K5")
-#p = loadpars_vec(p,"est_noSIPP_K3")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -67,7 +66,6 @@ end
 
 d = decomposition_counterfactual(p,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
 
-# TODO: add calculation of child skills here. do we account for heterogeneity or do we not?
 n_boot = 50
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
 V = readdlm("output/var_est_K5")
