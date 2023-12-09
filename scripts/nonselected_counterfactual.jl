@@ -51,7 +51,8 @@ end
 
 # extent out the horizon for simulation
 for n in eachindex(data)
-    data[n] = @set data[n].T = 24
+    d = data[n]
+    data[n] = @set d.T = 24
 end
 
 function non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
