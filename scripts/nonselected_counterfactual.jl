@@ -4,13 +4,12 @@ include("../src/estimation.jl")
 include("../src/counterfactuals.jl")
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
 p = loadpars_vec(p,"est_childsample_K5")
-#p = loadpars_vec(p,"est_noSIPP_K3")
 
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
 #select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
@@ -38,11 +37,16 @@ MD3 = Array{model_data,2}(undef,length(MD),2)
 for m in eachindex(MD)
     md = MD[m]
     MD1[m,2] = convert_sipp(md,"FTP")
-    MD1[m,1] = @set md.SOI = 10
+    md = @set md.SOI = 10
+    MD1[m,1] = @set md.y0 = 1994
+
     MD2[m,2] = convert_sipp(md,"CTJF")
-    MD2[m,1] = @set md.SOI = 7
+    md = @set md.SOI = 7
+    MD2[m,1] = @set md.y0 = 1996
+
     MD3[m,2] = convert_sipp(md,"MFIP")
-    MD3[m,1] = @set md.SOI = 24
+    md = @set md.SOI = 24
+    MD3[m,1] = @set md.y0 = 1994
 end
 
 function non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
@@ -60,7 +64,6 @@ end
 
 d = non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
 
-break
 n_boot = 2
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
 V = readdlm("output/var_est_K5")
@@ -132,12 +135,10 @@ for s in ("FTP","CTJF","MFIP")
     write(file,"& \\multicolumn{4}{c}{",s,"}\\\\ \n")
     write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-5} \n")
     for v in vars
-        d3 = @subset d2 :source.==s :variable.==v
+        d3 = @subset d2 :case.==s :variable.==v
         write(file,v," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
         write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
     end
 end
 close(file)
 CSV.write("output/non_selected_counterfactual2.csv",d2)
-
-# this is ready to go to the cluster :-)
