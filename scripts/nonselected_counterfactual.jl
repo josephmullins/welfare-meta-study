@@ -99,7 +99,7 @@ Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:
 @chain d begin
     @subset(:variable.=="Emp" .|| :variable.=="AFDC")
     innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
-    CSV.write("output/non_selected_counterfactual.csv",_)
+    CSV.write("output/non_selected_counterfactual.csv")
 end
 
 # what is different when comparing SIPP to any site?
