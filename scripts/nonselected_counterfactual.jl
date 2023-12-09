@@ -49,6 +49,11 @@ for m in eachindex(MD)
     MD3[m,1] = @set md.y0 = 1994
 end
 
+# extent out the horizon for simulation
+for n in eachindex(data)
+    data[n] = @set data[n].T = 24
+end
+
 function non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
     @views d1 = counterfactual(p,pB,pC,MD1[:,1],MD1[:,2],data,n_idx)
     d1[!,:case] .= "FTP"
@@ -131,14 +136,11 @@ end
 file = open("output/tables/non_selected_counterfactual.tex", "w")
 cases = unique(d2.case)
 vars = unique(d2.variable)
-for s in ("FTP","CTJF","MFIP")
-    write(file,"& \\multicolumn{4}{c}{",s,"}\\\\ \n")
-    write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-5} \n")
-    for v in vars
-        d3 = @subset d2 :case.==s :variable.==v
-        write(file,v," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
-        write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
-    end
+write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-4} \n")
+for v in vars
+    d3 = @subset d2 :variable.==v
+    write(file,String(v), " & ",tex_delimit(form.(d3.value)),"\\\\ \n")
+    write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
 end
 close(file)
 CSV.write("output/non_selected_counterfactual2.csv",d2)
