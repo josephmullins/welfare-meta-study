@@ -1,5 +1,5 @@
 #!/bin/bash -l        
-#SBATCH --time=3:00:00
+#SBATCH --time=4:00:00
 #SBATCH --ntasks=50
 #SBATCH --mem=100g
 #SBATCH --tmp=100g
@@ -8,5 +8,5 @@
 #SBATCH --output=output/Counterfactuals.out
 
 cd ~/welfare-meta-study
-#~/julia-1.9.3/bin/julia -t 50 scripts/decomposition_counterfactual.jl
+~/julia-1.9.3/bin/julia -t 50 scripts/decomposition_counterfactual.jl
 ~/julia-1.9.3/bin/julia -t 50 scripts/nonselected_counterfactual.jl
