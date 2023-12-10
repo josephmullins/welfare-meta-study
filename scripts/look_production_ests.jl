@@ -17,7 +17,8 @@ e1 = mean.(eachcol(mle[:,1:4]))
 iv = @subset(chain0,:version.=="iv",:skill.=="Behavioral")
 e2 = std.(eachcol(iv[:,1:4]))
 
-
+q25 = quantile.(eachcol(mle[:,1:4]),0.025)
+q75 = quantile.(eachcol(mle[:,1:4]),0.975)
 
 chain = CSV.read("output/production_ests_hetero.csv",DataFrame)
 chain_B = chain[1:10000,:]

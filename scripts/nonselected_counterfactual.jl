@@ -99,7 +99,7 @@ end
 
 Db = boot_cf(d)
 
-Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.025),:q75 = quantile(:value,0.975))
+Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.05),:q75 = quantile(:value,0.95))
 
 # write results to file for creating figures
 @chain d begin
@@ -124,6 +124,8 @@ end
 using Printf
 form(x) = @sprintf("%0.2f",x)
 formse(x) = string("(",@sprintf("%0.2f",x),")")
+formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
+
 # a helper function to write a collection of strings into separate columns
 function tex_delimit(x)
     str = x[1]
@@ -141,7 +143,8 @@ write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-4} \n")
 for v in vars
     d3 = @subset d2 :variable.==v
     write(file,String(v), " & ",tex_delimit(form.(d3.value)),"\\\\ \n")
-    write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
+    write(file," & ",tex_delimit(formci.(d3.q25,d3.q75)),"\\\\ \n")
 end
 close(file)
 CSV.write("output/non_selected_counterfactual2.csv",d2)
+
