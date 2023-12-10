@@ -113,6 +113,8 @@ end
 using Printf
 form(x) = @sprintf("%0.2f",x)
 formse(x) = string("(",@sprintf("%0.2f",x),")")
+formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
+
 # a helper function to write a collection of strings into separate columns
 function tex_delimit(x)
     str = x[1]
@@ -131,8 +133,8 @@ for s in ("FTP","CTJF","MFIP")
     write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-5} \n")
     for v in vars
         d3 = @subset d2 :source.==s :variable.==v
-        write(file,v," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
-        write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
+        write(file,String(v)," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
+        write(file," & ",tex_delimit(formci.(d3.q25,d3.q75)),"\\\\ \n")
     end
 end
 close(file)
