@@ -99,7 +99,7 @@ end
 
 Db = boot_cf(d)
 
-Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.025),:q75 = quantile(:value,0.975))
+Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.05),:q75 = quantile(:value,0.95))
 
 # write results to file for creating figures
 @chain d begin
