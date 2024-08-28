@@ -2,7 +2,7 @@ include("../src/model.jl")
 include("../src/estimation.jl")
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 p = update_transitions(p)
 nests = get_nests()
@@ -31,22 +31,31 @@ shuffle!(MD)
 
 forward_back_threaded!(p,EM,MD,data,n_idx)
 LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+
 ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
 using ForwardDiff: jacobian, Chunk, JacobianConfig
-break
+
 cfg = JacobianConfig(ll, x_est, Chunk{4}());
 
 scores = jacobian(ll,x_est,cfg)
+ss = sum(scores,dims=1)[:]
+i_drop = abs.(ss).<1e-10
+i_keep = .~i_drop
 
-N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this slightly overstates the sample size?
+N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this ~slightly~ overstates the sample size?
 
-V = inv(cov(scores)) / N
+V = inv(cov(scores[:,i_keep])) / N
 se = sqrt.(diag(V))
 
-writedlm("output/var_est_K5",V)
+se_full = zeros(length(x_est))
+se_full[i_keep] .= se
+V_full = diagm(fill(1e-8,length(x_est))) 
+V_full[i_keep,i_keep] .= V
+
+writedlm("output/var_est_K5",V_full)
 
 # -- now let's make some tables?
-p2 = pars_full(se,p)
+p2 = pars_full(se_full,p)
 
 # -- functions for writing output:
 using Printf
@@ -70,14 +79,14 @@ write(file," & \\multicolumn{6}{c}{Type-Specific Parameters} \\\\ \n")
 write(file,"Type & \$\\alpha_{H}\$ & \$\\alpha_{A}\$ & \$\\alpha_{S}\$ & \$\\alpha_{F}\$ & \$\\alpha_{\\theta}\$ & \$y\$ \\\\ \\cmidrule(r){1-1} \\cmidrule(r){2-7} \n")
 
 for k in 1:Kτ
-    str = "\$k_{\\tau}=$k\$ &" * form(p.αH[k]) * "&" * form(p.αA[k]) * "&" * form(p.αS[k]) * " & " * form(p.αF[k]) * " & " * form(p.αθ[k]) * "&" * form(p.wq[k]) * "\\\\ \n"
+    str = "\$k=$k\$ &" * form(p.αH[k]) * "&" * form(p.αA[k]) * "&" * form(p.αS[k]) * " & " * form(p.αF[k]) * " & " * form(p.αθ[k]) * "&" * form(p.wq[k]) * "\\\\ \n"
     write(file,str)
     str = "&" * formse(p2.αH[k]) * "&" * formse(p2.αA[k]) * "&" * formse(p2.αS[k]) * " & " * formse(p2.αF[k]) * " & " * formse(p.αθ[k] * log(p2.αθ[k])) * "&" * formse(p.wq[k] * log(p2.wq[k])) * "\\\\ \n"
     write(file,str)
 end
 
 write(file,"& \\multicolumn{6}{c}{Global Parameters} \\\\ \n")
-write(file,"& \$\\beta\$ & \$\\sigma_{F}\$ & \$\\sigma_{H}\$ & \$\\sigma_{P}\$ & \$\\alpha_{R}\$ & \$\\alpha_{P}\$ \\\\ \\cmidrule(r){2-7}")
+write(file,"& \$\\beta\$ & \$\\sigma_{3}\$ & \$\\sigma_{2}\$ & \$\\sigma_{1}\$ & \$\\alpha_{R}\$ & \$\\alpha_{P}\$ \\\\ \\cmidrule(r){2-7}")
 write(file, "&" * form(p.β) * "&" * form(p.σ[1]) * "&" * form(p.σ[2]) * "&" * form(p.σ[3]) * "&" * form(p.αR) * "&" * form(p.αP) * "\\\\ \n")
 write(file, "&" * formse(p.β * (1-p.β) * logit_inv(p2.β)) * "&" * formse(p.σ[1] * log(p2.σ[1])) * "&" * formse(p.σ[2] * log(p2.σ[2])) * "&" * formse(p.σ[3] * log(p2.σ[3])) * "&" * formse(p2.αR) * "&" * formse(p2.αP) * "\\\\ \n")
 close(file)
@@ -88,11 +97,11 @@ file = open("output/tables/transition_ests.tex", "w")
 write(file," & \\multicolumn{3}{c}{Type-Specific Parameters} \\\\ \n")
 write(file,tex_delimit(["Type","\$\\lambda_0\$","\$\\lambda_1\$","\$\\delta\$"]),"\\\\ \\cmidrule(r){1-1}\\cmidrule(r){2-4} \n")
 for k in 1:Kτ
-    write(file,"\$k_{\\tau}=$k\$ &",tex_delimit(form.([p.λ₀[k],p.λ₁[k],p.δ[k]])),"\\\\ \n")
+    write(file,"\$k=$k\$ &",tex_delimit(form.([p.λ₀[k],p.λ₁[k],p.δ[k]])),"\\\\ \n")
     write(file,"&",tex_delimit(formse.([logit_inv(p2.λ₀[k]) * (1-p.λ₀[k]) * p.λ₀[k],logit_inv(p2.λ₁[k]) * (1-p.λ₁[k]) * p.λ₁[k],logit_inv(p2.δ[k]) * (1-p.δ[k]) * p.δ[k]])),"\\\\ \n")
 end
 write(file,"& \\multicolumn{3}{c}{Global Parameters} \\\\ \n")
-write(file,tex_delimit(["","\$\\mu_{offer}\$","\$\\sigma_{offer}\$","\$\\lambda_R\$"]),"\\\\ \\cmidrule(r){2-4} \n")
+write(file,tex_delimit(["","\$\\mu_{o}\$","\$\\sigma_{o}\$","\$\\lambda_R\$"]),"\\\\ \\cmidrule(r){2-4} \n")
 write(file,"&",tex_delimit(form.([p.μₒ,p.σₒ,p.λR])),"\\\\ \n")
 write(file,"&",tex_delimit(formse.([p2.μₒ,p.σₒ * log(p2.σₒ),p2.λR])),"\\\\ \n")
 
@@ -108,19 +117,82 @@ for k in 1:Kτ
     write(file,"& ",formse(p2.βw[k]),"&",formse(p2.βf[k]),"\\\\ \n")
 end
 # next two covariates are wages only
-write(file,"Unemployment Rate &",form(p.βw[Kτ+1]),"& - \\\\ \n ")
-write(file," & ",formse(p2.βw[Kτ+1]),"& \\\\ \n")
+write(file,"Unemployment Rate &",form(p.βw[Kτ+1]),"&",form(p.βf[Kτ+1]),  "\\\\ \n ")
+write(file," & ",formse(p2.βw[Kτ+1]),"&",formse(p2.βf[Kτ+1])," \\\\ \n")
 write(file,"Age &",form(p.βw[Kτ+2]),"& - \\\\ \n ")
 write(file," & ",formse(p2.βw[Kτ+2]),"& \\\\ \n")
 # the remaining covariates are for childcare only:
 vnames = ["Num. Kids","Youngest \$\\leq 5\$","FTP Control","FTP Treat","CTJF Control","CTJF Treat","MFIP Control","MFIP Treat","MFIP Incentives"]
 for k in eachindex(vnames)
-    write(file,vnames[k],"& - &",form(p.βf[Kτ+k]),"\\\\ \n")
-    write(file,"& - &",formse(p2.βf[Kτ+k]),"\\\\ \n")
+    write(file,vnames[k],"& - &",form(p.βf[Kτ+1+k]),"\\\\ \n")
+    write(file,"& - &",formse(p2.βf[Kτ+1+k]),"\\\\ \n")
 end
 # finally, standard errors
 write(file," Measurement error (std. dev) & ",form(p.σ_W)," &",form(p.σ_PF),"\\\\ \n")
 write(file, " & ",formse(p.σ_W*p2.σ_W)," & ",formse(p.σ_PF * p2.σ_PF),"\\\\ \n")
+close(file)
+
+# -------- make a table for type selection -------- #
+vnames = ["Const.","High School","Some College","Num Kids"]
+pos = 1
+file = open("output/tables/type_ests.tex","w")
+write(file,["& \$k = $x\$" for x in 2:p.Kτ]...,"\\\\ \n")
+write(file," & \\multicolumn{$(p.Kτ-1)}{c}{SIPP} \\\\ \\cmidrule(r){2-$(p.Kτ)} \n")
+for v in vnames
+    write(file,v)
+    for k in 1:p.Kτ-1
+        write(file," & ",form(p.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    for k in 1:p.Kτ-1
+        write(file," & ",formse(p2.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    pos += 1
+end
+vnames = [vnames;"New Applicant"]
+write(file," & \\multicolumn{$(p.Kτ-1)}{c}{FTP} \\\\ \\cmidrule(r){2-$(p.Kτ)} \n")
+for v in vnames
+    write(file,v)
+    for k in 1:p.Kτ-1
+        write(file," & ",form(p.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    for k in 1:p.Kτ-1
+        write(file," & ",formse(p2.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    pos += 1
+end
+vnames = [vnames;"New Haven"]
+write(file," & \\multicolumn{$(p.Kτ-1)}{c}{CTJF} \\\\ \\cmidrule(r){2-$(p.Kτ)} \n")
+for v in vnames
+    write(file,v)
+    for k in 1:p.Kτ-1
+        write(file," & ",form(p.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    for k in 1:p.Kτ-1
+        write(file," & ",formse(p2.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    pos += 1
+end
+vnames[end] = "Re-Applicant"
+vnames = [vnames;"Anoka";"Dakota"]
+write(file," & \\multicolumn{$(p.Kτ-1)}{c}{MFIP} \\\\ \\cmidrule(r){2-$(p.Kτ)} \n")
+for v in vnames
+    write(file,v)
+    for k in 1:p.Kτ-1
+        write(file," & ",form(p.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    for k in 1:p.Kτ-1
+        write(file," & ",formse(p2.βτ[pos,k]))
+    end
+    write(file,"\\\\ \n")
+    pos += 1
+end
 close(file)
 
 

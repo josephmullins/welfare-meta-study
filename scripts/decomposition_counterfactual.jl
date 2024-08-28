@@ -4,13 +4,12 @@ include("../src/estimation.jl")
 include("../src/counterfactuals.jl")
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)
 
 p = loadpars_vec(p,"est_childsample_K5")
-#p = loadpars_vec(p,"est_noSIPP_K3")
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
@@ -67,8 +66,7 @@ end
 
 d = decomposition_counterfactual(p,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
 
-# TODO: add calculation of child skills here. do we account for heterogeneity or do we not?
-n_boot = 50
+n_boot = 70
 x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
 V = readdlm("output/var_est_K5")
 V = Hermitian(V)
@@ -97,7 +95,7 @@ end
 
 Db = boot_cf(d)
 
-Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.025),:q75 = quantile(:value,0.975))
+Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:q25 = quantile(:value,0.05),:q75 = quantile(:value,0.95))
 
 # write results to file for creating figures
 @chain d begin
@@ -115,6 +113,8 @@ end
 using Printf
 form(x) = @sprintf("%0.2f",x)
 formse(x) = string("(",@sprintf("%0.2f",x),")")
+formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
+
 # a helper function to write a collection of strings into separate columns
 function tex_delimit(x)
     str = x[1]
@@ -133,8 +133,8 @@ for s in ("FTP","CTJF","MFIP")
     write(file,"&",tex_delimit(cases),"\\\\ \\cmidrule(r){2-5} \n")
     for v in vars
         d3 = @subset d2 :source.==s :variable.==v
-        write(file,v," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
-        write(file," & ",tex_delimit(formse.(d3.sd)),"\\\\ \n")
+        write(file,String(v)," & ",tex_delimit(form.(d3.value)),"\\\\ \n")
+        write(file," & ",tex_delimit(formci.(d3.q25,d3.q75)),"\\\\ \n")
     end
 end
 close(file)

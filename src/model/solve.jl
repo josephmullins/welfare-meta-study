@@ -16,10 +16,11 @@ end
 
 function iterate!(logP,V,vj,p,md,t,tnow,state_idx)
     (;B,C) = p.nests
-    (;K,k_idx,k_inv) = state_idx
+    (;k_idx,k_inv) = state_idx
     tnext = 3-tnow #<- tnow = 1 => tnext =2, tnow=2 => tnext =1
-    for k in 1:K
-        kA,kη,kω,kτ = Tuple(k_inv[k])
+    for ki in k_inv
+        kA,kη,kω,kτ = Tuple(ki)
+        k = k_idx[kA,kη,kω,kτ]
         job_offer = kη>1
         age_yng = md.ageyng + fld(t,4)
         eligible = (kω<md.Kω || !md.TL) && (age_yng<18) #<- change what we mean by eligible
@@ -54,6 +55,47 @@ function calc_vj(j,V,md::model_data,state,pars,t,eligible)
     return v
 end
 
+# a special routine for iterating over states fixing kτ. This is useful when maximizing the likelihood and I don't know how to integrate it cleanly with the other iterate! and calc_vj above.
+function iterate_k!(logP,V,vj,p,md,t,tnow,state_idx)
+    (;B,C) = p.nests
+    (;kτ,kτ_idx,kτ_inv) = state_idx
+    tnext = 3-tnow #<- tnow = 1 => tnext =2, tnow=2 => tnext =1
+    for ki in kτ_inv
+        kA,kη,kω = Tuple(ki)
+        k = kτ_idx[kA,kη,kω]
+        job_offer = kη>1
+        age_yng = md.ageyng + fld(t,4)
+        eligible = (kω<md.Kω || !md.TL) && (age_yng<18) #<- change what we mean by eligible
+        state = (;kA,kη,kω,kτ,kτ_idx)
+        if job_offer
+            for j in 1:9
+                @views vj[j] = calc_vj_k(j,V[:,tnext],md,state,p,t,eligible)
+            end
+            # choice probs:
+            @views V[k,tnow] = nested_logit(logP[:,k],vj;B,C,σ = p.σ) #<- or something like it.
+        else
+            for j in (1,4,7)
+                @views vj[j] = calc_vj_k(j,V[:,tnext],md,state,p,t,eligible)
+            end
+            @views V[k,tnow] = plain_logit(logP[:,k],vj;B = (1,4,7),σ = p.σ[3])
+        end
+    end
+end
+
+
+function calc_vj_k(j,V,md::model_data,state,pars,t,eligible)
+    (;kA,kη,kω,kτ,kτ_idx) = state
+    #(;β,λ,δ,πW,Kη) = pars
+    S,A,_,H,F = j_inv(j)
+    v = utility(S,A,H,F,pars,md,kA,kη,kτ,t,eligible)
+    kA_next,kω_next = next(A,kA,kω;md.Kω)
+    for kη_next in 1:pars.Kη
+        k_next = kτ_idx[kA_next,kη_next,kω_next]
+        j = 1 + md.R * A #<- indicates if the work requirement gives a bump to λ₀
+        v += pars.β * pars.Fη[kη_next,kη,j,kτ] * V[k_next]
+    end
+    return v
+end
 
 
 

@@ -1,192 +1,192 @@
 Sampling (10 threads)   0%|                             |  ETA: N/A
 ┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 9.765625e-5
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-Sampling (10 threads)  10%|██▉                          |  ETA: 0:28:44
-Sampling (10 threads)  20%|█████▊                       |  ETA: 0:12:46
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:09:16
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:06:19
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:04:16
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:03:04
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:02:07
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:01:24
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:40
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:06:40
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:06:40
-Sampling (10 threads)   0%|                             |  ETA: N/A
-┌ Info: Found initial step size
-└   ϵ = 0.003125
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.003125
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.0001953125
-┌ Info: Found initial step size
-└   ϵ = 0.000390625
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-Sampling (10 threads)  10%|██▉                          |  ETA: 0:37:44
-Sampling (10 threads)  20%|█████▊                       |  ETA: 0:16:46
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:09:47
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:06:17
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:04:12
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:02:48
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:48
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:01:03
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:32
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:08:57
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:08:57
-Sampling (10 threads)   0%|                             |  ETA: N/A
-┌ Info: Found initial step size
-└   ϵ = 0.0001953125
-┌ Info: Found initial step size
-└   ϵ = 0.000390625
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
+└   ϵ = 0.00625
 ┌ Info: Found initial step size
 └   ϵ = 0.00625
 ┌ Info: Found initial step size
-└   ϵ = 0.000390625
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.0125
 ┌ Info: Found initial step size
 └   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.003125
-┌ Info: Found initial step size
-└   ϵ = 0.000390625
-Sampling (10 threads)  10%|██▉                          |  ETA: 2:45:56
-Sampling (10 threads)  20%|█████▊                       |  ETA: 1:13:45
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:43:01
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:27:39
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:18:26
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:12:17
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:07:54
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:08:53
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:04:06
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:43:28
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:43:28
-Sampling (10 threads)   0%|                             |  ETA: N/A
-┌ Info: Found initial step size
-└   ϵ = 0.0015625
 ┌ Info: Found initial step size
 └   ϵ = 0.00625
 ┌ Info: Found initial step size
-└   ϵ = 0.00078125
+└   ϵ = 0.00625
 ┌ Info: Found initial step size
-└   ϵ = 0.000390625
+└   ϵ = 0.0125
 ┌ Info: Found initial step size
-└   ϵ = 0.00078125
+└   ϵ = 0.00625
 ┌ Info: Found initial step size
-└   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.000390625
-┌ Info: Found initial step size
-└   ϵ = 0.003125
-┌ Info: Found initial step size
-└   ϵ = 0.003125
-Sampling (10 threads)  10%|██▉                          |  ETA: 2:34:08
-Sampling (10 threads)  20%|█████▊                       |  ETA: 1:08:30
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:39:58
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:25:41
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:17:08
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:11:25
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:12:19
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:07:54
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:04:15
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:44:23
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:44:23
+└   ϵ = 0.0125
+Sampling (10 threads)  10%|██▉                          |  ETA: 0:25:35
+Sampling (10 threads)  20%|█████▊                       |  ETA: 0:11:23
+Sampling (10 threads)  30%|████████▊                    |  ETA: 0:06:38
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:04:16
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:02:51
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:01:57
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:26
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:51
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:23
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:03:37
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:03:37
 Sampling (10 threads)   0%|                             |  ETA: N/A
 ┌ Info: Found initial step size
 └   ϵ = 0.00625
 ┌ Info: Found initial step size
-└   ϵ = 0.0015625
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.003125
 ┌ Info: Found initial step size
 └   ϵ = 0.003125
 ┌ Info: Found initial step size
 └   ϵ = 0.0015625
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 9.765625e-5
-┌ Info: Found initial step size
-└   ϵ = 0.000390625
-┌ Info: Found initial step size
-└   ϵ = 0.0001953125
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-┌ Info: Found initial step size
-└   ϵ = 0.00078125
-Sampling (10 threads)  10%|██▉                          |  ETA: 0:32:53
-Sampling (10 threads)  20%|█████▊                       |  ETA: 0:14:37
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:08:32
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:05:29
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:03:39
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:02:28
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:35
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:56
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:25
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:04:08
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:04:08
+Sampling (10 threads)  10%|██▉                          |  ETA: 0:15:39
+Sampling (10 threads)  20%|█████▊                       |  ETA: 0:06:57
+Sampling (10 threads)  30%|████████▊                    |  ETA: 0:04:03
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:02:36
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:01:44
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:01:23
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:00:54
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:32
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:15
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:27
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:27
 Sampling (10 threads)   0%|                             |  ETA: N/A
 ┌ Info: Found initial step size
-└   ϵ = 0.0001953125
+└   ϵ = 0.0125
 ┌ Info: Found initial step size
-└   ϵ = 0.0015625
+└   ϵ = 0.0125
 ┌ Info: Found initial step size
 └   ϵ = 0.0015625
 ┌ Info: Found initial step size
 └   ϵ = 0.003125
 ┌ Info: Found initial step size
-└   ϵ = 0.0001953125
+└   ϵ = 0.003125
 ┌ Info: Found initial step size
-└   ϵ = 0.000390625
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+Sampling (10 threads)  10%|██▉                          |  ETA: 2:00:10
+Sampling (10 threads)  20%|█████▊                       |  ETA: 0:53:24
+Sampling (10 threads)  30%|████████▊                    |  ETA: 0:31:09
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:21:31
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:20:34
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:15:34
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:10:47
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:06:20
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:02:57
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:27:35
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:27:35
+Sampling (10 threads)   0%|                             |  ETA: N/A
+┌ Info: Found initial step size
+└   ϵ = 0.05
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+Sampling (10 threads)  10%|██▉                          |  ETA: 4:29:42
+Sampling (10 threads)  20%|█████▊                       |  ETA: 1:59:52
+Sampling (10 threads)  30%|████████▊                    |  ETA: 1:09:55
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:44:57
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:29:58
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:19:59
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:12:51
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:08:39
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:04:09
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:38:57
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:38:57
+Sampling (10 threads)   0%|                             |  ETA: N/A
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.003125
 ┌ Info: Found initial step size
 └   ϵ = 0.00078125
 ┌ Info: Found initial step size
+└   ϵ = 0.0015625
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
 └   ϵ = 0.00078125
+Sampling (10 threads)  10%|██▉                          |  ETA: 0:25:13
+Sampling (10 threads)  20%|█████▊                       |  ETA: 0:11:13
+Sampling (10 threads)  30%|████████▊                    |  ETA: 0:06:32
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:04:12
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:02:48
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:01:52
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:12
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:42
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:19
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:50
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:50
+Sampling (10 threads)   0%|                             |  ETA: N/A
+┌ Info: Found initial step size
+└   ϵ = 0.025
+┌ Info: Found initial step size
+└   ϵ = 0.003125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
 ┌ Info: Found initial step size
 └   ϵ = 0.00078125
 ┌ Info: Found initial step size
-└   ϵ = 0.00078125
-Sampling (10 threads)  10%|██▉                          |  ETA: 0:31:00
-Sampling (10 threads)  20%|█████▊                       |  ETA: 0:13:47
-Sampling (10 threads)  30%|████████▊                    |  ETA: 0:08:02
-Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:05:10
-Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:03:27
-Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:02:18
-Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:31
-Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:56
-Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:27
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:04:29
-Sampling (10 threads) 100%|█████████████████████████████| Time: 0:04:29
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.0125
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.00625
+┌ Info: Found initial step size
+└   ϵ = 0.0015625
+Sampling (10 threads)  10%|██▉                          |  ETA: 0:22:36
+Sampling (10 threads)  20%|█████▊                       |  ETA: 0:10:03
+Sampling (10 threads)  30%|████████▊                    |  ETA: 0:05:55
+Sampling (10 threads)  40%|███████████▋                 |  ETA: 0:03:49
+Sampling (10 threads)  50%|██████████████▌              |  ETA: 0:02:33
+Sampling (10 threads)  60%|█████████████████▍           |  ETA: 0:01:44
+Sampling (10 threads)  70%|████████████████████▎        |  ETA: 0:01:07
+Sampling (10 threads)  80%|███████████████████████▎     |  ETA: 0:00:40
+Sampling (10 threads)  90%|██████████████████████████▏  |  ETA: 0:00:18
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:48
+Sampling (10 threads) 100%|█████████████████████████████| Time: 0:02:48

@@ -60,7 +60,7 @@ function pars(x,p)
     # πη #<- initial distribution of η for experimental samples
     # βτ #<- type selection
     p = (;p...,αA,αH,αθ,αS,αF,αP,αR,λR,βΓ,wq,βw,βf,ση,λ₀,δ,λ₁,μₒ,σₒ,σ,β)
-    p = update_transitions(p)
+    p = update_transitions(x,p)
     return p
 end
 
@@ -111,7 +111,7 @@ function pars(x,p,f::Vector{Symbol},tf::Vector{Int64}) #<-?
     end
     pnew = NamedTuple(zip(f,Xnew))
     p = (;p...,pnew...)
-    p = update_transitions(p)
+    p = update_transitions(x,p)
     return p
 end
 
@@ -145,4 +145,45 @@ function pars_inv_full(p)
     push!(x,p.σ_PF)
     #push!(x,p.μ_PF)
     #push!(x,log(p.σ_PF2))
+end
+
+# a key-based update routine for a specific type (k)
+function pars(x,p,kτ::Int64,f::Vector{Symbol},tf::Vector{Int64}) #<-?
+    pos = 1
+    R = eltype(x)
+    Xnew = Vector{R}[]
+    for kf in eachindex(f)
+        v = getfield(p,f[kf])
+        K = length(v)
+        if tf[kf]==1
+            vnew = convert(Vector{R},v)
+            vnew[kτ] = x[pos]
+        elseif tf[kf]==2
+            vnew = convert(Vector{R},v)
+            vnew[kτ] = exp(x[pos])
+        elseif tf[kf]==3
+            vnew = convert(Vector{R},v)
+            vnew[kτ] = logit(x[pos])
+        end
+        pos += 1
+        push!(Xnew,vnew)
+    end
+    pnew = NamedTuple(zip(f,Xnew))
+    p = (;p...,pnew...)
+    p = update_transitions(x,p)
+    return p
+end
+
+function pars_inv(p,kτ::Int64,f::Vector{Symbol},ft::Vector{Int64})
+    x = Float64[]
+    for kf in eachindex(f)
+        if ft[kf]==1
+            push!(x,getfield(p,f[kf])[kτ])
+        elseif ft[kf]==2
+            push!(x,log(getfield(p,f[kf])[kτ]))
+        elseif ft[kf]==3
+            push!(x,logit_inv(getfield(p,f[kf])[kτ]))
+        end
+    end
+    return x
 end

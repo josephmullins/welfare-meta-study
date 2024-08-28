@@ -6,7 +6,7 @@ include("../src/estimation/FactorAnalysis.jl")
 
 
 Kτ = 5 #
-Kη = 4
+Kη = 5
 p = pars(Kτ,Kη)
 nests = get_nests()
 p = (;p...,nests)

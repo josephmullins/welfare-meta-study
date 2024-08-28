@@ -1,11 +1,11 @@
 #!/bin/bash -l        
-#SBATCH --time=5:00:00
-#SBATCH --ntasks=80
-#SBATCH --mem=150g
-#SBATCH --tmp=150g
+#SBATCH --time=12:00:00
+#SBATCH --ntasks=70
+#SBATCH --mem=100g
+#SBATCH --tmp=100g
 #SBATCH --mail-type=ALL  
 #SBATCH --mail-user=mullinsj@umn.edu 
 #SBATCH --output=output/EstimationK10.out
 
 cd ~/welfare-meta-study
-~/julia-1.9.3/bin/julia -t 80 scripts/estimate_model_childsample_K10.jl
+~/julia-1.9.3/bin/julia -t 70 scripts/estimate_model_childsample_K10.jl
