@@ -32,11 +32,13 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
 
         ll = log_likelihood(EM,MD,data,n_idx)
         x1 = pars_inv(p)
+        #err1 = ll - ll0
+        err0 = norm(x1 .- x0,Inf)
         err = min(ll - ll0,norm(x1 .- x0,Inf)) # convergence if likelihood starts to decrease
         ll0 = ll #<- update likelihood of current ests
         iter += 1 
         println("current likelihood: $ll")
-        println("current error: $err")
+        println("current error: $err, $err0")
         if save & mod(iter,1)==0
             d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
             savepars_vec(p,"current_est")
@@ -44,7 +46,6 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
     end
     return p
 end
-
 
 # this function calculates the full log-likelihood for the subset of cases in MD
 function log_likelihood(EM::Vector{EM_data},MD::Vector{model_data},data::Vector{likelihood_data},n_idx)
