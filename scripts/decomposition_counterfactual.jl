@@ -67,10 +67,9 @@ end
 d = decomposition_counterfactual(p,pB,pC,MD,MD1,MD2,MD3,MD4,data,n_idx)
 
 n_boot = 70
-x_est = pars_inv_full(p) #<- here's an issue. The probabilities are not full rank. Surely won't invert?
+x_est = pars_inv_full(p) 
 V = readdlm("output/var_est_K5")
 V = Hermitian(V)
-#V = 0.001 * I(length(x_est)) # we shuld also be polishing estimates maybe
 p_bootstrap = rand(MvNormal(x_est,V),n_boot)
 cols = names(d)
 

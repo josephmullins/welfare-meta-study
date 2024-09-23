@@ -22,10 +22,60 @@
 - tab:types | tables/type_ests | src/calc_standard_errors.jl |
 
 
-# Script Summary
+# ----- Script Summary
 
+estimate_model_childsample_K5
+    estimation_setup
+    expectation_maximization
+    basic_model_fit
+    exante_model_fit
+    savepars_vec
 
-# A mindmap of functions
+calc_standard_errors
+    loadpars_vec
+    pars_inv_full
+    estimation_setup
+    forward_back_threaded!
+    log_likelihood_n
+    pars_full
+    tex_delimit #<- move this one!
+
+decomposition_counterfactual
+    loadpars_vec
+    estimation_setup
+    full_treatment
+    incentives_only
+    work_requirements_only
+    time_limits_only
+    control
+    counterfactual
+
+# ------ A mindmap of functions
+
+estimation_setup
+    model_data
+    likelihood_data
+    get_EM_data
+
+basic_model_fit
+    basic_model_fit_chunk
+        get_model
+        solve!
+        model_stats
+            em_mean
+
+exante_model_fit
+    exante_model_fit_chunk
+        initialize_exante!
+            log_type_prob!
+            initial_prob
+        get_choice_state_distribution!
+            choice_set
+        model_stats_exante
+            em_mean
+
+savepars_vec
+    pars_inv_full
 
 expectation_maximization
     forward_back_threaded!
