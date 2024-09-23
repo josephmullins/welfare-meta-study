@@ -139,5 +139,3 @@ for s in ("FTP","CTJF","MFIP")
 end
 close(file)
 CSV.write("output/decomp_counterfactual2.csv",d2)
-
-# this is ready to go to the cluster :-)
