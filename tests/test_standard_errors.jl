@@ -26,4 +26,11 @@ end
 
 MD,EM,data,n_idx = estimation_setup(panel);
 
+Random.seed!(2020)
+shuffle!(MD)
+
+forward_back_threaded!(p,EM,MD,data,n_idx)
+LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+
+
 V, se = get_standard_errors(x_est,p,EM,MD,data,n_idx)

@@ -85,14 +85,4 @@ include("model/prices.jl")
 include("budget.jl")
 include("model/utility.jl")
 include("model/states_transitions.jl")
-
-using DelimitedFiles
-
-function savepars_vec(p,f::String)
-    x = pars_inv_full(p)
-    writedlm("output/" * f,x)
-end
-function loadpars_vec(p,f::String)
-    x = readdlm("output/" * f)[:]
-    p = pars_full(x,p)
-end
+include("tools/input_output.jl")

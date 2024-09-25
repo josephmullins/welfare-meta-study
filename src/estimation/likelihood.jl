@@ -60,7 +60,8 @@ is called that evaluates the likelihood for type kτ only.
 
 
 """
-function log_likelihood_chunk(x,p,MD,EM::Vector{EM_data},data::Vector{likelihood_data},n_idx,kτ = 0)
+function log_likelihood_chunk(x,p,MD,
+    EM::Vector{EM_data},data::Vector{likelihood_data},n_idx,kτ = 0)
     # create storage
     K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
     logP,V,vj = get_model_buffer(x,K)
@@ -346,7 +347,7 @@ end
 
 function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
     # create storage
-    K = 2 * p.Kη * 9 #<- maximal state size
+    K = 2 * p.Kη * p.Kτ * 9 #<- maximal state size
     logP,V,vj = get_model_buffer(LL,K)
 
     # get additional buffer for type probabilities
@@ -356,11 +357,11 @@ function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
     for md in MD
         fill!(V,0.)
         T = max((17-md.ageyng)*4,md.T)
-        state_idx = state_indexing_rules(p,md,kτ)
+        state_idx = state_indexing_rules(p,md)
         tnow = 1
         # time varying component of likelihood
         for t in reverse(1:T)
-            iterate_k!(logP,V,vj,p,md,t,tnow,state_idx)
+            iterate!(logP,V,vj,p,md,t,tnow,state_idx)
             for n ∈ n_idx[md.case_idx]
                 # recall that t+t0 in model time is t in data time
                 if data[n].use
