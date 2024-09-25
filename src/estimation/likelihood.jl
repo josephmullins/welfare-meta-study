@@ -347,11 +347,11 @@ function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
     # create storage
     K = 2 * p.Kη * 9 #<- maximal state size
     logP,V,vj = get_model_buffer(LL,K)
+
     # get additional buffer for type probabilities
     R = eltype(LL)
     logπτ = zeros(R,p.Kτ)
 
-    ll = 0.
     for md in MD
         fill!(V,0.)
         T = max((17-md.ageyng)*4,md.T)
