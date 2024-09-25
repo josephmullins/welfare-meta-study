@@ -22,6 +22,8 @@
 - tab:types | tables/type_ests | src/calc_standard_errors.jl |
 
 
+# TODO: formatting functions form, formse, tex_delimit can live somewhere.
+# TODO: check wage_log_like
 # ----- Script Summary
 
 estimate_model_childsample_K5
@@ -49,6 +51,12 @@ decomposition_counterfactual
     time_limits_only
     control
     counterfactual
+    pars_full
+    prod_pars
+    boot_cf ** this one written on the spot. adjust??
+
+nonselected_counterfactual
+    same as a above
 
 # ------ A mindmap of functions
 
@@ -82,11 +90,19 @@ expectation_maximization
         forward_back_chunk!
             solve!
             update! #<- updates EM object
+                log_type_prob
+                wage_log_like
+                initial_prob
+                chcare_log_like
             forward_back!
 
     mstep_blocks
         mstep_major_block #<- maximizes over shared parameters
-            log_likelihood_threaded
+            log_likelihood_threaded(x,p,fnames,ft,EM,MD,data,n_idx)
+                ** duplicated in lowmem
+                log_likelihood_threaded(x,p,EM,MD,data,n_idx)
+                    log_likelihood_chunk(x,p,chunk,EM,data,n_idx) #<- p passed because we need the type
+                    ** updated in lowmem to keep at low memory
         mstep_k_block #<- maximizes over type specific parameters
             log_likelihood_threaded (with extra argument)
     mstep_types
@@ -96,6 +112,5 @@ expectation_maximization
     savepars_vec
     basic_model_fit
 
-# ** double check but it looks like there's a whole extra likelihood.jl script we don't use
 # ** also look to be many duplicate functions comparoing lowmem to lowmem_k
 # ** log_likelihood_threaded_full! #<- this uses the update routine that uses all parameters by default. Do we use this at all?
