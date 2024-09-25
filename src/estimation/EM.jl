@@ -59,3 +59,28 @@ function log_likelihood(EM::Vector{EM_data},MD::Vector{model_data},data::Vector{
     end
     return ll
 end
+
+using ForwardDiff: jacobian, Chunk, JacobianConfig
+
+
+function get_standard_errors(x_est,p,EM,MD,data,n_idx)
+    ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
+    cfg = JacobianConfig(ll, x_est, Chunk{4}());
+    
+    scores = jacobian(ll,x_est,cfg)
+    ss = sum(scores,dims=1)[:]
+    i_drop = abs.(ss).<1e-10
+    i_keep = .~i_drop
+    
+    N = sum(length(n_idx[md.case_idx]) for md in MD) #<- this ~slightly~ overstates the sample size?
+    
+    V = inv(cov(scores[:,i_keep])) / N
+    se = sqrt.(diag(V))
+    
+    se_full = zeros(length(x_est))
+    se_full[i_keep] .= se
+    V_full = diagm(fill(1e-8,length(x_est))) 
+    V_full[i_keep,i_keep] .= V
+    
+    return V_full, se_full
+end

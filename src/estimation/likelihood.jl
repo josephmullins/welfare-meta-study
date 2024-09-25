@@ -56,7 +56,7 @@ object in `data` that corresponds to that model instance given the parameters `p
 as indicated by `n_idx`
 
 If the argument `kτ` is additionally provided, a second is method 
-is called that evalutes the likelihood for type kτ only.
+is called that evaluates the likelihood for type kτ only.
 
 
 """
@@ -121,6 +121,7 @@ function log_likelihood_chunk(x,p,kτ::Int64,MD,EM::Vector{EM_data},data::Vector
         end
         # initial conditions
         if md.source=="SIPP"
+            (; s_inv, k_inv) = state_idx
             for n ∈ n_idx[md.case_idx]
                 if data[n].use
                     ll += log_likelihood_η0(p,EM[n],s_inv,k_inv)
@@ -370,6 +371,7 @@ function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
         end
         # initial conditions
         if md.source=="SIPP"
+            (; s_inv, k_inv) = state_idx
             for n ∈ n_idx[md.case_idx]
                 if data[n].use
                     @views LL[n] += log_likelihood_type(logπτ,
