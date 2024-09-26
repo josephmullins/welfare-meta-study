@@ -115,6 +115,7 @@ function log_likelihood_chunk(x,p,kτ::Int64,MD,EM::Vector{EM_data},data::Vector
             for n ∈ n_idx[md.case_idx]
                 # recall that t+t0 in model time is t in data time
                 if data[n].use
+                    # add the likelihood of choices and transitions in period t
                     ll += log_likelihood(EM[n],md,p,logP,data[n],state_idx,t,kτ)
                 end
             end
@@ -125,6 +126,9 @@ function log_likelihood_chunk(x,p,kτ::Int64,MD,EM::Vector{EM_data},data::Vector
             (; s_inv, k_inv) = state_idx
             for n ∈ n_idx[md.case_idx]
                 if data[n].use
+                    # add the likelihood of each inital η given SIPP is assumed to be steady state
+                    #  need this because the transition parameters effect the steady state, which
+                    #  we only assume for SIPP
                     ll += log_likelihood_η0(p,EM[n],s_inv,k_inv)
                 end
             end
@@ -294,8 +298,9 @@ function log_likelihood_transitions(t,kτ,em::EM_data,p,md::model_data,data::lik
     return ll
 end
 
-# log-likelihood of initial condition kη given type assuming stationary distribution
-# this is needed for SIPP observations
+# weighted log-likelihood of each initial condition kη given type 
+#   assuming stationary distribution
+#   this is needed for SIPP observations
 function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     ll = 0.
     for s in nzrange(em.q_s,1)
@@ -308,7 +313,8 @@ function log_likelihood_η0(p,em::EM_data,s_inv,k_inv)
     end
     return ll
 end
-# log-likelihood of initial conidition kη given type given weights em
+
+# log-likelihood of initial conidition kη given type and weights in em
 #   this is needed for the MDRC observations
 function log_likelihood_η0_full(p,md::model_data,em::EM_data,s_inv,k_inv)
     ll = 0.

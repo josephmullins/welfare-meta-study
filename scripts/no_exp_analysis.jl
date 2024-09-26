@@ -33,12 +33,7 @@ shuffle!(MD)
 forward_back_threaded!(p,EM,MD,data,n_idx)
 LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
 
-ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
-using ForwardDiff: jacobian, Chunk, JacobianConfig
-
-cfg = JacobianConfig(ll, x_est, Chunk{4}());
-
-scores = jacobian(ll,x_est,cfg)
+scores = get_score(x_est,p,EM,MD,data,n_idx)
 
 # we want to look only at σ and β:
 sc = scores[:,(11p.Kτ+21):(11p.Kτ+24)]

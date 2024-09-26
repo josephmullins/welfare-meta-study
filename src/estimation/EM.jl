@@ -9,17 +9,11 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         x0 = pars_inv(p) #<- use these parameters to measure convergence
         # E-step:
         forward_back_threaded!(p,EM,MD,data,n_idx)
+
         # M-step in 4 parts:
         # (1) most parameters here:
-        # do the M-step for 9 separate blocks:
-        #println(" -- doing the blocked step --- ")
+        #   do the M-step for 9 separate blocks:
         p = mstep_blocks(p,EM,MD,n_idx,mstep_iter) #<- 20 steps.
-        #println(" -- now doing everything simulataneously --- ")
-        #p = mstep_major(p,EM,MD,n_idx,mstep_iter)
-        # (1.1): for robustness, a few steps of just preferences:
-        #block = [:αθ,:αH,:αA,:αS,:αF,:αP,:αR,:wq,:βΓ]
-        #ft = [2,1,1,1,1,1,1,2,1]
-        #p = mstep_major_block(p,block,ft,EM,MD,n_idx,mstep_iter)
 
         # (2) type selection
         mstep_types!(p,EM,MD,data,n_idx,J)
@@ -27,8 +21,6 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         mstep_πη!(p,EM,MD,data,n_idx,J)
         # (4) measurement error
         p = mstep_σ(p,EM,MD,data,n_idx,J)
-        # (5) measurement error for child care: (deprecated. remove if this works).
-        #p = mstep_chcare(p,EM,MD,data,n_idx)
 
         ll = log_likelihood(EM,MD,data,n_idx)
         x1 = pars_inv(p)
@@ -62,12 +54,17 @@ end
 
 using ForwardDiff: jacobian, Chunk, JacobianConfig
 
-
-function get_standard_errors(x_est,p,EM,MD,data,n_idx)
+# this function calculates the score for each observation in the data
+function get_score(x_est, p, EM, MD, data, n_idx)
     ll(x) = log_likelihood_n(x,p,EM,MD,data,n_idx)
     cfg = JacobianConfig(ll, x_est, Chunk{4}());
-    
     scores = jacobian(ll,x_est,cfg)
+    return scores
+end
+
+# this function calculates standard errors using the covariance of the score
+function get_standard_errors(x_est, p, EM, MD, data, n_idx)
+    scores = get_score(x_est,p,EM,MD,data,n_idx)
     ss = sum(scores,dims=1)[:]
     i_drop = abs.(ss).<1e-10
     i_keep = .~i_drop
