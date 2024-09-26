@@ -85,4 +85,4 @@ V = readdlm("output/var_est_K5")
 se = sqrt.(diag(V))
 pb2 = pars_full(se,pb)
 
-write_comparison_table(p,p2,pb,pb2)
+write_comparison_table!(p,p2,pb,pb2)
