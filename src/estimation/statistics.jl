@@ -1,4 +1,3 @@
-#include("../tools/ModelStatistics.jl")
 using DataFrames, Statistics, CSV
 
 function em_mean(Π,t::Int64,f::Function,condition::Function = (x->true))
@@ -353,4 +352,36 @@ function initialize_expost!(π0,EM::EM_data,s_inv)
     return nothing
 end
 
+function get_data_initial_distribution!(p,EM,MD,n_idx)
+    (;Kη, Kτ) = p
+    dist_η = zeros(Kη,2)
+    denom_η = zeros(2)
+    dist_τ = zeros(Kτ,2)
+    denom_τ = zeros(2)
+    for md in MD
+        k_inv = CartesianIndices((2,Kη,md.Kω,Kτ))
+        K = prod(size(k_inv))
+        s_inv = CartesianIndices((9,K))
+        l = 1 + 1*(md.source=="SIPP")
+        for n in n_idx[md.case_idx]
+            for s in nzrange(EM[n].q_s,1)
+                s_idx = EM[n].q_s.rowval[s]
+                wght = EM[n].q_s.nzval[s]
+                _,k = Tuple(s_inv[s_idx])
+                _,kη,kω,kτ = Tuple(k_inv[k])
+                dist_η[kη,l] += wght
+                denom_η[l] += wght
+                dist_τ[kτ,l] += wght
+                denom_τ[l] += wght
+            end
+        end
+    end
+    dist_η ./= denom_η'
+    dist_τ ./= denom_τ'
+    d = [DataFrame(var = "Wage Shock",value = 1:Kη,dist = dist_η[:,1],source="Experiments");
+    DataFrame(var = "Wage Shock",value = 1:Kη,dist = dist_η[:,2],source="SIPP");
+    DataFrame(var = "Type",value = 1:Kτ,dist = dist_τ[:,1],source="Experiments");
+    DataFrame(var = "Type",value = 1:Kτ,dist = dist_τ[:,2],source="SIPP")]
+    CSV.write("output/initial_dists.csv",d)
+end
 

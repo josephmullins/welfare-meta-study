@@ -13,15 +13,9 @@ x0 = pars_inv(p)
 
 scores = CSV.read("../Data/Data_child_prepped.csv",DataFrame,missingstring = "NA")
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
-#select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
 
-# we have to split the panel and then put it back together again
-sipp = @subset panel :source.=="SIPP"
-panel = @chain scores begin
-    @select :id :source
-    innerjoin(panel,on=[:id,:source])
-    vcat(sipp)
-end
+# pull out the cases with data on children
+panel = make_child_sample(panel, scores)
 
 MD,EM,data,n_idx = estimation_setup(panel);
 
@@ -65,3 +59,30 @@ p = expectation_maximization(p,EM,MD_est,n_idx;max_iter = 150,mstep_iter = 5,sav
 basic_model_fit(p,EM,MD,data,n_idx,"model_stats_K5_noexp.csv")
 d = exante_model_fit(p,EM,MD,data,n_idx,"modelfit_exante_K5_noexp.csv")
 savepars_vec(p,"est_childsample_K5_noexp")
+
+# --- Calculate Standard Errors and Make a Comparison Table ---- #
+x_est = pars_inv_full(p)
+forward_back_threaded!(p,EM,MD,data,n_idx)
+LL = log_likelihood_n(x_est,p,EM,MD,data,n_idx)
+
+scores = get_score(x_est,p,EM,MD,data,n_idx)
+
+# we want to look only at σ and β:
+sc = scores[:,(11p.Kτ+21):(11p.Kτ+24)]
+xe = x_est[(11p.Kτ+21):(11p.Kτ+24)]
+
+N = sum(length(n_idx[md.case_idx]) for md in MD) 
+
+V = inv(cov(sc)) / N
+se = sqrt.(diag(V))
+
+p2 = pars(se,p,[:σ;:β],[2,3])
+
+# load the baseline estimates and standard errors
+
+pb = loadpars_vec(p,"est_childsample_K5")
+V = readdlm("output/var_est_K5")
+se = sqrt.(diag(V))
+pb2 = pars_full(se,pb)
+
+write_comparison_table(p,p2,pb,pb2)

@@ -1,4 +1,16 @@
 
+# this function pulls the units out of panel that can be linked to the child sample
+function make_child_sample(panel,scores)
+    # we have to split the panel and then put it back together again
+    sipp = @subset panel :source.=="SIPP"
+    panel = @chain scores begin
+        @select :id :source
+        innerjoin(_,panel,on=[:id,:source])
+        vcat(sipp)
+    end
+    return panel
+end
+
 function estimation_setup(panel::DataFrame)
     case_idx = @chain panel begin
         @select(:source,:panel,:SOI,:arm,:age,:ageyng,:numkids)

@@ -24,7 +24,7 @@ function tex_delimit(x)
     return str
 end
 
-function write_estimates_table(p,p2,Kτ)
+function write_estimates_table!(p,p2,Kτ)
     # ------ make a table for preferences --------------- #
     file = open("output/tables/preference_ests.tex", "w")
     write(file," & \\multicolumn{6}{c}{Type-Specific Parameters} \\\\ \n")
@@ -145,6 +145,20 @@ function write_estimates_table(p,p2,Kτ)
         write(file,"\\\\ \n")
         pos += 1
     end
+    close(file)
+
+end
+
+# write a table comparing estimates with and without experiments
+# p: estimates without, p2: standard errors
+# pb: baseline estimates, pb2: basline standard errors
+function write_comparison_table!(p,p2,pb,pb2)
+    file = open("output/tables/no_exp_ests.tex", "w")
+    write(file,"& \$\\beta\$ & \$\\sigma_{3}\$ & \$\\sigma_{2}\$ & \$\\sigma_{1}\$ \\\\ \\cmidrule(r){2-5}")
+    write(file, "Control Group Only &" * form(p.β) * "&" * form(p.σ[1]) * "&" * form(p.σ[2]) * "&" * form(p.σ[3]) *  "\\\\ \n")
+    write(file, "&" * formse(p.β * (1-p.β) * logit_inv(p2.β)) * "&" * formse(p.σ[1] * log(p2.σ[1])) * "&" * formse(p.σ[2] * log(p2.σ[2])) * "&" * formse(p.σ[3] * log(p2.σ[3])) * "\\\\ \n")
+    write(file, "Full Sample &" * form(pb.β) * "&" * form(pb.σ[1]) * "&" * form(pb.σ[2]) * "&" * form(pb.σ[3]) *  "\\\\ \n")
+    write(file, "&" * formse(pb.β * (1-pb.β) * logit_inv(pb2.β)) * "&" * formse(pb.σ[1] * log(pb2.σ[1])) * "&" * formse(pb.σ[2] * log(pb2.σ[2])) * "&" * formse(pb.σ[3] * log(p2.σ[3])) * "\\\\ \n")
     close(file)
 
 end
