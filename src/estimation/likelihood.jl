@@ -377,16 +377,14 @@ function log_likelihood_n_chunk!(LL,p,EM,MD,data,n_idx)
             tnow = 3 - tnow
         end
         # initial conditions
-        if md.source=="SIPP"
-            (; s_inv, k_inv) = state_idx
-            for n ∈ n_idx[md.case_idx]
-                if data[n].use
-                    @views LL[n] += log_likelihood_type(logπτ,
-                        p.βτ[md.type_block,:],EM[n],data[n],s_inv,k_inv)
-                    LL[n] += log_likelihood_η0_full(p,md,EM[n],s_inv,k_inv)
-                end
+        (; s_inv, k_inv) = state_idx
+        for n ∈ n_idx[md.case_idx]
+            if data[n].use
+                @views LL[n] += log_likelihood_type(logπτ,
+                    p.βτ[md.type_block,:],EM[n],data[n],s_inv,k_inv)
+                LL[n] += log_likelihood_η0_full(p,md,EM[n],s_inv,k_inv)
             end
-        end 
+        end
     end
     return nothing
 end
@@ -416,6 +414,34 @@ function prices_log_like(em::EM_data,p,md::model_data,data::likelihood_data,s_in
                 llW = chcare_log_like(data.log_chcare[t],p,md,kτ,t+t0)
                 ll += wght * llW
             end
+        end
+    end
+    return ll
+end
+
+function prices_log_like(t,em::EM_data,p,md::model_data,data::likelihood_data,s_inv,k_inv)
+    ll = 0.
+    t0 = data.t0
+    if data.wage_valid[t]
+        logW = data.logW[t]
+        for s in nzrange(em.q_s,t)
+            s_idx = em.q_s.rowval[s]
+            wght = em.q_s.nzval[s]
+            _,k = Tuple(s_inv[s_idx])
+            _,kη,_,kτ = Tuple(k_inv[k]) 
+            llW = wage_log_like(logW,p,md,kτ,kη,t+t0)
+            ll += wght * llW
+        end
+    end
+    if md.source=="SIPP" && data.chcare_valid[t] && data.pay_care[t]
+        #logP = data.log_chcare[t]
+        for s in nzrange(em.q_s,t)
+            s_idx = em.q_s.rowval[s]
+            wght = em.q_s.nzval[s]
+            _,k = Tuple(s_inv[s_idx])
+            _,_,_,kτ = Tuple(k_inv[k]) 
+            llW = chcare_log_like(data.log_chcare[t],p,md,kτ,t+t0)
+            ll += wght * llW
         end
     end
     return ll
