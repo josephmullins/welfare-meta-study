@@ -12,16 +12,11 @@ p = (;p...,nests)
 p = loadpars_vec(p,"est_childsample_K5")
 
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
-#select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
 
-# we have to split the panel and then put it back together again
+# pull out the sipp data
 sipp = @subset panel :source.=="SIPP"
 
 MD,EM,data,n_idx = estimation_setup(sipp);
-
-function prod_pars(x,K)
-    return (δI = x[1], δθ = x[2], g₁ = x[3:(2+K)], g₂ = x[(3+K):(2+2K)])
-end
 
 chain = CSV.read("output/production_ests_hetero.csv",DataFrame)
 chain_B = chain[1:10000,:]
@@ -80,7 +75,6 @@ cols = names(d)
 Random.seed!(2233)
 pd_boot = rand(1:10000,n_boot)
 
-# put this in a function?
 function boot_cf(d)
     Db = d[1:0,:]
     Db[!,:boot] .= []
@@ -103,37 +97,26 @@ Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:
 # write results to file for creating figures
 @chain d begin
     @subset(:variable.=="Emp" .|| :variable.=="AFDC")
-    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+    innerjoin(_,Db,on=[:source,:variable,:year,:Q,:case])
     CSV.write("output/non_selected_counterfactual.csv",_)
 end
 
 # what is different when comparing SIPP to any site?
-# (1) unemployment rate.
-# (2) the type selection probabilities.
-# (3) the location index for childcare.
-# (4) the cpi/years
-# (5) the coefficients and covariates used for type probabilities.
+## (1) unemployment rate.
+## (2) the type selection probabilities.
+## (3) the location index for childcare.
+## (4) the cpi/years
+## (5) the coefficients and covariates used for type probabilities.
 
 # write a table with the other stuff that matters:
 d2 = @chain d begin
     @subset :variable.!="Emp" :variable.!="AFDC" :variable.!="Earn"
-    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+    innerjoin(_,Db,on=[:source,:variable,:year,:Q,:case])
 end
+# save other statistics to file
+CSV.write("output/non_selected_counterfactual2.csv",d2)
 
-using Printf
-form(x) = @sprintf("%0.2f",x)
-formse(x) = string("(",@sprintf("%0.2f",x),")")
-formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
-
-# a helper function to write a collection of strings into separate columns
-function tex_delimit(x)
-    str = x[1]
-    num_col = length(x)
-    for i in 2:num_col
-        str *=  "&" * x[i]
-    end
-    return str
-end
+# --- Write results to a table
 
 file = open("output/tables/non_selected_counterfactual.tex", "w")
 cases = unique(d2.case)
@@ -145,5 +128,4 @@ for v in vars
     write(file," & ",tex_delimit(formci.(d3.q25,d3.q75)),"\\\\ \n")
 end
 close(file)
-CSV.write("output/non_selected_counterfactual2.csv",d2)
 

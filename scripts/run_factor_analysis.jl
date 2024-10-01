@@ -25,7 +25,7 @@ est,sd = factor_analysis(scores,columns)
 
 
 
-# ------ now let's make a table ------- #
+# ------ now let's make a table of estimates ------- #
 using Printf
 form(x) = x!=0 ? @sprintf("%0.2f",x) : "-"
 formse(x) = x!=0 ? string("(",@sprintf("%0.2f",x),")") : ""

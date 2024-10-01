@@ -85,4 +85,5 @@ V = readdlm("output/var_est_K5")
 se = sqrt.(diag(V))
 pb2 = pars_full(se,pb)
 
+# write a table that compares estimates to those from the baseline
 write_comparison_table!(p,p2,pb,pb2)

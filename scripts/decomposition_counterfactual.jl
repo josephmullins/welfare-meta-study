@@ -25,10 +25,6 @@ end
 
 MD,EM,data,n_idx = estimation_setup(panel);
 
-function prod_pars(x,K)
-    return (δI = x[1], δθ = x[2], g₁ = x[3:(2+K)], g₂ = x[(3+K):(2+2K)])
-end
-
 chain = CSV.read("output/production_ests_hetero.csv",DataFrame)
 chain_B = chain[1:10000,:]
 chain_C = chain[10001:20000,:]
@@ -99,31 +95,19 @@ Db = @combine(groupby(Db,[:source,:variable,:year,:Q,:case]),:sd = std(:value),:
 # write results to file for creating figures
 @chain d begin
     @subset(:variable.=="Emp" .|| :variable.=="AFDC")
-    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+    innerjoin(_,Db,on=[:source,:variable,:year,:Q,:case])
     CSV.write("output/decomp_counterfactual.csv",_)
 end
 
 # write a table with the other stuff that matters:
 d2 = @chain d begin
     @subset :variable.!="Emp" :variable.!="AFDC" :variable.!="Earn"
-    innerjoin(Db,on=[:source,:variable,:year,:Q,:case])
+    innerjoin(_,Db,on=[:source,:variable,:year,:Q,:case])
 end
+# write to file
+CSV.write("output/decomp_counterfactual2.csv",d2)
 
-using Printf
-form(x) = @sprintf("%0.2f",x)
-formse(x) = string("(",@sprintf("%0.2f",x),")")
-formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
-
-# a helper function to write a collection of strings into separate columns
-function tex_delimit(x)
-    str = x[1]
-    num_col = length(x)
-    for i in 2:num_col
-        str *=  "&" * x[i]
-    end
-    return str
-end
-
+# Write results to a  table for the paper
 file = open("output/tables/decomp_counterfactual.tex", "w")
 cases = unique(d2.case)
 vars = unique(d2.variable)
@@ -137,4 +121,3 @@ for s in ("FTP","CTJF","MFIP")
     end
 end
 close(file)
-CSV.write("output/decomp_counterfactual2.csv",d2)

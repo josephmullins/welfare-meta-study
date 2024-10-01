@@ -21,18 +21,21 @@ cols = (:BPIE,:BPIN,:PBS,:ENGAGE,:REPEAT,:SUSPEND,:ACHIEVE,:TCH_AVG)
 columns = (MFIP = cols[1:end-1],FTP = cols[1:end-1],CTJF = cols)
 # convert factor scores to an array for estimation
 M = prep_scores(scores,cols)
-# calculate the optimal weighting matrix
-wght = get_weighting_matrix(scores,columns)
-Λ,Σ,D = estimate_system(scores,wght,columns)
-# calculate the factor scores:
 
-# var = λ^2 + D, so one sd is sqrt of this.
-th = factor_scores(scores,M,Λ,Σ,D) #<- add Standard Errors?
+# run the factor analysis along with the bootstrap
+est,sd = factor_analysis(scores,columns)
+Λ,Σ,D = measurement_system(est) #<- estimated system
+Λ_se,_,Dse = measurement_system(sd) #<- standard errors
+## write results to table
+write_measurement_table!(Λ,Λ_se,D,Dse)
 
+# Calculate factor scores using the measurement system
+## var = λ^2 + D, so one sd is sqrt of this.
+th = factor_scores(scores,M,Λ,Σ,D) 
+
+break
 
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
-#select!(panel,Not(:case_idx)) #<- have to add this to other script or re-clean data
-panel[!,:case_idx] .= 0 #<- don't need this here
 
 panel = @chain scores begin
     @select :id :source
@@ -45,17 +48,9 @@ X = get_X(est_data) #<- get the X variables
 Z = hcat((d.Z for d in est_data)...) #<- get the instruments
 Z = Z'
 
-# project X onto Z
+# project X onto Z for the IV model
 Xhat = Z * inv(Z' * Z) * Z' * X
 
-num_X = size(est_data[1].X,1)
-
-# y = X*β(δ) + η
-# can we write a true likelihood conditional on z?
-# X = Π * Z + ϵ #<- approximate as normal?
-# p(y|Z) = ∑_x (x*)
-# should we be including a control for age in here?
-# also want to eventually include some controls for η
 
 @model function model_likelihood(th,X)
     num_X = size(X,2)
@@ -113,13 +108,10 @@ function get_X_hetero(est_data,Kτ)
     for n in eachindex(est_data)
         # extract a dummy for xk
         xk = [sum(est_data[n].X[k:Kτ:(3Kτ)]) for k in 1:Kτ]
-        # then simplify the dummy because this is too slow.
-        #xk = [sum(xk[1:2]),sum(xk[3:4])] #
 
         T = est_data[n].T
         num_inputs = 2Kτ + 1
         for t in 1:T
-            #X[n,((t-1)*11+1):t*11] .= [est_data[n].logY[T+1-t]; xk .* est_data[n].H[T+1-t]; xk .* est_data[n].F[T+1-t]]
             X[n,((t-1)*num_inputs+1):t*num_inputs] .= [est_data[n].logY[T+1-t]; xk .* est_data[n].H[T+1-t]; xk .* est_data[n].F[T+1-t]]
         end
     end

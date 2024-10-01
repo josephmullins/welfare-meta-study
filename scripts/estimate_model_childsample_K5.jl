@@ -36,7 +36,7 @@ x_est = pars_inv_full(p)
 V, se = get_standard_errors(x_est,p,EM,MD,data,n_idx)
 writedlm("output/var_est_K5",V_full)
 
-# write standard errors to a table
+# write estimates and standard errors to tables
 p2 = pars_full(se_full,p)
 write_estimates_table!(p,p2,Kτ)
 

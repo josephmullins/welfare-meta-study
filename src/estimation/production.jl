@@ -53,13 +53,19 @@ function get_variance(Y,X,Z,pars)
     return cov(G)
 end
 
-
+# get production parameters given nunmber of X variables in intercept
 function production_pars(x,num_X)
     return (δI = x[1:2],
     δθ = x[3:4],
     g = reshape(x[5:8],2,2),
     β = reshape(x[9:(8+num_X*2)],num_X,2))
 end
+
+# get production parameters in one dimension given number of types
+function prod_pars(x,K)
+    return (δI = x[1], δθ = x[2], g₁ = x[3:(2+K)], g₂ = x[(3+K):(2+2K)])
+end
+
 
 function get_controls(p,md::model_data,em::EM_data,data::likelihood_data)
     # control for: location, type, in MFIP control for application status and county.
