@@ -3,7 +3,8 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
     err = Inf
     iter = 0
     ll0 = -Inf
-
+    N = sum(length(n_idx[md.case_idx]) for md in MD) 
+    (;Kτ) = p
     while err>1e-3 && iter<max_iter
         println(" ===== EM-algorithm: iteration $iter =====")
         x0 = pars_inv(p) #<- use these parameters to measure convergence
@@ -22,11 +23,11 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
         # (4) measurement error
         p = mstep_σ(p,EM,MD,data,n_idx,J)
 
-        ll = log_likelihood(EM,MD,data,n_idx)
+        ll = log_likelihood(EM,MD,data,n_idx) / N
         x1 = pars_inv(p)
         #err1 = ll - ll0
-        err0 = norm(x1 .- x0,Inf)
-        err = min(ll - ll0,norm(x1 .- x0,Inf)) # convergence if likelihood starts to decrease
+        @views err0 = norm(x1[1:6Kτ+1] .- x0[1:6Kτ+1],Inf)
+        err = min(ll - ll0,err0) # convergence if likelihood starts to decrease
         ll0 = ll #<- update likelihood of current ests
         iter += 1 
         println("current likelihood: $ll")
