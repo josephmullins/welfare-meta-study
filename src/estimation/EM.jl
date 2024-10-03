@@ -5,7 +5,8 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
     ll0 = -Inf
     N = sum(length(n_idx[md.case_idx]) for md in MD) 
     (;Kτ) = p
-    while err>1e-3 && iter<max_iter
+    like_err = Inf
+    while err>1e-3 && iter<max_iter && like_err>0 #<- this requires that the likelihood always be increasing
         println(" ===== EM-algorithm: iteration $iter =====")
         x0 = pars_inv(p) #<- use these parameters to measure convergence
         # E-step:
@@ -25,14 +26,13 @@ function expectation_maximization(p,EM::Vector{EM_data},MD::Vector{model_data},n
 
         ll = log_likelihood(EM,MD,data,n_idx) / N
         x1 = pars_inv(p)
-        #err1 = ll - ll0
-        @views err0 = norm(x1[1:6Kτ+1] .- x0[1:6Kτ+1],Inf)
-        err = min(ll - ll0,err0) # convergence if likelihood starts to decrease
+        like_err = ll - ll0
+        @views err = norm(x1[1:6Kτ+1] .- x0[1:6Kτ+1],Inf)
         ll0 = ll #<- update likelihood of current ests
         iter += 1 
         println("current likelihood: $ll")
-        println("current error: $err, $err0")
-        if save & mod(iter,1)==0
+        println("current error: $like_err, $err")
+        if save && mod(iter,1)==0
             d = basic_model_fit(p,EM,MD,data,n_idx,"model_stats_progress.csv")
             savepars_vec(p,"current_est")
         end
