@@ -1,0 +1,53 @@
+ ===== EM-algorithm: iteration 0 =====
+Iter     Function value   Gradient norm 
+     0     4.624652e+01     3.374979e+01
+ * time: 0.0271148681640625
+     1     4.615753e+01     5.011833e+00
+ * time: 3.2125048637390137
+Iter     Function value   Gradient norm 
+     0     2.095409e+01     4.799621e-01
+ * time: 5.2928924560546875e-5
+     1     2.026795e+01     2.126749e-01
+ * time: 0.4327418804168701
+finished type 1....
+Iter     Function value   Gradient norm 
+     0     1.754713e+01     4.029407e-01
+ * time: 7.867813110351562e-6
+     1     1.697981e+01     1.266640e-01
+ * time: 0.41821789741516113
+finished type 2....
+Iter     Function value   Gradient norm 
+     0     1.468807e+01     3.327963e-01
+ * time: 5.9604644775390625e-6
+     1     1.426353e+01     1.447969e-01
+ * time: 0.6361739635467529
+finished type 3....
+Iter     Function value   Gradient norm 
+     0     1.244994e+01     2.726942e-01
+ * time: 5.0067901611328125e-6
+     1     1.212768e+01     1.141425e-01
+ * time: 0.5997359752655029
+finished type 4....
+Iter     Function value   Gradient norm 
+     0     1.087574e+01     2.223041e-01
+ * time: 5.9604644775390625e-6
+     1     1.061654e+01     8.376934e-02
+ * time: 0.6107110977172852
+finished type 5....
+Iter     Function value   Gradient norm 
+     0     4.389807e+01     3.660316e-01
+ * time: 3.695487976074219e-5
+     1     4.379747e+01     4.806271e-02
+ * time: 3.549088954925537
+Iter     Function value   Gradient norm 
+     0     4.379747e+01     3.400798e-01
+ * time: 1.6927719116210938e-5
+     1     4.376218e+01     1.833577e-01
+ * time: 1.0293779373168945
+Iter     Function value   Gradient norm 
+     0     4.376218e+01     2.159224e+01
+ * time: 1.71661376953125e-5
+     1     4.376028e+01     1.889823e+01
+ * time: 8.797606945037842
+current likelihood: -32.00804894748048
+current error: 1.614020942524752, 1.614020942524752
