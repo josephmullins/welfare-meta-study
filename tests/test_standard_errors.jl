@@ -28,4 +28,7 @@ p = expectation_maximization(p,EM,MD,n_idx;max_iter = 1,mstep_iter = 1,save = fa
 
 # calculate standard errors and save the variance-covariance matrix
 x_est = pars_inv_full(p)
+
+# try again here. it should be working?
+
 V, se = get_standard_errors(x_est,p,EM,MD,data,n_idx)
