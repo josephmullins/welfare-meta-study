@@ -24,7 +24,7 @@ Random.seed!(2020)
 shuffle!(MD)
 
 
-p = expectation_maximization(p,EM,MD,n_idx;max_iter = 150,mstep_iter = 5,save = true)
+p = expectation_maximization(p,EM,MD,n_idx;max_iter = 400,mstep_iter = 5,save = false)
 
 # calculate standard errors and save the variance-covariance matrix
 x_est = pars_inv_full(p)
