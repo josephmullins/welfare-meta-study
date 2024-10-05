@@ -29,10 +29,10 @@ p = expectation_maximization(p,EM,MD,n_idx;max_iter = 400,mstep_iter = 5,save = 
 # calculate standard errors and save the variance-covariance matrix
 x_est = pars_inv_full(p)
 V, se = get_standard_errors(x_est,p,EM,MD,data,n_idx)
-writedlm("output/var_est_K5",V_full)
+writedlm("output/var_est_K5",V)
 
 # write estimates and standard errors to tables
-p2 = pars_full(se_full,p)
+p2 = pars_full(se,p)
 write_estimates_table!(p,p2,Kτ)
 
 # calculate data the initial distribution over types and states
