@@ -65,7 +65,7 @@ Xhat = Z * inv(Z' * Z) * Z' * X
     th ~ MvNormal(m, I*σ)
 end
 # set the length of each chain
-length_chain = 10_000
+length_chain = 1_000
 
 chain_B_mle = sample(model_likelihood(th[:,1],X),NUTS(),MCMCThreads(),length_chain,Threads.nthreads())
 data_B_mle = DataFrame(chain_B_mle)[:,[:δI,:δθ,:g₁,:g₂]]
@@ -88,6 +88,7 @@ data_C_iv = DataFrame(chain_C_iv)[:,[:δI,:δθ,:g₁,:g₂]]
 data_C_iv[!,:version] .= "iv"
 data_C_iv[!,:skill] .= "Cognitive"
 
+break
 # save these results:
 CSV.write("output/production_ests.csv",[data_B_mle;data_C_mle;data_B_iv;data_C_iv])
 
