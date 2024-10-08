@@ -33,10 +33,12 @@ write_measurement_table!(Λ,Λ_se,D,Dse)
 ## var = λ^2 + D, so one sd is sqrt of this.
 th = factor_scores(scores,M,Λ,Σ,D) 
 
-break
-
 panel = CSV.read("../Data/Data_prepped.csv",DataFrame,missingstring = "NA")
+# we still need a case ID when we make the model data objects, but we don't need to
+#  distinguish across cases when the likelihood isn't involved, hence...
+panel[!,:case_idx] .= 0 
 
+# merge in the data on scores
 panel = @chain scores begin
     @select :id :source
     innerjoin(panel,on=[:id,:source])
@@ -51,7 +53,6 @@ Z = Z'
 # project X onto Z for the IV model
 Xhat = Z * inv(Z' * Z) * Z' * X
 
-
 @model function model_likelihood(th,X)
     num_X = size(X,2)
     δI ~ Uniform(0,3) #[Uniform(0,3) for i in 1:2]
@@ -64,7 +65,7 @@ Xhat = Z * inv(Z' * Z) * Z' * X
     th ~ MvNormal(m, I*σ)
 end
 # set the length of each chain
-length_chain = 1000
+length_chain = 10_000
 
 chain_B_mle = sample(model_likelihood(th[:,1],X),NUTS(),MCMCThreads(),length_chain,Threads.nthreads())
 data_B_mle = DataFrame(chain_B_mle)[:,[:δI,:δθ,:g₁,:g₂]]
