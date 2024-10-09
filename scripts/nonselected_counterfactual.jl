@@ -1,6 +1,7 @@
 # a script to check the model's unconditional fit of the data
 include("../src/model.jl")
 include("../src/estimation.jl")
+include("../src/estimation/production.jl")
 include("../src/counterfactuals.jl")
 
 Kτ = 5 #
@@ -65,7 +66,7 @@ end
 
 d = non_selected_counterfactual(p,pB,pC,MD1,MD2,MD3,data,n_idx)
 
-n_boot = 70
+n_boot = 100
 x_est = pars_inv_full(p)
 V = readdlm("output/var_est_K5")
 V = Hermitian(V)
