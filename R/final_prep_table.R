@@ -2,9 +2,8 @@ library(knitr)
 library(kableExtra)
 library(dplyr)
 
-#d <- read.csv("~/Dropbox/WelfareMetaAnalysis/Data/Data_prepped.csv")
-d <- read.csv("~/Dropbox/Research Projects/WelfareMetaAnalysis/Data/Data_prepped.csv")
-kid_sample <- read.csv("~/Dropbox/Research Projects/WelfareMetaAnalysis/Data/Data_child_prepped.csv") %>%
+d <- read.csv("../../Data/Data_prepped.csv")
+kid_sample <- read.csv("../../Data/Data_child_prepped.csv") %>%
   select(source,id)
   
 sipp <- d %>%
@@ -66,8 +65,3 @@ latex_output <- capture.output({
 
 # Print the LaTeX output
 cat(latex_output)
-
-
-
-
-

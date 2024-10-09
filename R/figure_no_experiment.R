@@ -1,6 +1,6 @@
 library(tidyverse)
 
-model <- read.csv("~/Dropbox/Research Projects/WelfareMetaAnalysis/julia/output/modelfit_exante_K5.csv") %>%
+model <- read.csv("../output/modelfit_exante_K5.csv") %>%
   filter(est_sample=="true") %>%
   mutate(date = as.Date(paste(year, "-", 3 * (Q+1), "-01", sep = ""))) %>%
   select(-LOGFULL) %>%
@@ -8,7 +8,7 @@ model <- read.csv("~/Dropbox/Research Projects/WelfareMetaAnalysis/julia/output/
   mutate(case = "Full Sample") %>%
   select(-year,-Q)
 
-model2 <- read.csv("~/Dropbox/Research Projects/WelfareMetaAnalysis/julia/output/modelfit_exante_K5_noexp.csv") %>%
+model2 <- read.csv("../output/modelfit_exante_K5_noexp.csv") %>%
   filter(est_sample=="true") %>%
   mutate(date = as.Date(paste(year, "-", 3 * (Q+1), "-01", sep = ""))) %>%
   select(-LOGFULL) %>%
