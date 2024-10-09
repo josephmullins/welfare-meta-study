@@ -88,7 +88,6 @@ data_C_iv = DataFrame(chain_C_iv)[:,[:δI,:δθ,:g₁,:g₂]]
 data_C_iv[!,:version] .= "iv"
 data_C_iv[!,:skill] .= "Cognitive"
 
-break
 # save these results:
 CSV.write("output/production_ests.csv",[data_B_mle;data_C_mle;data_B_iv;data_C_iv])
 
