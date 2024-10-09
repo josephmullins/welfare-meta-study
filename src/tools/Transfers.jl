@@ -64,7 +64,7 @@ end
 
 
 # ------------------ SNAP ---------------------------------------------------------------- #
-snap_rules_csv = CSV.read("../Data/WelfareRules/SNAPRules.csv",DataFrame)
+snap_rules_csv = CSV.read("data/WelfareRules/SNAPRules.csv",DataFrame)
 const PG::Vector{Float64} = convert(Array{Float64,1},snap_rules_csv.PG) 
 const MA::Vector{Float64} = convert(Array{Float64,1},snap_rules_csv.MA)
 
@@ -96,7 +96,7 @@ end
 
 
 # -------------------- TANF ------------------------------------------ #
-tanf_rules_csv = CSV.read("../Data/WelfareRules/WelfareRules.csv",DataFrame)
+tanf_rules_csv = CSV.read("data/WelfareRules/WelfareRules.csv",DataFrame)
 const NS::Vector{Float64} = convert(Array{Float64,1},tanf_rules_csv.NS)
 const GR::Vector{Float64} = convert(Array{Float64,1},tanf_rules_csv.GR)
 const NR::Vector{Float64} = convert(Array{Float64,1},tanf_rules_csv.NR)
@@ -152,7 +152,7 @@ end
 
 
 # --------------------- TAXES ------------------------------------ #
-const TDAT = readdlm("../Data/WelfareRules/TaxsimVector.csv",',')[:] # great
+const TDAT = readdlm("data/WelfareRules/TaxsimVector.csv",',')[:] # great
 
 # -- TDAT is data ordered as follows:  year,state,depx,earnings
 # years: 1970-1976 (federal only), 1977-1978
