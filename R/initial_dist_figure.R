@@ -25,5 +25,3 @@ g <- d %>%
 tikz(file = "../output/figures/InitialDistributions-Paper.tex",width=4,height = 4)
 print(g)
 dev.off()
-
-
