@@ -13,6 +13,7 @@ end
 # functions for writing numbers to tables
 form(x) = @sprintf("%0.2f",x)
 formse(x) = string("(",@sprintf("%0.2f",x),")")
+formci(x,y) = string("[",@sprintf("%0.2f",x),", ",@sprintf("%0.2f",y),"]")
 
 # a helper function to write a collection of strings into separate columns
 function tex_delimit(x)
