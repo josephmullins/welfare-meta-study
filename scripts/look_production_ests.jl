@@ -1,4 +1,3 @@
-# a script to check the model's unconditional fit of the data
 include("../src/model.jl")
 include("../src/estimation.jl")
 
