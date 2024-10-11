@@ -1,8 +1,3 @@
-ERROR: LoadError: UndefVarError: `formci` not defined
-Stacktrace:
- [1] top-level scope
-   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/decomposition_counterfactual.jl:121
-in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/decomposition_counterfactual.jl:115
 "working on trial $(b)" = "working on trial 1"
 "working on trial $(b)" = "working on trial 2"
 "working on trial $(b)" = "working on trial 3"
@@ -103,11 +98,6 @@ in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-stu
 "working on trial $(b)" = "working on trial 98"
 "working on trial $(b)" = "working on trial 99"
 "working on trial $(b)" = "working on trial 100"
-ERROR: LoadError: UndefVarError: `formci` not defined
-Stacktrace:
- [1] top-level scope
-   @ /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:129
-in expression starting at /panfs/jay/groups/5/mullinsj/mullinsj/welfare-meta-study/scripts/nonselected_counterfactual.jl:126
 "working on trial $(b)" = "working on trial 1"
 "working on trial $(b)" = "working on trial 2"
 "working on trial $(b)" = "working on trial 3"
