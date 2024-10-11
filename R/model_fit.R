@@ -2,7 +2,7 @@ library(tidyverse)
 
 # --- Part 1: In-sample model fit
 
-model <- read.csv("../output/model_stats_K5.csv") %>%
+model <- read.csv("output/model_stats_K5.csv") %>%
   mutate(date = as.Date(paste(year, "-", 3 * Q, "-01", sep = ""))) %>%
   select(-LOGFULL) %>%
   pivot_longer(cols=c("EMP", "AFDC", "EARN")) %>%
@@ -11,10 +11,10 @@ model <- read.csv("../output/model_stats_K5.csv") %>%
 
 
 
-c_sub <- read.csv("../../Data/Data_child_prepped.csv") %>%
+c_sub <- read.csv("../Data/Data_child_prepped.csv") %>%
   select(source, id)
 
-data <- read.csv("../../Data/Data_prepped.csv") %>%
+data <- read.csv("../Data/Data_prepped.csv") %>%
   filter(!is.na(FS), !is.na(AFDC), !is.na(EMP))
 
 data %>%
@@ -38,6 +38,7 @@ data <- data %>%
   summarize(sd = sd(value,na.rm = TRUE)/sqrt(sum(!is.na(value))), value = mean(value,na.rm = TRUE)) %>%
   mutate(case = "Data") %>%
   as.data.frame()
+
 
 # recode applicant status:
 data <- data %>%
@@ -80,26 +81,28 @@ th_ = theme_minimal() + theme(rect = element_rect(fill = cback),panel.background
 
 library(tikzDevice)
 
+# paper friendly version of model fit
 g <- data %>%
   rbind(model) %>%
   filter(est_sample) %>%
-  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case,color=arm,fill=arm)) + geom_ribbon(color=NA,alpha=0.2) + geom_line() + facet_grid(name ~ source*applicant,scales="free_y") + th_ + scale_color_manual(name="Arm",values = colors) + scale_fill_manual(name="Arm",values = colors) + xlab("") + ylab("") + scale_linetype_discrete(name=NULL) + theme(strip.text = element_text(size=7,margin = margin(t=0,r=0,b=0,l=0)),axis.text = element_text(size=6,angle=45))
+  filter(name!="EARN") %>%
+  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case,shape=arm,color=arm)) + 
+  #geom_ribbon(color=NA,alpha=0.2) + geom_line(size=2) + 
+  geom_errorbar(width = 0.) + geom_line(size=1.5) + 
+  #geom_point(size=3) +
+  facet_grid(source*applicant ~ name,scales="free_y") + 
+  theme_minimal() + theme(legend.position = "bottom") + 
+  scale_shape_discrete(name="Arm") + 
+  scale_color_manual(name="Arm",values = colors) + 
+  scale_linetype_discrete(name=NULL) + 
+  xlab("") + ylab("") + 
+  theme(strip.text = element_text(size=7,margin = margin(t=0,r=0,b=0,l=0)),axis.text = element_text(size=6,angle=45))
 
-tikz(file = "../output/figures/ModelFit.tex",width=6.2,height = 3)
-print(g)
-dev.off()
+ggsave("output/figures/ModelFitPaper.eps",width = 7, height = 9)
 
-g <- data %>%
-  rbind(model) %>%
-  filter(est_sample) %>%
-  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case,color=arm,fill=arm)) + geom_ribbon(color=NA,alpha=0.2) + geom_line(size=1.2) + facet_grid(name ~ source*applicant,scales="free_y") + theme_minimal() + theme(legend.position = "bottom") + scale_color_manual(name="Arm",values = colors) + scale_fill_manual(name="Arm",values = colors) + xlab("") + ylab("") + scale_linetype_discrete(name=NULL) + theme(strip.text = element_text(size=7,margin = margin(t=0,r=0,b=0,l=0)),axis.text = element_text(size=6,angle=45))
-
-tikz(file = "../output/figures/ModelFitPaper.tex",width=7,height = 4.5)
-print(g)
-dev.off()
 
 # ------- Part 2: model fit out of sample:
-model <- read.csv("../output/modelfit_exante_K5.csv") %>%
+model <- read.csv("output/modelfit_exante_K5.csv") %>%
   mutate(date = as.Date(paste(year, "-", 3 * (Q+1), "-01", sep = ""))) %>%
   select(-LOGFULL) %>%
   pivot_longer(cols=c("EMP","AFDC","EARN")) %>%
@@ -117,21 +120,19 @@ model_TE <- model %>%
   mutate(value = value-value0,sd0 = NA)
 
 g <- data %>%
+  select(-c("app_status","applicant")) %>%
   rbind(model) %>%
   filter(!est_sample) %>%
-  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case,color=arm,fill=arm)) + geom_point(size=0.5) + geom_ribbon(color=NA,alpha=0.2) + geom_line() + facet_grid(name ~ source,scales="free_y") + th_ + scale_color_manual(name="Arm",values = colors[2:3]) + scale_fill_manual(name="Arm",values = colors[2:3]) + ylab("") + xlab("")  + scale_linetype_discrete(name=NULL) + theme(axis.text.y = element_text(size=6))
+  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case)) + 
+  geom_errorbar(width=0) +
+  geom_line(size=2) + 
+  facet_grid(name ~ source*arm,scales="free_y") + theme_minimal() + 
+  theme(legend.position = "bottom") + 
+  scale_color_manual(name="Arm",values = colors[2:3]) + 
+  scale_fill_manual(name="Arm",values = colors[2:3]) + 
+  scale_shape_discrete(name=NULL) + 
+  ylab("") + xlab("")  + 
+  scale_linetype_discrete(name=NULL) + 
+  theme(axis.text.y = element_text(size=6))
 
-tikz(file = "~/Dropbox/Research Projects/WelfareMetaAnalysis/Figures/OutModelFit.tex",width=5,height = 3)
-print(g)
-dev.off()
-
-# version for paper:
-
-g <- data %>%
-  rbind(model) %>%
-  filter(!est_sample) %>%
-  ggplot(aes(x=date,y=value,ymin=value-1.96*sd,ymax=value+1.96*sd,linetype=case,color=arm,fill=arm)) + geom_point(size=0.5) + geom_ribbon(color=NA,alpha=0.2) + geom_line(size=1.2) + facet_grid(name ~ source,scales="free_y") + theme_minimal() + theme(legend.position = "bottom") + scale_color_manual(name="Arm",values = colors[2:3]) + scale_fill_manual(name="Arm",values = colors[2:3]) + ylab("") + xlab("")  + scale_linetype_discrete(name=NULL) + theme(axis.text.y = element_text(size=6))
-
-tikz(file = "~/Dropbox/Research Projects/WelfareMetaAnalysis/Figures/OutModelFitPaper.tex",width=5,height = 5)
-print(g)
-dev.off()
+ggsave("output/figures/OutModelFitPaper.eps",width = 8,height = 8)
