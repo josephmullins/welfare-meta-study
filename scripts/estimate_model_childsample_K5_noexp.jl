@@ -54,7 +54,7 @@ function mstep_blocks(p,EM::Vector{EM_data},MD::Vector{model_data},n_idx,mstep_i
     return p
 end
 
-p = expectation_maximization(p,EM,MD_est,n_idx;max_iter = 150,mstep_iter = 5,save = true)
+p = expectation_maximization(p,EM,MD_est,n_idx;max_iter = 800,mstep_iter = 5,save = true)
 
 # --- Calculate Standard Errors --- #
 x_est = pars_inv_full(p)
